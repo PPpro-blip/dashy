@@ -7,7 +7,7 @@
    ╚════════════════════════════════════════════════════════════════════════╝
    ========================================================================== */
 
-const GEMINI_API_KEY = "AIzaSyCtQKK5TpraTglGB68n31xnaWp-2dJEHbE";
+const GEMINI_API_KEY = "";
 
 /* ==========================================================================
    STATE
@@ -24,7 +24,7 @@ const State = {
 };
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/";
+const GEMINI_ENDPOINT = "https://wispy-frog-df14.kamleshprathampandey.workers.dev/";
 
 /* ==========================================================================
    DASH MODEL CONFIGS — Gemini 2.5 Flash with MAX tokens
