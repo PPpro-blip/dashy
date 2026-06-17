@@ -1,0 +1,1031 @@
+"use strict";
+
+/* ==========================================================================
+   ╔════════════════════════════════════════════════════════════════════════╗
+   ║   🔑  PASTE YOUR GEMINI API KEY HERE  🔑                              ║
+   ║   Get a free key at: https://aistudio.google.com/app/apikey           ║
+   ╚════════════════════════════════════════════════════════════════════════╝
+   ========================================================================== */
+
+const GEMINI_API_KEY = "AIzaSyCtQKK5TpraTglGB68n31xnaWp-2dJEHbE";
+
+/* ==========================================================================
+   STATE
+   ========================================================================== */
+const State = {
+  currentUser: null,
+  currentChatId: null,
+  chats: [],
+  currentModel: "dash-3",
+  currentTheme: "dark",
+  isResponding: false,
+  pendingAttachments: [],
+  pendingReportMsgId: null
+};
+
+const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
+const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/";
+
+/* ==========================================================================
+   DASH MODEL CONFIGS — Gemini 2.5 Flash with MAX tokens
+   ========================================================================== */
+const DASH_MODELS = {
+  "dash-3.2": {
+    displayName: "DASH-3.2",
+    backendModel: "gemini-2.5-flash",
+    systemInstruction:
+      "You are DASH-3.2, DashyCore's flagship model — built for complex code generation, deep technical reasoning, and high-quality creative writing. CRITICAL: Always provide COMPLETE, production-ready code without truncation. Never cut off mid-function. Include all imports, all functions, all error handling. If code is long, take all the space needed. Format with proper markdown code blocks and language tags. Add clear comments. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 65536,
+      topP: 0.95,
+      topK: 64
+    }
+  },
+  "dash-3": {
+    displayName: "DASH-3",
+    backendModel: "gemini-2.5-flash",
+    systemInstruction:
+      "You are DASH-3, DashyCore's balanced all-around assistant. Help users with everything from casual conversation to coding, writing, analysis, and creative tasks. Be friendly, clear, and helpful. When generating code, provide COMPLETE working examples — never cut off mid-function. Use markdown formatting when it improves readability. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
+    generationConfig: {
+      temperature: 0.8,
+      maxOutputTokens: 32768,
+      topP: 0.9,
+      topK: 40
+    }
+  },
+  "dash-2.5-speed": {
+    displayName: "DASH-2.5 SPEED",
+    backendModel: "gemini-2.5-flash",
+    systemInstruction:
+      "You are DASH-2.5 Speed, DashyCore's fastest model. Optimize for speed and brevity. Give direct, concise answers. Skip unnecessary preamble. Get straight to the point. Use short sentences. Keep code snippets focused and minimal. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
+    generationConfig: {
+      temperature: 0.6,
+      maxOutputTokens: 8192,
+      topP: 0.85,
+      topK: 20
+    }
+  }
+};
+
+function getDashConfig(modelKey) {
+  return DASH_MODELS[modelKey] || DASH_MODELS["dash-3"];
+}
+
+function isApiKeyConfigured() {
+  return GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_GEMINI_API_KEY_HERE" && GEMINI_API_KEY.length > 10;
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+function scrollToBottom() {
+  const area = document.getElementById("chat-messages-area");
+  if (area) area.scrollTop = area.scrollHeight;
+}
+
+function generateMsgId() {
+  return "msg_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
+}
+
+/* ==========================================================================
+   SCREEN & MODAL
+   ========================================================================== */
+function showScreen(id) {
+  document.querySelectorAll(".screen-container").forEach(s => s.classList.remove("active-screen"));
+  const el = document.getElementById(id);
+  if (el) el.classList.add("active-screen");
+}
+function goToLogin() { showScreen("screen-login"); }
+
+function openModal(id) {
+  document.getElementById("modal-overlay").classList.add("show");
+  document.querySelectorAll(".modal-card").forEach(m => m.classList.remove("active"));
+  const m = document.getElementById(id);
+  if (m) m.classList.add("active");
+}
+function closeModal(e) {
+  if (e && e.target && !e.target.classList.contains("modal-overlay")) return;
+  closeAllModals();
+}
+function closeAllModals() {
+  document.getElementById("modal-overlay").classList.remove("show");
+  document.querySelectorAll(".modal-card").forEach(m => m.classList.remove("active"));
+  State.pendingReportMsgId = null;
+}
+
+/* ==========================================================================
+   APP BOOT
+   ========================================================================== */
+function initApp() {
+  try {
+    showScreen("screen-title");
+    setTimeout(() => {
+      if (document.getElementById("screen-title").classList.contains("active-screen")) {
+        goToLogin();
+      }
+    }, 2500);
+  } catch (err) {
+    showError("Init failed: " + err.message);
+  }
+}
+window.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
+
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+function loginWithGoogle() {
+  handleUserLogin({ email: "user@gmail.com", defaultName: "Google User", avatarLetter: "G" });
+}
+function loginAsGuest() {
+  handleUserLogin({ email: "guest@dashy.ai", defaultName: "Guest", avatarLetter: "G" });
+}
+function loginWithEmail() {
+  try {
+    const email = document.getElementById("login-email-input").value.trim();
+    const pass = document.getElementById("login-password-input").value.trim();
+    if (!email) return showError("Please enter your email.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("Invalid email format.");
+    if (!pass || pass.length < 4) return showError("Password must be at least 4 characters.");
+    handleUserLogin({ email, defaultName: email.split("@")[0], avatarLetter: email[0].toUpperCase() });
+  } catch (err) { showError("Login failed: " + err.message); }
+}
+
+function handleUserLogin({ email, defaultName, avatarLetter }) {
+  const savedUsername = localStorage.getItem("dashy_username_" + email);
+  if (savedUsername) {
+    State.currentUser = { name: savedUsername, email, avatar: savedUsername[0].toUpperCase() };
+    enterChatApp();
+  } else {
+    State.currentUser = { name: defaultName, email, avatar: avatarLetter };
+    showScreen("screen-username");
+    setTimeout(() => {
+      const input = document.getElementById("username-setup-input");
+      if (input) { input.value = defaultName; input.focus(); input.select(); }
+    }, 100);
+  }
+}
+
+function saveUsername() {
+  const input = document.getElementById("username-setup-input");
+  if (!input) return;
+  const username = input.value.trim();
+  if (!username) return showError("Please enter a username.");
+  if (username.length < 2) return showError("Username must be at least 2 characters.");
+  if (username.length > 20) return showError("Username must be 20 characters or less.");
+  if (!/^[a-zA-Z0-9\s_-]+$/.test(username)) return showError("Username can only contain letters, numbers, spaces, _ and -");
+
+  localStorage.setItem("dashy_username_" + State.currentUser.email, username);
+  State.currentUser.name = username;
+  State.currentUser.avatar = username[0].toUpperCase();
+  enterChatApp();
+}
+
+function resetUsername() {
+  if (!State.currentUser) return;
+  if (!confirm("Reset your username? You'll be asked to set a new one.")) return;
+  localStorage.removeItem("dashy_username_" + State.currentUser.email);
+  showScreen("screen-username");
+  setTimeout(() => {
+    const input = document.getElementById("username-setup-input");
+    if (input) { input.value = ""; input.focus(); }
+  }, 100);
+}
+
+function enterChatApp() {
+  showScreen("screen-chat");
+  renderUserInSidebar();
+  startNewChat();
+}
+
+function renderUserInSidebar() {
+  const u = State.currentUser;
+  if (!u) return;
+  const nameEl = document.getElementById("sidebar-user-name");
+  const emailEl = document.getElementById("sidebar-user-email");
+  const avatarEl = document.getElementById("sidebar-user-avatar");
+  if (nameEl) nameEl.textContent = u.name;
+  if (emailEl) emailEl.textContent = u.email;
+  if (avatarEl) avatarEl.textContent = u.avatar;
+
+  const greet = document.getElementById("empty-state-greeting");
+  if (greet) {
+    const h = new Date().getHours();
+    let s = "Hello";
+    if (h < 12) s = "Good morning";
+    else if (h < 18) s = "Good afternoon";
+    else s = "Good evening";
+    greet.textContent = `${s}, ${u.name}`;
+  }
+}
+
+function logout() {
+  if (!confirm("Log out?")) return;
+  State.currentUser = null;
+  State.chats = [];
+  State.currentChatId = null;
+  showScreen("screen-login");
+}
+
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+function toggleSidebar() {
+  const sidebar = document.getElementById("chat-sidebar");
+  if (sidebar) sidebar.classList.toggle("collapsed");
+}
+
+function filterChats(query) {
+  const lower = (query || "").toLowerCase().trim();
+  const list = document.getElementById("sidebar-chat-list");
+  if (!list) return;
+  list.querySelectorAll(".sidebar-chat-item").forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = (lower === "" || text.includes(lower)) ? "" : "none";
+  });
+}
+
+function clearAllChats() {
+  if (!confirm("Delete all chats? This cannot be undone.")) return;
+  State.chats = [];
+  State.currentChatId = null;
+  startNewChat();
+}
+
+/* ==========================================================================
+   CHAT MANAGEMENT
+   ========================================================================== */
+function startNewChat() {
+  const chat = { id: "chat_" + Date.now(), title: "New Chat", messages: [] };
+  State.chats.unshift(chat);
+  State.currentChatId = chat.id;
+  renderSidebarChatList();
+  renderActiveChat();
+}
+
+function renderSidebarChatList() {
+  const list = document.getElementById("sidebar-chat-list");
+  const count = document.getElementById("sidebar-chat-count");
+  const empty = document.getElementById("sidebar-empty-state");
+  if (!list) return;
+  list.innerHTML = "";
+  if (count) count.textContent = State.chats.length;
+  if (empty) {
+    const allEmpty = State.chats.length === 0 ||
+      (State.chats.length === 1 && State.chats[0].messages.length === 0);
+    empty.classList.toggle("show", allEmpty);
+  }
+  State.chats.forEach(c => {
+    const item = document.createElement("div");
+    item.className = "sidebar-chat-item" + (c.id === State.currentChatId ? " active" : "");
+    const title = document.createElement("div");
+    title.className = "sidebar-chat-item-title";
+    title.textContent = c.title;
+    const time = document.createElement("div");
+    time.className = "sidebar-chat-item-time";
+    const ts = parseInt(c.id.replace("chat_", ""), 10) || Date.now();
+    time.textContent = formatRelativeTime(ts);
+    item.appendChild(title);
+    item.appendChild(time);
+    item.addEventListener("click", () => switchToChat(c.id));
+    list.appendChild(item);
+  });
+}
+
+function formatRelativeTime(ts) {
+  const diff = Date.now() - ts;
+  const sec = Math.floor(diff / 1000);
+  const min = Math.floor(sec / 60);
+  const hr = Math.floor(min / 60);
+  const day = Math.floor(hr / 24);
+  if (sec < 60) return "Just now";
+  if (min < 60) return `${min}m ago`;
+  if (hr < 24) return `${hr}h ago`;
+  if (day < 7) return `${day}d ago`;
+  return new Date(ts).toLocaleDateString();
+}
+
+function switchToChat(id) {
+  State.currentChatId = id;
+  renderSidebarChatList();
+  renderActiveChat();
+}
+
+function getCurrentChat() {
+  return State.chats.find(c => c.id === State.currentChatId);
+}
+
+function renderActiveChat() {
+  const chat = getCurrentChat();
+  const area = document.getElementById("chat-messages-area");
+  const empty = document.getElementById("chat-empty-state");
+  const title = document.getElementById("chat-current-title");
+  if (!area || !chat) return;
+  if (title) title.textContent = chat.title;
+  area.innerHTML = "";
+  if (chat.messages.length === 0) {
+    if (empty) { area.appendChild(empty); empty.style.display = "flex"; }
+    renderUserInSidebar();
+  } else {
+    chat.messages.forEach(m => renderMessageBubble(m));
+  }
+}
+
+/* ==========================================================================
+   ATTACHMENTS
+   ========================================================================== */
+function handleFileAttachment(event) {
+  const files = Array.from(event.target.files || []);
+  files.forEach(f => addAttachment(f));
+  event.target.value = "";
+}
+
+function addAttachment(file) {
+  if (file.size > 20 * 1024 * 1024) return showError(`File "${file.name}" exceeds 20MB limit.`);
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const attachment = {
+      id: "att_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+      name: file.name, type: file.type, size: file.size,
+      isImage: file.type.startsWith("image/"),
+      dataUrl: e.target.result,
+      base64: e.target.result.split(",")[1] || ""
+    };
+    State.pendingAttachments.push(attachment);
+    renderAttachmentPreviews();
+  };
+  reader.onerror = () => showError("Failed to read file: " + file.name);
+  reader.readAsDataURL(file);
+}
+
+function renderAttachmentPreviews() {
+  const row = document.getElementById("attachment-preview-row");
+  if (!row) return;
+  row.innerHTML = "";
+  State.pendingAttachments.forEach(a => {
+    const chip = document.createElement("div");
+    chip.className = "attachment-preview-chip";
+    chip.innerHTML = a.isImage
+      ? `<img class="attachment-preview-thumb" src="${a.dataUrl}" alt="">
+         <span class="attachment-preview-name">${escapeHtml(a.name)}</span>
+         <button class="attachment-preview-remove" onclick="removeAttachment('${a.id}')">✕</button>`
+      : `<span style="font-size:1.1rem;">📄</span>
+         <span class="attachment-preview-name">${escapeHtml(a.name)}</span>
+         <button class="attachment-preview-remove" onclick="removeAttachment('${a.id}')">✕</button>`;
+    row.appendChild(chip);
+  });
+}
+
+function removeAttachment(id) {
+  State.pendingAttachments = State.pendingAttachments.filter(a => a.id !== id);
+  renderAttachmentPreviews();
+}
+
+window.addEventListener("paste", (e) => {
+  if (!document.getElementById("screen-chat").classList.contains("active-screen")) return;
+  const items = (e.clipboardData || {}).items || [];
+  for (const item of items) {
+    if (item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (file) addAttachment(file);
+    }
+  }
+});
+
+window.addEventListener("dragover", (e) => { e.preventDefault(); });
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (!document.getElementById("screen-chat").classList.contains("active-screen")) return;
+  const files = Array.from(e.dataTransfer.files || []);
+  files.forEach(f => addAttachment(f));
+});
+
+/* ==========================================================================
+   SEND MESSAGE
+   ========================================================================== */
+function sendMessage(event) {
+  if (event) event.preventDefault();
+  try {
+    if (State.isResponding) return;
+    const inputEl = document.getElementById("chat-text-input");
+    const text = inputEl.value.trim();
+    if (!text && State.pendingAttachments.length === 0) return;
+
+    const chat = getCurrentChat();
+    if (!chat) return showError("No active chat.");
+
+    const empty = document.getElementById("chat-empty-state");
+    if (empty) empty.style.display = "none";
+
+    const attachments = [...State.pendingAttachments];
+
+    const userMsg = {
+      id: generateMsgId(),
+      author: State.currentUser.name,
+      role: "user",
+      text,
+      avatar: State.currentUser.avatar,
+      attachments
+    };
+    chat.messages.push(userMsg);
+    renderMessageBubble(userMsg);
+
+    if (chat.messages.length === 1) {
+      chat.title = text.length > 0
+        ? (text.length > 30 ? text.substring(0, 30) + "..." : text)
+        : "Image chat";
+      renderSidebarChatList();
+      document.getElementById("chat-current-title").textContent = chat.title;
+    }
+
+    inputEl.value = "";
+    State.pendingAttachments = [];
+    renderAttachmentPreviews();
+
+    const lower = text.toLowerCase();
+    const isImageRequest = /\b(generate|create|draw|make|render)\b.*\b(image|picture|photo|art|illustration|drawing)\b/i.test(lower)
+      || lower.startsWith("/imagine ")
+      || lower.startsWith("imagine ");
+
+    if (isImageRequest) {
+      handleImageGeneration(text, chat);
+    } else {
+      handleTextGeneration(text, chat, attachments);
+    }
+  } catch (err) {
+    showError("Send failed: " + err.message);
+  }
+}
+
+function useSuggestion(text) {
+  const el = document.getElementById("chat-text-input");
+  if (el) { el.value = text; el.focus(); }
+}
+
+/* ==========================================================================
+   SPEEDGEN — IMAGE GENERATION
+   ========================================================================== */
+function handleImageGeneration(prompt, chat) {
+  State.isResponding = true;
+  const sendBtn = document.getElementById("chat-send-btn");
+  if (sendBtn) sendBtn.disabled = true;
+
+  let cleanPrompt = prompt
+    .replace(/^(\/imagine\s+|imagine\s+)/i, "")
+    .replace(/^.*?(generate|create|draw|make|render)(\s+an?\s+|\s+)(image|picture|photo|art|illustration|drawing)(\s+of\s+|\s+)?/i, "")
+    .trim();
+
+  if (!cleanPrompt) cleanPrompt = prompt;
+
+  const isHQ = State.currentModel === "dash-3.2";
+  const dimension = isHQ ? 768 : 512;
+  const seed = Math.floor(Math.random() * 1000000);
+
+  const finalPrompt = isHQ
+    ? `${cleanPrompt}, ultra detailed, masterpiece, professional, cinematic lighting, sharp focus, high quality`
+    : cleanPrompt;
+
+  const url = `${SPEEDGEN_ENDPOINT}${encodeURIComponent(finalPrompt)}?width=${dimension}&height=${dimension}&seed=${seed}&nologo=true&model=flux`;
+
+  const aiMsg = {
+    id: generateMsgId(),
+    author: "DashyCore",
+    role: "ai",
+    text: `Generating image through SpeedGen: "${cleanPrompt}"`,
+    avatar: "D",
+    imageUrl: null,
+    imagePrompt: cleanPrompt,
+    imageLoading: true,
+    originalPrompt: prompt,
+    modelUsed: getDashConfig(State.currentModel).displayName
+  };
+  chat.messages.push(aiMsg);
+  const bubble = renderMessageBubble(aiMsg);
+
+  fetch(url)
+    .then(response => {
+      if (!response.ok) throw new Error("SpeedGen returned " + response.status);
+      return response.blob();
+    })
+    .then(blob => {
+      const objectUrl = URL.createObjectURL(blob);
+      aiMsg.imageUrl = objectUrl;
+      aiMsg.imageLoading = false;
+      aiMsg.text = `Here's your ${isHQ ? "HQ " : ""}image of "${cleanPrompt}":`;
+      reRenderMessage(aiMsg);
+      scrollToBottom();
+    })
+    .catch(err => {
+      aiMsg.imageLoading = false;
+      aiMsg.text = `⚠️ SpeedGen couldn't generate this image: ${err.message}. Try again with a different prompt.`;
+      reRenderMessage(aiMsg);
+    })
+    .finally(() => {
+      State.isResponding = false;
+      if (sendBtn) sendBtn.disabled = false;
+    });
+}
+
+/* ==========================================================================
+   TEXT GENERATION
+   ========================================================================== */
+async function handleTextGeneration(prompt, chat, attachments) {
+  State.isResponding = true;
+  const sendBtn = document.getElementById("chat-send-btn");
+  if (sendBtn) sendBtn.disabled = true;
+
+  const aiMsg = {
+    id: generateMsgId(),
+    author: "DashyCore",
+    role: "ai",
+    text: "",
+    avatar: "D",
+    originalPrompt: prompt,
+    originalAttachments: attachments,
+    modelUsed: getDashConfig(State.currentModel).displayName
+  };
+  chat.messages.push(aiMsg);
+  const bubble = renderMessageBubble(aiMsg);
+  const textEl = bubble.querySelector(".message-text");
+  textEl.classList.add("ai-typing");
+
+  try {
+    let responseText = "";
+    if (isApiKeyConfigured()) {
+      responseText = await callGeminiAPI(prompt, chat, attachments);
+    } else {
+      responseText = getDemoResponse(prompt);
+    }
+    await streamText(responseText, aiMsg, textEl);
+    aiMsg.text = responseText;
+    reRenderMessage(aiMsg);
+  } catch (err) {
+    aiMsg.text = `⚠️ Error: ${err.message}\n\n${isApiKeyConfigured() ? "Check your API key at the top of script.js" : "Add your Gemini API key at the top of script.js (line 14)."}`;
+    textEl.innerHTML = formatMessageContent(aiMsg.text);
+    reRenderMessage(aiMsg);
+  } finally {
+    textEl.classList.remove("ai-typing");
+    State.isResponding = false;
+    if (sendBtn) sendBtn.disabled = false;
+  }
+}
+
+async function callGeminiAPI(prompt, chat, attachments) {
+  const config = getDashConfig(State.currentModel);
+  const url = `${GEMINI_ENDPOINT}${config.backendModel}:generateContent?key=${GEMINI_API_KEY}`;
+
+  const history = chat.messages.slice(-11, -1).map(m => ({
+    role: m.role === "user" ? "user" : "model",
+    parts: [{ text: m.text || "" }]
+  })).filter(m => m.parts[0].text);
+
+  const parts = [{ text: prompt || "Describe this." }];
+  (attachments || []).forEach(a => {
+    if (a.isImage && a.base64) {
+      parts.push({ inline_data: { mime_type: a.type, data: a.base64 } });
+    } else if (a.dataUrl) {
+      parts[0].text += `\n\n[Attached file: ${a.name} (${a.type})]`;
+    }
+  });
+
+  const body = {
+    contents: [...history, { role: "user", parts }],
+    systemInstruction: { parts: [{ text: config.systemInstruction }] },
+    generationConfig: config.generationConfig
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error?.message || `Request failed with status ${res.status}`);
+  }
+
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error("Empty response from " + config.displayName + ".");
+  return text;
+}
+
+function getDemoResponse(query) {
+  const lower = query.toLowerCase();
+  const modelName = getDashConfig(State.currentModel).displayName;
+
+  if (lower.includes("hello") || lower.includes("hi")) {
+    return `Hello! I'm **${modelName}** — part of the DashyCore lineup. I'm currently in **demo mode**. Add your API key at the top of \`script.js\` to unlock full AI power!`;
+  }
+  if (lower.includes("code") || lower.includes("python") || lower.includes("script")) {
+    return "Here's a demo code block:\n\n```python\ndef hello_dashy():\n    print('Powered by DashyCore!')\n    return True\n\nhello_dashy()\n```\n\nAdd your API key in `script.js` to unlock real code generation!";
+  }
+  return `Received: "${query}"\n\nI'm **${modelName}** running in **demo mode**. Add your API key at the top of \`script.js\` (line 14).`;
+}
+
+/* ==========================================================================
+   STREAMING + FORMATTING
+   ========================================================================== */
+function streamText(fullText, aiMsg, textEl) {
+  return new Promise(resolve => {
+    let i = 0;
+    const chunkSize = 4;
+    const interval = setInterval(() => {
+      if (i < fullText.length) {
+        i = Math.min(i + chunkSize, fullText.length);
+        aiMsg.text = fullText.substring(0, i);
+        textEl.innerHTML = formatMessageContent(aiMsg.text);
+        scrollToBottom();
+      } else {
+        clearInterval(interval);
+        textEl.innerHTML = formatMessageContent(fullText);
+        resolve();
+      }
+    }, 14);
+  });
+}
+
+function formatMessageContent(text) {
+  if (!text) return "";
+  let html = escapeHtml(text);
+
+  html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
+    const language = lang || "code";
+    const escapedCode = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const codeId = "code_" + Math.random().toString(36).substr(2, 9);
+    return `<div class="code-block-wrapper">
+      <div class="code-block-header">
+        <span class="code-block-lang">${language}</span>
+        <button class="code-block-copy" onclick="copyCodeBlock('${codeId}', this)">Copy</button>
+      </div>
+      <pre class="code-block-content" id="${codeId}">${escapedCode}</pre>
+    </div>`;
+  });
+
+  html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
+  html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  html = html.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+  html = html.replace(/\n/g, "<br>");
+
+  return html;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function copyCodeBlock(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    btn.textContent = "✓ Copied";
+    btn.classList.add("copied");
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
+  }).catch(() => showError("Could not copy to clipboard."));
+}
+
+/* ==========================================================================
+   RENDER MESSAGE BUBBLE
+   ========================================================================== */
+function renderMessageBubble(msg) {
+  const area = document.getElementById("chat-messages-area");
+  if (!area) return null;
+  const bubble = buildMessageBubbleNode(msg);
+  area.appendChild(bubble);
+  scrollToBottom();
+  return bubble;
+}
+
+function reRenderMessage(msg) {
+  const area = document.getElementById("chat-messages-area");
+  if (!area || !msg.id) return;
+  const oldBubble = area.querySelector(`[data-msg-id="${msg.id}"]`);
+  if (!oldBubble) return;
+  const newBubble = buildMessageBubbleNode(msg);
+  oldBubble.replaceWith(newBubble);
+}
+
+function buildMessageBubbleNode(msg) {
+  const bubble = document.createElement("div");
+  bubble.className = "chat-message";
+  bubble.dataset.msgId = msg.id;
+
+  const avatar = document.createElement("div");
+  avatar.className = "message-avatar " + (msg.role === "user" ? "user-avatar" : "ai-avatar");
+  avatar.textContent = msg.avatar;
+
+  const content = document.createElement("div");
+  content.className = "message-content";
+
+  // Author row (with optional model badge)
+  const authorRow = document.createElement("div");
+  authorRow.className = "message-author-row";
+  const author = document.createElement("div");
+  author.className = "message-author";
+  author.textContent = msg.author;
+  authorRow.appendChild(author);
+  if (msg.role === "ai" && msg.modelUsed) {
+    const badge = document.createElement("span");
+    badge.className = "message-model-badge";
+    badge.textContent = msg.modelUsed;
+    authorRow.appendChild(badge);
+  }
+  content.appendChild(authorRow);
+
+  if (msg.attachments && msg.attachments.length > 0) {
+    const attRow = document.createElement("div");
+    attRow.className = "message-attachments";
+    msg.attachments.forEach(a => {
+      if (a.isImage) {
+        const img = document.createElement("img");
+        img.className = "message-attachment-thumb";
+        img.src = a.dataUrl; img.alt = a.name;
+        attRow.appendChild(img);
+      } else {
+        const file = document.createElement("div");
+        file.className = "message-attachment-file";
+        file.innerHTML = `<span class="message-attachment-file-icon">📄</span><span>${escapeHtml(a.name)}</span>`;
+        attRow.appendChild(file);
+      }
+    });
+    content.appendChild(attRow);
+  }
+
+  const textEl = document.createElement("div");
+  textEl.className = "message-text";
+  textEl.innerHTML = formatMessageContent(msg.text);
+  content.appendChild(textEl);
+
+  // Image / loading state
+  if (msg.imageUrl && !msg.imageLoading) {
+    const wrap = document.createElement("div");
+    wrap.className = "generated-image-wrap";
+    const img = document.createElement("img");
+    img.src = msg.imageUrl;
+    img.alt = msg.imagePrompt || "Generated image";
+    wrap.appendChild(img);
+    content.appendChild(wrap);
+  } else if (msg.imageLoading) {
+    const wrap = document.createElement("div");
+    wrap.className = "generated-image-wrap";
+    const overlay = document.createElement("div");
+    overlay.className = "generated-image-loading-overlay";
+    overlay.innerHTML = `
+      <div class="speedgen-badge">⚡ SpeedGen</div>
+      <span class="image-spinner"></span>
+      <span class="speedgen-loading-text">Rendering your image...</span>
+    `;
+    wrap.appendChild(overlay);
+    content.appendChild(wrap);
+  }
+
+  // Action bar
+  const actionBar = buildActionBar(msg);
+  if (actionBar) content.appendChild(actionBar);
+
+  bubble.appendChild(avatar);
+  bubble.appendChild(content);
+  return bubble;
+}
+
+/* ==========================================================================
+   ACTION BAR (Copy, Like, Dislike, Report, Regenerate)
+   ========================================================================== */
+function buildActionBar(msg) {
+  if (msg.imageLoading) return null;
+  if (msg.role === "ai" && (!msg.text || msg.text.length === 0)) return null;
+
+  const bar = document.createElement("div");
+  bar.className = "message-action-bar";
+
+  if (msg.role === "user") {
+    bar.appendChild(makeActionBtn("📋", "Copy prompt", () => {
+      navigator.clipboard.writeText(msg.text || "").then(() => {
+        showSuccess("Prompt copied!");
+      }).catch(() => showError("Couldn't copy."));
+    }));
+  } else {
+    bar.appendChild(makeActionBtn("📋", "Copy response", () => {
+      navigator.clipboard.writeText(msg.text || "").then(() => {
+        showSuccess("Response copied!");
+      }).catch(() => showError("Couldn't copy."));
+    }));
+
+    const d1 = document.createElement("div");
+    d1.className = "msg-action-divider";
+    bar.appendChild(d1);
+
+    bar.appendChild(makeActionBtn("👍", "Helpful", (btn) => {
+      const wasActive = btn.classList.contains("active-like");
+      bar.querySelectorAll(".msg-action-btn").forEach(b => {
+        b.classList.remove("active-like", "active-dislike");
+      });
+      if (!wasActive) {
+        btn.classList.add("active-like");
+        msg.feedback = "like";
+        saveFeedback(msg, "like");
+        showSuccess("Thanks for your feedback! 👍");
+      } else {
+        msg.feedback = null;
+      }
+    }, msg.feedback === "like" ? "active-like" : ""));
+
+    bar.appendChild(makeActionBtn("👎", "Not helpful", (btn) => {
+      const wasActive = btn.classList.contains("active-dislike");
+      bar.querySelectorAll(".msg-action-btn").forEach(b => {
+        b.classList.remove("active-like", "active-dislike");
+      });
+      if (!wasActive) {
+        btn.classList.add("active-dislike");
+        msg.feedback = "dislike";
+        saveFeedback(msg, "dislike");
+        showSuccess("Got it — we'll keep improving 👎");
+      } else {
+        msg.feedback = null;
+      }
+    }, msg.feedback === "dislike" ? "active-dislike" : ""));
+
+    bar.appendChild(makeActionBtn("🚩", "Report", () => {
+      openReportModal(msg.id);
+    }, msg.reported ? "active-report" : ""));
+
+    const d2 = document.createElement("div");
+    d2.className = "msg-action-divider";
+    bar.appendChild(d2);
+
+    bar.appendChild(makeActionBtn("🔄", "Regenerate", () => {
+      regenerateResponse(msg);
+    }));
+  }
+
+  return bar;
+}
+
+function makeActionBtn(iconText, tooltip, onClick, extraClass = "") {
+  const btn = document.createElement("button");
+  btn.className = "msg-action-btn msg-action-tooltip " + extraClass;
+  btn.setAttribute("data-tooltip", tooltip);
+  btn.innerHTML = `<span>${iconText}</span>`;
+  btn.addEventListener("click", () => onClick(btn));
+  return btn;
+}
+
+/* ==========================================================================
+   FEEDBACK STORAGE
+   ========================================================================== */
+function saveFeedback(msg, type) {
+  try {
+    const stored = JSON.parse(localStorage.getItem("dashy_feedback") || "[]");
+    stored.push({
+      msgId: msg.id,
+      type: type,
+      model: State.currentModel,
+      prompt: msg.originalPrompt || "",
+      response: (msg.text || "").substring(0, 500),
+      user: State.currentUser?.email || "anonymous",
+      timestamp: Date.now()
+    });
+    if (stored.length > 500) stored.splice(0, stored.length - 500);
+    localStorage.setItem("dashy_feedback", JSON.stringify(stored));
+  } catch (e) {
+    console.warn("Couldn't save feedback:", e);
+  }
+}
+
+function saveReport(msg, reason, details) {
+  try {
+    const stored = JSON.parse(localStorage.getItem("dashy_reports") || "[]");
+    stored.push({
+      msgId: msg.id,
+      reason: reason,
+      details: details || "",
+      model: State.currentModel,
+      prompt: msg.originalPrompt || "",
+      response: (msg.text || "").substring(0, 1000),
+      user: State.currentUser?.email || "anonymous",
+      timestamp: Date.now()
+    });
+    if (stored.length > 200) stored.splice(0, stored.length - 200);
+    localStorage.setItem("dashy_reports", JSON.stringify(stored));
+  } catch (e) {
+    console.warn("Couldn't save report:", e);
+  }
+}
+
+/* ==========================================================================
+   REPORT
+   ========================================================================== */
+function openReportModal(msgId) {
+  State.pendingReportMsgId = msgId;
+  const radios = document.querySelectorAll("input[name='report-reason']");
+  radios.forEach(r => r.checked = false);
+  const details = document.getElementById("report-details");
+  if (details) details.value = "";
+  openModal("modal-report");
+}
+
+function submitReport() {
+  const selected = document.querySelector("input[name='report-reason']:checked");
+  if (!selected) return showError("Please select a reason.");
+
+  const detailsEl = document.getElementById("report-details");
+  const details = detailsEl ? detailsEl.value.trim() : "";
+
+  const chat = getCurrentChat();
+  if (!chat || !State.pendingReportMsgId) {
+    closeAllModals();
+    return showError("Couldn't submit report.");
+  }
+  const msg = chat.messages.find(m => m.id === State.pendingReportMsgId);
+  if (msg) {
+    saveReport(msg, selected.value, details);
+    msg.reported = true;
+    reRenderMessage(msg);
+  }
+  closeAllModals();
+  showSuccess("Report submitted. Thank you for helping improve DashyCore 🚩");
+}
+
+/* ==========================================================================
+   REGENERATE
+   ========================================================================== */
+async function regenerateResponse(msg) {
+  if (State.isResponding) return showError("Wait for current response to finish.");
+  const chat = getCurrentChat();
+  if (!chat) return;
+  if (!msg.originalPrompt && !msg.imagePrompt) return showError("Can't regenerate this response.");
+
+  const msgIndex = chat.messages.findIndex(m => m.id === msg.id);
+  if (msgIndex === -1) return;
+  chat.messages.splice(msgIndex, 1);
+
+  const bubble = document.querySelector(`[data-msg-id="${msg.id}"]`);
+  if (bubble) bubble.remove();
+
+  if (msg.imagePrompt) {
+    handleImageGeneration(msg.originalPrompt || msg.imagePrompt, chat);
+  } else {
+    handleTextGeneration(msg.originalPrompt, chat, msg.originalAttachments || []);
+  }
+}
+
+/* ==========================================================================
+   MODEL / THEME
+   ========================================================================== */
+function changeModel(v) { State.currentModel = v; }
+function changeTheme(v) {
+  State.currentTheme = v;
+  const r = document.documentElement;
+  if (v === "cyan") {
+    r.style.setProperty("--accent-primary", "#00ffcc");
+    r.style.setProperty("--accent-secondary", "#00d2ff");
+    r.style.setProperty("--bg-base", "#040d14");
+  } else if (v === "amber") {
+    r.style.setProperty("--accent-primary", "#fbbf24");
+    r.style.setProperty("--accent-secondary", "#f59e0b");
+    r.style.setProperty("--bg-base", "#0a0805");
+  } else {
+    r.style.setProperty("--accent-primary", "#00d2ff");
+    r.style.setProperty("--accent-secondary", "#a476bb");
+    r.style.setProperty("--bg-base", "#07090f");
+  }
+}
+
+/* ==========================================================================
+   TOASTS
+   ========================================================================== */
+function showError(msg) {
+  console.log("[Dashy ERROR]", msg);
+  showToast(msg, "error");
+}
+function showSuccess(msg) {
+  console.log("[Dashy]", msg);
+  showToast(msg, "success");
+}
+function showToast(msg, type = "error") {
+  const existing = document.querySelector(".error-toast");
+  if (existing) existing.remove();
+  const t = document.createElement("div");
+  t.className = "error-toast" + (type === "success" ? " success" : "");
+  const iconColor = type === "success" ? "var(--accent-success)" : "var(--accent-danger)";
+  const icon = type === "success" ? "✓" : "⚠";
+  t.innerHTML = `<span style="color: ${iconColor};">${icon}</span><span>${escapeHtml(msg)}</span>`;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = "opacity 0.3s, transform 0.3s";
+    t.style.opacity = "0";
+    t.style.transform = "translateX(-50%) translateY(10px)";
+    setTimeout(() => t.remove(), 320);
+  }, 3500);
+}
+
+window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
