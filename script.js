@@ -573,7 +573,7 @@ async function handleTextGeneration(prompt, chat, attachments) {
 
 async function callGeminiAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
-  const url = `${GEMINI_ENDPOINT}${config.backendModel}:generateContent?key=${GEMINI_API_KEY}`;
+  const url = `${GEMINI_ENDPOINT}${config.backendModel}:generateContent`;
 
   const history = chat.messages.slice(-11, -1).map(m => ({
     role: m.role === "user" ? "user" : "model",
