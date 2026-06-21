@@ -699,7 +699,12 @@ function escapeHtml(s) {
 function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
-  navigator.clipboard.writeText(el.textContent).then(() => {
+  const lines = el.innerText.split('\n');
+  const minIndent = lines
+    .filter(l => l.trim().length > 0)
+    .reduce((min, l) => Math.min(min, l.match(/^(\s*)/)[1].length), Infinity);
+  const cleaned = lines.map(l => l.slice(minIndent)).join('\n').trim();
+  navigator.clipboard.writeText(cleaned).then(() => {
     btn.textContent = "✓ Copied";
     btn.classList.add("copied");
     setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
