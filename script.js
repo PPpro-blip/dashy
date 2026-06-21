@@ -119,12 +119,17 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   try {
-    showScreen("screen-title");
-    setTimeout(() => {
-      if (document.getElementById("screen-title").classList.contains("active-screen")) {
-        goToLogin();
-      }
-    }, 2500);
+    const verified = localStorage.getItem("dashy_age_verified");
+    if (!verified) {
+      showScreen("screen-age");
+    } else {
+      showScreen("screen-title");
+      setTimeout(() => {
+        if (document.getElementById("screen-title").classList.contains("active-screen")) {
+          goToLogin();
+        }
+      }, 2500);
+    }
   } catch (err) {
     showError("Init failed: " + err.message);
   }
@@ -191,6 +196,44 @@ function resetUsername() {
     const input = document.getElementById("username-setup-input");
     if (input) { input.value = ""; input.focus(); }
   }, 100);
+}
+
+function verifyAge() {
+  const dob = document.getElementById("age-dob-input").value;
+  const errEl = document.getElementById("age-error");
+  if (!dob) {
+    errEl.textContent = "Please enter your date of birth.";
+    errEl.style.display = "block";
+    return;
+  }
+  const birth = new Date(dob);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  localStorage.setItem("dashy_age_verified", age >= 16 ? "full" : "guest");
+if (age >= 16) {
+  showScreen("screen-title");
+  setTimeout(() => {
+    if (document.getElementById("screen-title").classList.contains("active-screen")) {
+      goToLogin();
+    }
+  }, 2500);
+} else {
+    localStorage.setItem("dashy_age_verified", "guest");
+    loginAsGuest();
+    setTimeout(() => {
+      showError("You're in limited guest mode as you must be 16+ for full access.");
+    }, 500);
+  }
+}
+
+
+function checkAgeVerification() {
+  const verified = localStorage.getItem("dashy_age_verified");
+  if (!verified) {
+    showScreen("screen-age");
+  }
 }
 
 function enterChatApp() {
