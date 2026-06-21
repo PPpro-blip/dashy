@@ -2039,3 +2039,53 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
   -webkit-user-select: none;
   user-select: none;
 }
+
+#screen-age {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+#screen-age .title-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#screen-age .title-logo-mark {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+#screen-age .title-logo-text {
+  font-size: 2.5rem;
+  letter-spacing: 0.3em;
+  margin-bottom: 0.5rem;
+}
+
+#screen-age .title-tagline {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+}
+
+#screen-age .login-input {
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 1rem;
+  text-align: center;
+  background: #1a1a2e;
+  color: #fff;
+  border: 1px solid #00d2ff44;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+#screen-age .login-btn-primary {
+  width: 100%;
+  max-width: 280px;
+}
