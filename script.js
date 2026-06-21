@@ -222,9 +222,9 @@ if (age >= 16) {
 } else {
     localStorage.setItem("dashy_age_verified", "guest");
     loginAsGuest();
-    setTimeout(() => {
-      showError("You're in limited guest mode as you must be 16+ for full access.");
-    }, 500);
+setTimeout(() => {
+  showError("You're in limited guest mode (16+ only for full access). <button onclick=\"localStorage.removeItem('dashy_age_verified'); showScreen('screen-age');\" style=\"background:none; border:none; color:#00d2ff; cursor:pointer; text-decoration:underline; font-size:13px;\">Re-enter date of birth</button>");
+}, 500);
   }
 }
 
