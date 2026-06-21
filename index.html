@@ -35,7 +35,34 @@
 </head>
 <body>
 
-  <!-- SCREEN 1: TITLE -->
+  <!-- SCREEN 0: AGE VERIFICATION -->
+<div id="screen-age" class="screen-container active-screen">
+  <div class="title-ambient-glow"></div>
+  <div class="title-content-wrapper">
+    <div class="title-logo-mark">
+      <svg viewBox="0 0 64 64" fill="none">
+        <defs>
+          <linearGradient id="ageGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00d2ff"/>
+            <stop offset="100%" stop-color="#a476bb"/>
+          </linearGradient>
+        </defs>
+        <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#ageGrad)" stroke-width="2"/>
+        <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#ageGrad)"/>
+        <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#ageGrad)" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h1 class="title-logo-text">DASHYCORE</h1>
+    <p class="title-tagline">Before we begin, please enter your date of birth</p>
+    <div class="login-form" style="margin-top:2rem;">
+      <input type="date" id="age-dob-input" class="login-input" style="text-align:center;">
+      <button class="login-btn-primary" onclick="verifyAge()">Continue →</button>
+      <p id="age-error" style="color:#ff6b6b;font-size:13px;margin-top:8px;display:none;"></p>
+    </div>
+  </div>
+</div>
+
+ <!-- SCREEN 1: TITLE -->
   <div id="screen-title" class="screen-container active-screen">
     <div class="title-ambient-glow"></div>
     <div class="title-content-wrapper">
