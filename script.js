@@ -909,7 +909,8 @@ function saveFeedback(msg, type) {
     });
     if (stored.length > 500) stored.splice(0, stored.length - 500);
     localStorage.setItem("dashy_feedback", JSON.stringify(stored));
-  } catch (e) {
+  sendFeedbackToSheets(type, (msg.text || "").substring(0, 500), State.currentUser?.email || "anonymous");
+} catch (e) {
     console.warn("Couldn't save feedback:", e);
   }
 }
@@ -929,7 +930,8 @@ function saveReport(msg, reason, details) {
     });
     if (stored.length > 200) stored.splice(0, stored.length - 200);
     localStorage.setItem("dashy_reports", JSON.stringify(stored));
-  } catch (e) {
+  sendFeedbackToSheets(reason, (msg.text || "").substring(0, 1000), State.currentUser?.email || "anonymous");
+} catch (e) {
     console.warn("Couldn't save report:", e);
   }
 }
