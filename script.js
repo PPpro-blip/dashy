@@ -571,6 +571,19 @@ async function handleTextGeneration(prompt, chat, attachments) {
   }
 }
 
+async function sendFeedbackToSheets(type, message, user) {
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbxIurZwk3xLvmmIQJpvXxm5_hnMdYyd_p57eTja5ittPCgeNr_i99FoZ_gE7EI_ztNbbw/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, message, user })
+    });
+  } catch (err) {
+    console.error("Feedback error:", err);
+  }
+}
+
 async function callGeminiAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
   const url = `${GEMINI_ENDPOINT}${config.backendModel}:generateContent`;
