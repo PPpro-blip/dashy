@@ -417,16 +417,31 @@ window.addEventListener("drop", (e) => {
   files.forEach(f => addAttachment(f));
 });
 
-/* ==========================================================================
-   SEND MESSAGE
-   ========================================================================== */
+// ============================================================
+//  SEND MESSAGE — With Shift+Enter support!
+// ============================================================
+
+// Handle Enter key in text input
+document.addEventListener('DOMContentLoaded', function() {
+  const input = document.getElementById('chat-text-input');
+  if (input) {
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(e);
+      }
+      // Shift+Enter = new line (default behavior, we do nothing!)
+    });
+  }
+});
+
 function sendMessage(event) {
   if (event) event.preventDefault();
   try {
     if (State.isResponding) return;
     const inputEl = document.getElementById("chat-text-input");
-    const text = inputEl.value.trim();
-    if (!text && State.pendingAttachments.length === 0) return;
+    const text = inputEl.value; // Keep newlines! Don't trim!
+    if (!text.trim() && State.pendingAttachments.length === 0) return;
 
     const chat = getCurrentChat();
     if (!chat) return showError("No active chat.");
@@ -440,7 +455,7 @@ function sendMessage(event) {
       id: generateMsgId(),
       author: State.currentUser.name,
       role: "user",
-      text,
+      text: text, // Keep the text with newlines!
       avatar: State.currentUser.avatar,
       attachments
     };
@@ -472,11 +487,6 @@ function sendMessage(event) {
   } catch (err) {
     showError("Send failed: " + err.message);
   }
-}
-
-function useSuggestion(text) {
-  const el = document.getElementById("chat-text-input");
-  if (el) { el.value = text; el.focus(); }
 }
 
 /* ==========================================================================
