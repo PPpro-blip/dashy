@@ -2,12 +2,13 @@
 
 /* ==========================================================================
    ╔════════════════════════════════════════════════════════════════════════╗
-   ║   🔑  PASTE YOUR GEMINI API KEY HERE  🔑                              ║
-   ║   Get a free key at: https://aistudio.google.com/app/apikey           ║
+   ║   🔑  NO GEMINI API KEY NEEDED ANYMORE! 100% HUGGING FACE! 🗿        ║
+   ║   Just add your HF token to Cloudflare Worker!                       ║
    ╚════════════════════════════════════════════════════════════════════════╝
    ========================================================================== */
 
-const GEMINI_API_KEY = "cloudflare-worker";
+// Your Cloudflare Worker URL (keep this!)
+const GEMINI_ENDPOINT = "https://wispy-frog-df14.kamleshprathampandey.workers.dev/";
 
 /* ==========================================================================
    STATE
@@ -16,7 +17,7 @@ const State = {
   currentUser: null,
   currentChatId: null,
   chats: [],
-  currentModel: "dash-3",
+  currentModel: "dash-allrounder",
   currentTheme: "dark",
   isResponding: false,
   pendingAttachments: [],
@@ -24,56 +25,35 @@ const State = {
 };
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
-const GEMINI_ENDPOINT = "https://wispy-frog-df14.kamleshprathampandey.workers.dev/";
 
 /* ==========================================================================
-   DASH MODEL CONFIGS — Gemini 2.5 Flash with MAX tokens
+   DASH MODEL CONFIGS — 100% HUGGING FACE! 🗿
    ========================================================================== */
 const DASH_MODELS = {
-  "dash-3.2": {
-    displayName: "DASH-3.2",
-    backendModel: "gemini-2.5-flash",
-    systemInstruction:
-      "You are DASH-3.2, DashyCore's flagship model — built for complex code generation, deep technical reasoning, and high-quality creative writing. CRITICAL: Always provide COMPLETE, production-ready code without truncation. Never cut off mid-function. Include all imports, all functions, all error handling. If code is long, take all the space needed. Format with proper markdown code blocks and language tags. Add clear comments. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 65536,
-      topP: 0.95,
-      topK: 64
-    }
+  "dash-complexity": {
+    displayName: "🧠 DASH-Complexity",
+    backendModel: "dash-complexity",
+    systemInstruction: "You are DASH-Complexity. You excel at complex reasoning, deep technical problems, and sophisticated code generation. Provide thorough, well-structured responses with complete examples. You were built by Pratham Pandey. Your image generation engine is called SpeedGen."
   },
-  "dash-3": {
-    displayName: "DASH-3",
-    backendModel: "gemini-2.5-flash",
-    systemInstruction:
-      "You are DASH-3, DashyCore's balanced all-around assistant. Help users with everything from casual conversation to coding, writing, analysis, and creative tasks. Be friendly, clear, and helpful. When generating code, provide COMPLETE working examples — never cut off mid-function. Use markdown formatting when it improves readability. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
-    generationConfig: {
-      temperature: 0.8,
-      maxOutputTokens: 32768,
-      topP: 0.9,
-      topK: 40
-    }
+  "dash-allrounder": {
+    displayName: "⚡ DASH-AllRounder",
+    backendModel: "dash-allrounder",
+    systemInstruction: "You are DASH-AllRounder. You're friendly, helpful, and versatile. Help users with conversations, coding, writing, analysis, and creative tasks. Be clear and engaging. You were built by Pratham Pandey. Your image generation engine is called SpeedGen."
   },
-  "dash-2.5-speed": {
-    displayName: "DASH-2.5 SPEED",
-    backendModel: "gemini-2.5-flash",
-    systemInstruction:
-      "You are DASH-2.5 Speed, DashyCore's fastest model. Optimize for speed and brevity. Give direct, concise answers. Skip unnecessary preamble. Get straight to the point. Use short sentences. Keep code snippets focused and minimal. You were built by Pratham Pandey. Your image generation engine is called SpeedGen.",
-    generationConfig: {
-      temperature: 0.6,
-      maxOutputTokens: 8192,
-      topP: 0.85,
-      topK: 20
-    }
+  "dash-superfast": {
+    displayName: "🔥 DASH-SuperFast",
+    backendModel: "dash-superfast",
+    systemInstruction: "You are DASH-SuperFast. Optimize for speed and brevity. Give direct, concise answers. Get straight to the point. Use short sentences. Keep code snippets focused and minimal. You were built by Pratham Pandey. Your image generation engine is called SpeedGen."
   }
 };
 
 function getDashConfig(modelKey) {
-  return DASH_MODELS[modelKey] || DASH_MODELS["dash-3"];
+  return DASH_MODELS[modelKey] || DASH_MODELS["dash-allrounder"];
 }
 
+// No API key check needed anymore!
 function isApiKeyConfigured() {
-  return GEMINI_API_KEY && GEMINI_API_KEY !== "PASTE_YOUR_GEMINI_API_KEY_HERE" && GEMINI_API_KEY.length > 10;
+  return true; // Always true since we use HF!
 }
 
 /* ==========================================================================
@@ -138,6 +118,37 @@ window.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
 
 /* ==========================================================================
+   AGE VERIFICATION
+   ========================================================================== */
+function verifyAge() {
+  const input = document.getElementById("dob-input");
+  if (!input) return;
+  const dob = new Date(input.value);
+  if (isNaN(dob.getTime())) return showError("Please enter a valid date of birth.");
+
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+  if (age >= 16) {
+    localStorage.setItem("dashy_age_verified", "full");
+    showScreen("screen-title");
+    setTimeout(() => {
+      if (document.getElementById("screen-title").classList.contains("active-screen")) {
+        goToLogin();
+      }
+    }, 2500);
+  } else {
+    localStorage.setItem("dashy_age_verified", "guest");
+    showError("You must be 16+ to use DashyCore. You'll continue as a guest with limited features.");
+    setTimeout(() => {
+      handleUserLogin({ email: "guest@dashy.ai", defaultName: "Guest", avatarLetter: "G" });
+    }, 1500);
+  }
+}
+
+/* ==========================================================================
    LOGIN
    ========================================================================== */
 function loginWithGoogle() {
@@ -196,44 +207,6 @@ function resetUsername() {
     const input = document.getElementById("username-setup-input");
     if (input) { input.value = ""; input.focus(); }
   }, 100);
-}
-
-function verifyAge() {
-  const dob = document.getElementById("age-dob-input").value;
-  const errEl = document.getElementById("age-error");
-  if (!dob) {
-    errEl.textContent = "Please enter your date of birth.";
-    errEl.style.display = "block";
-    return;
-  }
-  const birth = new Date(dob);
-  const today = new Date();
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-  localStorage.setItem("dashy_age_verified", age >= 16 ? "full" : "guest");
-if (age >= 16) {
-  showScreen("screen-title");
-  setTimeout(() => {
-    if (document.getElementById("screen-title").classList.contains("active-screen")) {
-      goToLogin();
-    }
-  }, 2500);
-} else {
-    localStorage.setItem("dashy_age_verified", "guest");
-    loginAsGuest();
-setTimeout(() => {
-  showError("You're in limited guest mode (16+ only for full access). <button onclick=\"localStorage.removeItem('dashy_age_verified'); showScreen('screen-age');\" style=\"background:none; border:none; color:#00d2ff; cursor:pointer; text-decoration:underline; font-size:13px;\">Re-enter date of birth</button>");
-}, 500);
-  }
-}
-
-
-function checkAgeVerification() {
-  const verified = localStorage.getItem("dashy_age_verified");
-  if (!verified) {
-    showScreen("screen-age");
-  }
 }
 
 function enterChatApp() {
@@ -521,7 +494,7 @@ function handleImageGeneration(prompt, chat) {
 
   if (!cleanPrompt) cleanPrompt = prompt;
 
-  const isHQ = State.currentModel === "dash-3.2";
+  const isHQ = State.currentModel === "dash-complexity";
   const dimension = isHQ ? 768 : 512;
   const seed = Math.floor(Math.random() * 1000000);
 
@@ -571,7 +544,7 @@ function handleImageGeneration(prompt, chat) {
 }
 
 /* ==========================================================================
-   TEXT GENERATION
+   TEXT GENERATION — 100% HUGGING FACE! 🗿
    ========================================================================== */
 async function handleTextGeneration(prompt, chat, attachments) {
   State.isResponding = true;
@@ -594,17 +567,12 @@ async function handleTextGeneration(prompt, chat, attachments) {
   textEl.classList.add("ai-typing");
 
   try {
-    let responseText = "";
-    if (isApiKeyConfigured()) {
-      responseText = await callGeminiAPI(prompt, chat, attachments);
-    } else {
-      responseText = getDemoResponse(prompt);
-    }
+    let responseText = await callHuggingFaceAPI(prompt, chat, attachments);
     await streamText(responseText, aiMsg, textEl);
     aiMsg.text = responseText;
     reRenderMessage(aiMsg);
   } catch (err) {
-    aiMsg.text = `⚠️ Error: ${err.message}\n\n${isApiKeyConfigured() ? "Check your API key at the top of script.js" : "Add your Gemini API key at the top of script.js (line 14)."}`;
+    aiMsg.text = `⚠️ Error: ${err.message}`;
     textEl.innerHTML = formatMessageContent(aiMsg.text);
     reRenderMessage(aiMsg);
   } finally {
@@ -614,42 +582,37 @@ async function handleTextGeneration(prompt, chat, attachments) {
   }
 }
 
-async function sendFeedbackToSheets(type, message, user) {
-  try {
-    await fetch("https://script.google.com/macros/s/AKfycbxIurZwk3xLvmmIQJpvXxm5_hnMdYyd_p57eTja5ittPCgeNr_i99FoZ_gE7EI_ztNbbw/exec", {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, message, user })
-    });
-  } catch (err) {
-    console.error("Feedback error:", err);
-  }
-}
-
-async function callGeminiAPI(prompt, chat, attachments) {
+/* ==========================================================================
+   HUGGING FACE API CALLER — NO GEMINI! 🗿
+   ========================================================================== */
+async function callHuggingFaceAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
-  const url = `${GEMINI_ENDPOINT}${config.backendModel}:generateContent`;
-
+  
+  // Build message history
   const history = chat.messages.slice(-11, -1).map(m => ({
-    role: m.role === "user" ? "user" : "model",
-    parts: [{ text: m.text || "" }]
-  })).filter(m => m.parts[0].text);
+    role: m.role === "user" ? "user" : "assistant",
+    text: m.text || ""
+  }));
 
-  const parts = [{ text: prompt || "Describe this." }];
-  (attachments || []).forEach(a => {
-    if (a.isImage && a.base64) {
-      parts.push({ inline_data: { mime_type: a.type, data: a.base64 } });
-    } else if (a.dataUrl) {
-      parts[0].text += `\n\n[Attached file: ${a.name} (${a.type})]`;
-    }
-  });
-
+  // Build the request body
   const body = {
-    contents: [...history, { role: "user", parts }],
-    systemInstruction: { parts: [{ text: config.systemInstruction }] },
-    generationConfig: config.generationConfig
+    model: config.backendModel,
+    messages: [...history, { role: "user", text: prompt }],
+    systemInstruction: config.systemInstruction
   };
+
+  // Add attachments if any
+  if (attachments && attachments.length > 0) {
+    body.attachments = attachments.map(a => ({
+      name: a.name,
+      type: a.type,
+      isImage: a.isImage,
+      data: a.base64 || a.dataUrl
+    }));
+  }
+
+  // Call your Cloudflare Worker (which routes to HF)
+  const url = GEMINI_ENDPOINT;  // Your worker URL!
 
   const res = await fetch(url, {
     method: "POST",
@@ -658,27 +621,22 @@ async function callGeminiAPI(prompt, chat, attachments) {
   });
 
   if (!res.ok) {
-    const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error?.message || `Request failed with status ${res.status}`);
+    const errorData = await res.text();
+    throw new Error(`API error: ${res.status} - ${errorData}`);
   }
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error("Empty response from " + config.displayName + ".");
-  return text;
-}
-
-function getDemoResponse(query) {
-  const lower = query.toLowerCase();
-  const modelName = getDashConfig(State.currentModel).displayName;
-
-  if (lower.includes("hello") || lower.includes("hi")) {
-    return `Hello! I'm **${modelName}** — part of the DashyCore lineup. I'm currently in **demo mode**. Add your API key at the top of \`script.js\` to unlock full AI power!`;
+  
+  // Handle model loading state
+  if (data.loading) {
+    throw new Error("⏳ Model is loading. Please wait 10-15 seconds and try again.");
   }
-  if (lower.includes("code") || lower.includes("python") || lower.includes("script")) {
-    return "Here's a demo code block:\n\n```python\ndef hello_dashy():\n    print('Powered by DashyCore!')\n    return True\n\nhello_dashy()\n```\n\nAdd your API key in `script.js` to unlock real code generation!";
+  
+  if (!data.success) {
+    throw new Error(data.error || "Unknown error from AI service.");
   }
-  return `Received: "${query}"\n\nI'm **${modelName}** running in **demo mode**. Add your API key at the top of \`script.js\` (line 14).`;
+
+  return data.text || "No response received.";
 }
 
 /* ==========================================================================
@@ -742,12 +700,7 @@ function escapeHtml(s) {
 function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
-  const lines = el.innerText.split('\n');
-  const minIndent = lines
-    .filter(l => l.trim().length > 0)
-    .reduce((min, l) => Math.min(min, l.match(/^(\s*)/)[1].length), Infinity);
-  const cleaned = lines.map(l => l.slice(minIndent)).join('\n').trim();
-  navigator.clipboard.writeText(cleaned).then(() => {
+  navigator.clipboard.writeText(el.textContent).then(() => {
     btn.textContent = "✓ Copied";
     btn.classList.add("copied");
     setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
@@ -787,7 +740,6 @@ function buildMessageBubbleNode(msg) {
   const content = document.createElement("div");
   content.className = "message-content";
 
-  // Author row (with optional model badge)
   const authorRow = document.createElement("div");
   authorRow.className = "message-author-row";
   const author = document.createElement("div");
@@ -826,7 +778,6 @@ function buildMessageBubbleNode(msg) {
   textEl.innerHTML = formatMessageContent(msg.text);
   content.appendChild(textEl);
 
-  // Image / loading state
   if (msg.imageUrl && !msg.imageLoading) {
     const wrap = document.createElement("div");
     wrap.className = "generated-image-wrap";
@@ -849,7 +800,6 @@ function buildMessageBubbleNode(msg) {
     content.appendChild(wrap);
   }
 
-  // Action bar
   const actionBar = buildActionBar(msg);
   if (actionBar) content.appendChild(actionBar);
 
@@ -957,8 +907,10 @@ function saveFeedback(msg, type) {
     });
     if (stored.length > 500) stored.splice(0, stored.length - 500);
     localStorage.setItem("dashy_feedback", JSON.stringify(stored));
-  sendFeedbackToSheets(type, (msg.text || "").substring(0, 500), State.currentUser?.email || "anonymous");
-} catch (e) {
+    
+    // Also send to Google Sheets
+    sendFeedbackToSheets(type, msg.text || "", State.currentUser?.email || "anonymous");
+  } catch (e) {
     console.warn("Couldn't save feedback:", e);
   }
 }
@@ -978,9 +930,27 @@ function saveReport(msg, reason, details) {
     });
     if (stored.length > 200) stored.splice(0, stored.length - 200);
     localStorage.setItem("dashy_reports", JSON.stringify(stored));
-  sendFeedbackToSheets(reason, (msg.text || "").substring(0, 1000), State.currentUser?.email || "anonymous");
-} catch (e) {
+    
+    // Also send to Google Sheets
+    sendFeedbackToSheets("report", `Reason: ${reason}\nDetails: ${details || "N/A"}\nResponse: ${(msg.text || "").substring(0, 300)}`, State.currentUser?.email || "anonymous");
+  } catch (e) {
     console.warn("Couldn't save report:", e);
+  }
+}
+
+/* ==========================================================================
+   GOOGLE SHEETS FEEDBACK
+   ========================================================================== */
+async function sendFeedbackToSheets(type, message, user) {
+  try {
+    await fetch("https://script.google.com/macros/s/AKfycbxIurZwk3xLvmmIQJpvXxm5_hnMdYyd_p57eTja5ittPCgeNr_i99FoZ_gE7EI_ztNbbw/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type, message, user })
+    });
+  } catch (e) {
+    console.warn("Couldn't send feedback to Sheets:", e);
   }
 }
 
