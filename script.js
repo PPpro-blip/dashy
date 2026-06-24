@@ -1062,3 +1062,86 @@ function showToast(msg, type = "error") {
 }
 
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
+
+/* ==========================================================================
+   🎙️ VOICE INPUT
+   ========================================================================== */
+
+let isListening = false;
+let recognition = null;
+
+function toggleVoiceInput() {
+  // Check if browser supports speech recognition
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    showError("Voice input not supported in this browser. Try Chrome or Edge!");
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  
+  if (!recognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = function(event) {
+      const input = document.getElementById('chat-text-input');
+      let finalTranscript = '';
+      let interimTranscript = '';
+      
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+      
+      if (finalTranscript) {
+        input.value = finalTranscript;
+        // Auto-send after voice input!
+        setTimeout(() => {
+          sendMessage(new Event('submit'));
+        }, 500);
+      } else {
+        input.value = interimTranscript;
+      }
+    };
+
+    recognition.onerror = function(event) {
+      console.error('Voice error:', event.error);
+      const btn = document.getElementById('voice-btn');
+      btn.style.color = '';
+      btn.style.background = '';
+      isListening = false;
+      showError('Voice error: ' + event.error);
+    };
+
+    recognition.onend = function() {
+      const btn = document.getElementById('voice-btn');
+      btn.style.color = '';
+      btn.style.background = '';
+      isListening = false;
+    };
+  }
+
+  // Toggle listening
+  if (isListening) {
+    recognition.stop();
+    const btn = document.getElementById('voice-btn');
+    btn.style.color = '';
+    btn.style.background = '';
+    isListening = false;
+  } else {
+    recognition.start();
+    const btn = document.getElementById('voice-btn');
+    btn.style.color = '#00ffcc';
+    btn.style.background = 'rgba(0, 255, 204, 0.15)';
+    btn.style.borderRadius = '50%';
+    isListening = true;
+    showSuccess('🎤 Listening... Speak now!');
+  }
+}
