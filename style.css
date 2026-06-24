@@ -2165,3 +2165,32 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
   from { transform: scale(0.8); opacity: 0.5; }
   to { transform: scale(1.2); opacity: 1; }
 }
+
+/* ================================================================
+   SHIFT+ENTER SUPPORT — Textarea-like behavior!
+   ================================================================ */
+
+.chat-text-input {
+  resize: none; /* Prevent manual resize */
+  max-height: 150px; /* Grow up to 150px */
+  overflow-y: auto; /* Scroll if too long */
+  line-height: 1.6; /* Comfortable spacing */
+  min-height: 24px; /* Keep it tidy */
+  padding: 11px 4px;
+  transition: height 0.1s ease;
+}
+
+/* Auto-grow the input as user types */
+.chat-text-input:focus {
+  min-height: 24px;
+}
+
+/* For very long messages, show scrollbar */
+.chat-text-input::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-text-input::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 4px;
+}
