@@ -8,7 +8,7 @@
    ========================================================================== */
 
 // Your Cloudflare Worker URL (keep this!)
-const GEMINI_ENDPOINT = "https://wispy-frog-df14.kamleshprathampandey.workers.dev/";
+const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.dev/";
 /* ==========================================================================
    STATE
    ========================================================================== */
