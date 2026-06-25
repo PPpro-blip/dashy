@@ -1154,3 +1154,15 @@ function toggleVoiceInput() {
     showSuccess('🎤 Listening... Speak now!');
   }
 }
+
+/* ==========================================================================
+   SUGGESTIONS
+   ========================================================================== */
+
+function useSuggestion(text) {
+  const input = document.getElementById("chat-text-input");
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+}
