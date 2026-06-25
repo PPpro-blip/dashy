@@ -8,7 +8,7 @@
    ========================================================================== */
 
 // Your Cloudflare Worker URL (keep this!)
-const GEMINI_ENDPOINT = "https://young-snow-7aab.kamleshprathampandey.workers.dev/";
+const GEMINI_ENDPOINT = "https://wispy-frog-df14.kamleshprathampandey.workers.dev/";
 /* ==========================================================================
    STATE
    ========================================================================== */
