@@ -68,6 +68,20 @@ function generateMsgId() {
 }
 
 /* ==========================================================================
+   SUGGESTIONS — Quick Tips
+   ========================================================================== */
+
+function useSuggestion(text) {
+  const input = document.getElementById("chat-text-input");
+  if (input) {
+    input.value = text;
+    input.focus();
+    // Smooth scroll to input
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+/* ==========================================================================
    SCREEN & MODAL
    ========================================================================== */
 function showScreen(id) {
@@ -1155,16 +1169,3 @@ function toggleVoiceInput() {
   }
 }
 
-/* ==========================================================================
-   SUGGESTIONS — Quick Tips
-   ========================================================================== */
-
-function useSuggestion(text) {
-  const input = document.getElementById("chat-text-input");
-  if (input) {
-    input.value = text;
-    input.focus();
-    // Scroll to input if needed
-    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
