@@ -1156,7 +1156,7 @@ function toggleVoiceInput() {
 }
 
 /* ==========================================================================
-   SUGGESTIONS
+   SUGGESTIONS — Quick Tips
    ========================================================================== */
 
 function useSuggestion(text) {
@@ -1164,5 +1164,7 @@ function useSuggestion(text) {
   if (input) {
     input.value = text;
     input.focus();
+    // Scroll to input if needed
+    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
