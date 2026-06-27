@@ -1369,3 +1369,42 @@ window.speechSynthesis.onvoiceschanged = () => {
 setTimeout(() => {
   window.speechSynthesis.getVoices();
 }, 1000);
+
+/* ==========================================================================
+   EXPORT CHAT
+   ========================================================================== */
+
+function exportChat() {
+  const chat = getCurrentChat();
+  if (!chat || chat.messages.length === 0) {
+    return showError("No messages to export.");
+  }
+  
+  let text = `═══════════════════════════════════════════════════════\n`;
+  text += `         🗿 DASHYCORE — CHAT EXPORT\n`;
+  text += `═══════════════════════════════════════════════════════\n\n`;
+  text += `📅 Exported: ${new Date().toLocaleString()}\n`;
+  text += `🤖 Model: ${State.currentModel}\n`;
+  text += `👤 User: ${State.currentUser?.name || "Anonymous"}\n`;
+  text += `📨 Total Messages: ${chat.messages.length}\n\n`;
+  text += `───────────────────────────────────────────────────────\n\n`;
+  
+  chat.messages.forEach((m, index) => {
+    const role = m.role === "user" ? "👤 You" : "🤖 DashyCore";
+    text += `${role}:\n${m.text}\n\n`;
+    if (index < chat.messages.length - 1) {
+      text += `───────────────────────────────────────────────────────\n\n`;
+    }
+  });
+  
+  text += `\n═══════════════════════════════════════════════════════\n`;
+  text += `         🗿 Export complete — DashyCore AI\n`;
+  text += `═══════════════════════════════════════════════════════\n`;
+  
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  showSuccess("📥 Chat exported successfully!");
+}
