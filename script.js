@@ -1276,3 +1276,94 @@ function toggleVoiceInput() {
   }
 }
 
+/* ==========================================================================
+   TEXT-TO-SPEECH — 15 VOICES! 🔥
+   ========================================================================== */
+
+let selectedVoice = "default";
+let isVoiceMode = false; // When ON, AI speaks responses
+
+function changeVoice(voiceName) {
+  selectedVoice = voiceName;
+  showSuccess(`🔊 Voice changed to: ${voiceName}`);
+}
+
+function toggleVoice() {
+  isVoiceMode = !isVoiceMode;
+  const btn = document.getElementById('voice-toggle-btn');
+  if (isVoiceMode) {
+    btn.style.color = '#00ffcc';
+    btn.style.background = 'rgba(0, 255, 204, 0.15)';
+    showSuccess('🔊 Voice mode ON — AI will speak responses!');
+  } else {
+    btn.style.color = '';
+    btn.style.background = '';
+    showSuccess('🔇 Voice mode OFF');
+  }
+}
+
+function speakResponse(text) {
+  if (!isVoiceMode) return;
+  
+  // Check if browser supports speech synthesis
+  if (!('speechSynthesis' in window)) {
+    return showError("Text-to-speech not supported in this browser.");
+  }
+
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  
+  // Set language
+  utterance.lang = 'en-US';
+  
+  // Set rate and pitch (natural sounding)
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+
+  // SELECT THE VOICE
+  const voices = window.speechSynthesis.getVoices();
+  
+  if (selectedVoice !== "default") {
+    // Find the exact voice by name
+    const matchedVoice = voices.find(v => v.name === selectedVoice);
+    if (matchedVoice) {
+      utterance.voice = matchedVoice;
+    } else {
+      // If voice not found, try to find similar
+      const fallback = voices.find(v => v.name.includes(selectedVoice) || selectedVoice.includes(v.name));
+      if (fallback) utterance.voice = fallback;
+    }
+  }
+  
+  // If no voice selected, use default
+  if (!utterance.voice && voices.length > 0) {
+    utterance.voice = voices[0];
+  }
+
+  // Optional: Add subtle effects
+  utterance.onstart = () => {
+    console.log('🔊 Speaking...');
+  };
+  
+  utterance.onend = () => {
+    console.log('🔊 Speaking finished');
+  };
+  
+  utterance.onerror = (e) => {
+    console.error('🔊 Speech error:', e);
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Load voices when they're available
+window.speechSynthesis.onvoiceschanged = () => {
+  console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
+};
+
+// Preload voices
+setTimeout(() => {
+  window.speechSynthesis.getVoices();
+}, 1000);
