@@ -1408,3 +1408,41 @@ function exportChat() {
   a.click();
   showSuccess("📥 Chat exported successfully!");
 }
+
+/* ==========================================================================
+   PAUSE RESPONSE TOGGLE
+   ========================================================================== */
+
+let isPaused = false;
+
+function togglePause() {
+  isPaused = !isPaused;
+  const btn = document.getElementById('pause-toggle-btn');
+  if (isPaused) {
+    btn.innerHTML = '▶️';
+    btn.style.color = '#fbbf24';
+    btn.style.background = 'rgba(251, 191, 36, 0.15)';
+    showSuccess('⏸️ Responses PAUSED');
+  } else {
+    btn.innerHTML = '⏸️';
+    btn.style.color = '';
+    btn.style.background = '';
+    showSuccess('▶️ Responses RESUMED');
+  }
+}
+
+// Modify sendMessage to check pause state
+// Add this at the BEGINNING of sendMessage():
+function sendMessage(event) {
+  if (event) event.preventDefault();
+  try {
+    // 🔥 CHECK PAUSE STATE
+    if (isPaused) {
+      showError('⏸️ Responses are paused. Click "▶️" to resume.');
+      return;
+    }
+    
+    if (State.isResponding) return;
+    // ... rest of your sendMessage code ...
+  }
+}
