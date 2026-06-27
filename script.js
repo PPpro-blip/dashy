@@ -2,13 +2,14 @@
 
 /* ==========================================================================
    ╔════════════════════════════════════════════════════════════════════════╗
-   ║   🔑  NO GEMINI API KEY NEEDED ANYMORE! 100% HUGGING FACE! 🗿        ║
-   ║   Just add your HF token to Cloudflare Worker!                       ║
+   ║   🔑  NO API KEY NEEDED! 100% GROQ AI! 🗿                            ║
+   ║   Admin system, chat persistence, and more!                          ║
    ╚════════════════════════════════════════════════════════════════════════╝
    ========================================================================== */
 
-// Your Cloudflare Worker URL (keep this!)
+// Your Cloudflare Worker URL
 const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.dev/";
+
 /* ==========================================================================
    STATE
    ========================================================================== */
@@ -25,14 +26,6 @@ const State = {
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
-// ============================================================
-//  VOICE + PAUSE + EXPORT SETTINGS
-// ============================================================
-
-let isPaused = false;
-let selectedVoice = "default";
-let isVoiceMode = false;
-
 // 👑 ADMIN LIST — Unlimited messages!
 const ADMINS = [
   "shubhampandey2012@gmail.com",
@@ -45,81 +38,15 @@ const ADMINS = [
 ];
 
 // ============================================================
-//  OTP SYSTEM — Google Apps Script
+//  VOICE + PAUSE + EXPORT SETTINGS
 // ============================================================
 
-const OTP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwb18HN82eezCpH5pUABVTY6v3sQM_HAGgJ0XKsnYF9OF783XgMqa8UvUG4VGkFfW-v/exec"; // 🔁 Replace with your Apps Script URL
-
-async function sendOTP(email) {
-  try {
-    const res = await fetch(OTP_SCRIPT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "send", email })
-    });
-    console.log("📧 OTP request sent to:", email);
-  } catch (err) {
-    console.error("❌ Failed to send OTP:", err);
-    showError("Could not send OTP. Please try again.");
-  }
-}
-
-async function verifyOTP(email, otp) {
-  try {
-    const res = await fetch(OTP_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "verify", email, otp })
-    });
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error("❌ OTP verification failed:", err);
-    return { success: false, message: "Verification error. Please try again." };
-  }
-}
+let isPaused = false;
+let selectedVoice = "default";
+let isVoiceMode = false;
 
 /* ==========================================================================
-   CHAT PERSISTENCE — Save & Load Chats
-   ========================================================================== */
-
-function saveChatsToStorage() {
-  try {
-    const data = {
-      chats: State.chats,
-      currentChatId: State.currentChatId,
-      currentModel: State.currentModel,
-      currentTheme: State.currentTheme
-    };
-    localStorage.setItem('dashy_chats_data', JSON.stringify(data));
-  } catch (e) {
-    console.warn('Could not save chats:', e);
-  }
-}
-
-function loadChatsFromStorage() {
-  try {
-    const stored = localStorage.getItem('dashy_chats_data');
-    if (!stored) return false;
-    
-    const data = JSON.parse(stored);
-    if (data.chats && data.chats.length > 0) {
-      State.chats = data.chats;
-      State.currentChatId = data.currentChatId || null;
-      if (data.currentModel) State.currentModel = data.currentModel;
-      if (data.currentTheme) State.currentTheme = data.currentTheme;
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.warn('Could not load chats:', e);
-    return false;
-  }
-}
-
-/* ==========================================================================
-   DASH MODEL CONFIGS — 100% HUGGING FACE! 🗿
+   DASH MODEL CONFIGS — 3 Models!
    ========================================================================== */
 const DASH_MODELS = {
   "dash-complexity": {
@@ -143,9 +70,8 @@ function getDashConfig(modelKey) {
   return DASH_MODELS[modelKey] || DASH_MODELS["dash-allrounder"];
 }
 
-// No API key check needed anymore!
 function isApiKeyConfigured() {
-  return true; // Always true since we use HF!
+  return true;
 }
 
 /* ==========================================================================
@@ -160,16 +86,11 @@ function generateMsgId() {
   return "msg_" + Date.now() + "_" + Math.random().toString(36).substr(2, 6);
 }
 
-/* ==========================================================================
-   SUGGESTIONS — Quick Tips
-   ========================================================================== */
-
 function useSuggestion(text) {
   const input = document.getElementById("chat-text-input");
   if (input) {
     input.value = text;
     input.focus();
-    // Smooth scroll to input
     input.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
@@ -318,15 +239,7 @@ function resetUsername() {
 function enterChatApp() {
   showScreen("screen-chat");
   renderUserInSidebar();
-  
-  const hasSavedChats = loadChatsFromStorage();
-  
-  if (hasSavedChats && State.chats.length > 0) {
-    renderSidebarChatList();
-    renderActiveChat();
-  } else {
-    startNewChat();
-  }
+  startNewChat();
 }
 
 function renderUserInSidebar() {
@@ -380,7 +293,6 @@ function clearAllChats() {
   if (!confirm("Delete all chats? This cannot be undone.")) return;
   State.chats = [];
   State.currentChatId = null;
-  localStorage.removeItem('dashy_chats_data'); // ← ADD THIS!
   startNewChat();
 }
 
@@ -393,7 +305,6 @@ function startNewChat() {
   State.currentChatId = chat.id;
   renderSidebarChatList();
   renderActiveChat();
-  saveChatsToStorage();
 }
 
 function renderSidebarChatList() {
@@ -442,7 +353,6 @@ function switchToChat(id) {
   State.currentChatId = id;
   renderSidebarChatList();
   renderActiveChat();
-  saveChatsToStorage();
 }
 
 function getCurrentChat() {
@@ -538,7 +448,6 @@ window.addEventListener("drop", (e) => {
 //  SEND MESSAGE — With Shift+Enter support!
 // ============================================================
 
-// Handle Enter key in text input
 document.addEventListener('DOMContentLoaded', function() {
   const input = document.getElementById('chat-text-input');
   if (input) {
@@ -547,7 +456,6 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         sendMessage(e);
       }
-      // Shift+Enter = new line (default behavior, we do nothing!)
     });
   }
 });
@@ -555,19 +463,13 @@ document.addEventListener('DOMContentLoaded', function() {
 function sendMessage(event) {
   if (event) event.preventDefault();
   try {
-    
-function sendMessage(event) {
-  if (event) event.preventDefault();
-  try {
-    // 🔥 CHECK PAUSE STATE
     if (isPaused) {
-      showError('⏸️ Responses are paused. Click "▶️" to resume.');
+      showError('⏸️ Responses are paused. Click "▶️ Resume" to continue.');
       return;
     }
-      
-     if (State.isResponding) return;
+    if (State.isResponding) return;
     const inputEl = document.getElementById("chat-text-input");
-    const text = inputEl.value; // Keep newlines! Don't trim!
+    const text = inputEl.value;
     if (!text.trim() && State.pendingAttachments.length === 0) return;
 
     const chat = getCurrentChat();
@@ -582,15 +484,14 @@ function sendMessage(event) {
       id: generateMsgId(),
       author: State.currentUser.name,
       role: "user",
-      text: text, // Keep the text with newlines!
+      text: text,
       avatar: State.currentUser.avatar,
       attachments
     };
     chat.messages.push(userMsg);
     renderMessageBubble(userMsg);
-    saveChatsToStorage(); 
-    
-     if (chat.messages.length === 1) {
+
+    if (chat.messages.length === 1) {
       chat.title = text.length > 0
         ? (text.length > 30 ? text.substring(0, 30) + "..." : text)
         : "Image chat";
@@ -669,8 +570,7 @@ function handleImageGeneration(prompt, chat) {
       aiMsg.text = `Here's your ${isHQ ? "HQ " : ""}image of "${cleanPrompt}":`;
       reRenderMessage(aiMsg);
       speakResponse(aiMsg.text);
-       saveChatsToStorage();
-       scrollToBottom();
+      scrollToBottom();
     })
     .catch(err => {
       aiMsg.imageLoading = false;
@@ -684,7 +584,7 @@ function handleImageGeneration(prompt, chat) {
 }
 
 /* ==========================================================================
-   TEXT GENERATION — 100% HUGGING FACE! 🗿
+   TEXT GENERATION
    ========================================================================== */
 async function handleTextGeneration(prompt, chat, attachments) {
   State.isResponding = true;
@@ -706,13 +606,12 @@ async function handleTextGeneration(prompt, chat, attachments) {
   const textEl = bubble.querySelector(".message-text");
   textEl.classList.add("ai-typing");
 
-   try {
-    let responseText = await callHuggingFaceAPI(prompt, chat, attachments);
+  try {
+    let responseText = await callGroqAPI(prompt, chat, attachments);
     await streamText(responseText, aiMsg, textEl);
     aiMsg.text = responseText;
     reRenderMessage(aiMsg);
-    speakResponse(responseText); // ← PASTE THIS LINE HERE!
-    saveChatsToStorage();
+    speakResponse(responseText);
   } catch (err) {
     aiMsg.text = `⚠️ Error: ${err.message}`;
     textEl.innerHTML = formatMessageContent(aiMsg.text);
@@ -722,27 +621,25 @@ async function handleTextGeneration(prompt, chat, attachments) {
     State.isResponding = false;
     if (sendBtn) sendBtn.disabled = false;
   }
+}
 
 /* ==========================================================================
-   HUGGING FACE API CALLER — NO GEMINI! 🗿
+   GROQ API CALLER
    ========================================================================== */
-async function callHuggingFaceAPI(prompt, chat, attachments) {
+async function callGroqAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
   
-  // Build message history
   const history = chat.messages.slice(-11, -1).map(m => ({
     role: m.role === "user" ? "user" : "assistant",
     text: m.text || ""
   }));
 
-  // Build the request body
   const body = {
     model: config.backendModel,
     messages: [...history, { role: "user", text: prompt }],
     systemInstruction: config.systemInstruction
   };
 
-  // Add attachments if any
   if (attachments && attachments.length > 0) {
     body.attachments = attachments.map(a => ({
       name: a.name,
@@ -752,8 +649,7 @@ async function callHuggingFaceAPI(prompt, chat, attachments) {
     }));
   }
 
-  // Call your Cloudflare Worker (which routes to HF)
-  const url = GEMINI_ENDPOINT;  // Your worker URL!
+  const url = GEMINI_ENDPOINT;
 
   const res = await fetch(url, {
     method: "POST",
@@ -768,7 +664,6 @@ async function callHuggingFaceAPI(prompt, chat, attachments) {
 
   const data = await res.json();
   
-  // Handle model loading state
   if (data.loading) {
     throw new Error("⏳ Model is loading. Please wait 10-15 seconds and try again.");
   }
@@ -842,7 +737,6 @@ function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
   
-  // Clean the text before copying
   let text = el.textContent;
   text = text.split('\n').map(line => line.trim()).join('\n');
   text = text.replace(/\n{3,}/g, '\n\n');
@@ -959,7 +853,7 @@ function buildMessageBubbleNode(msg) {
 }
 
 /* ==========================================================================
-   ACTION BAR (Copy, Like, Dislike, Report, Regenerate)
+   ACTION BAR
    ========================================================================== */
 function buildActionBar(msg) {
   if (msg.imageLoading) return null;
@@ -1057,8 +951,6 @@ function saveFeedback(msg, type) {
     });
     if (stored.length > 500) stored.splice(0, stored.length - 500);
     localStorage.setItem("dashy_feedback", JSON.stringify(stored));
-    
-    // Also send to Google Sheets
     sendFeedbackToSheets(type, msg.text || "", State.currentUser?.email || "anonymous");
   } catch (e) {
     console.warn("Couldn't save feedback:", e);
@@ -1080,8 +972,6 @@ function saveReport(msg, reason, details) {
     });
     if (stored.length > 200) stored.splice(0, stored.length - 200);
     localStorage.setItem("dashy_reports", JSON.stringify(stored));
-    
-    // Also send to Google Sheets
     sendFeedbackToSheets("report", `Reason: ${reason}\nDetails: ${details || "N/A"}\nResponse: ${(msg.text || "").substring(0, 300)}`, State.currentUser?.email || "anonymous");
   } catch (e) {
     console.warn("Couldn't save report:", e);
@@ -1181,250 +1071,6 @@ function changeTheme(v) {
     r.style.setProperty("--accent-secondary", "#a476bb");
     r.style.setProperty("--bg-base", "#07090f");
   }
-}
-
-/* ==========================================================================
-   TOASTS
-   ========================================================================== */
-function showError(msg) {
-  console.log("[Dashy ERROR]", msg);
-  showToast(msg, "error");
-}
-function showSuccess(msg) {
-  console.log("[Dashy]", msg);
-  showToast(msg, "success");
-}
-function showToast(msg, type = "error") {
-  const existing = document.querySelector(".error-toast");
-  if (existing) existing.remove();
-  const t = document.createElement("div");
-  t.className = "error-toast" + (type === "success" ? " success" : "");
-  const iconColor = type === "success" ? "var(--accent-success)" : "var(--accent-danger)";
-  const icon = type === "success" ? "✓" : "⚠";
-  t.innerHTML = `<span style="color: ${iconColor};">${icon}</span><span>${escapeHtml(msg)}</span>`;
-  document.body.appendChild(t);
-  setTimeout(() => {
-    t.style.transition = "opacity 0.3s, transform 0.3s";
-    t.style.opacity = "0";
-    t.style.transform = "translateX(-50%) translateY(10px)";
-    setTimeout(() => t.remove(), 320);
-  }, 3500);
-}
-
-window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
-
-/* ==========================================================================
-   🎙️ VOICE INPUT
-   ========================================================================== */
-
-let isListening = false;
-let recognition = null;
-
-function toggleVoiceInput() {
-  // Check if browser supports speech recognition
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    showError("Voice input not supported in this browser. Try Chrome or Edge!");
-    return;
-  }
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  
-  if (!recognition) {
-    recognition = new SpeechRecognition();
-    recognition.lang = 'en-US';
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-
-    recognition.onresult = function(event) {
-      const input = document.getElementById('chat-text-input');
-      let finalTranscript = '';
-      let interimTranscript = '';
-      
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          finalTranscript += transcript;
-        } else {
-          interimTranscript += transcript;
-        }
-      }
-      
-      if (finalTranscript) {
-        input.value = finalTranscript;
-        // Auto-send after voice input!
-        setTimeout(() => {
-          sendMessage(new Event('submit'));
-        }, 500);
-      } else {
-        input.value = interimTranscript;
-      }
-    };
-
-    recognition.onerror = function(event) {
-      console.error('Voice error:', event.error);
-      const btn = document.getElementById('voice-btn');
-      btn.style.color = '';
-      btn.style.background = '';
-      isListening = false;
-      showError('Voice error: ' + event.error);
-    };
-
-    recognition.onend = function() {
-      const btn = document.getElementById('voice-btn');
-      btn.style.color = '';
-      btn.style.background = '';
-      isListening = false;
-    };
-  }
-
-  // Toggle listening
-  if (isListening) {
-    recognition.stop();
-    const btn = document.getElementById('voice-btn');
-    btn.style.color = '';
-    btn.style.background = '';
-    isListening = false;
-  } else {
-    recognition.start();
-    const btn = document.getElementById('voice-btn');
-    btn.style.color = '#00ffcc';
-    btn.style.background = 'rgba(0, 255, 204, 0.15)';
-    btn.style.borderRadius = '50%';
-    isListening = true;
-    showSuccess('🎤 Listening... Speak now!');
-  }
-}
-
-/* ==========================================================================
-   TEXT-TO-SPEECH — 15 VOICES! 🔥
-   ========================================================================== */
-
-let selectedVoice = "default";
-let isVoiceMode = false; // When ON, AI speaks responses
-
-function changeVoice(voiceName) {
-  selectedVoice = voiceName;
-  showSuccess(`🔊 Voice changed to: ${voiceName}`);
-}
-
-function toggleVoice() {
-  isVoiceMode = !isVoiceMode;
-  const btn = document.getElementById('voice-toggle-btn');
-  if (isVoiceMode) {
-    btn.style.color = '#00ffcc';
-    btn.style.background = 'rgba(0, 255, 204, 0.15)';
-    showSuccess('🔊 Voice mode ON — AI will speak responses!');
-  } else {
-    btn.style.color = '';
-    btn.style.background = '';
-    showSuccess('🔇 Voice mode OFF');
-  }
-}
-
-function speakResponse(text) {
-  if (!isVoiceMode) return;
-  
-  // Check if browser supports speech synthesis
-  if (!('speechSynthesis' in window)) {
-    return showError("Text-to-speech not supported in this browser.");
-  }
-
-  // Cancel any ongoing speech
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Set language
-  utterance.lang = 'en-US';
-  
-  // Set rate and pitch (natural sounding)
-  utterance.rate = 0.9;
-  utterance.pitch = 1;
-
-  // SELECT THE VOICE
-  const voices = window.speechSynthesis.getVoices();
-  
-  if (selectedVoice !== "default") {
-    // Find the exact voice by name
-    const matchedVoice = voices.find(v => v.name === selectedVoice);
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    } else {
-      // If voice not found, try to find similar
-      const fallback = voices.find(v => v.name.includes(selectedVoice) || selectedVoice.includes(v.name));
-      if (fallback) utterance.voice = fallback;
-    }
-  }
-  
-  // If no voice selected, use default
-  if (!utterance.voice && voices.length > 0) {
-    utterance.voice = voices[0];
-  }
-
-  // Optional: Add subtle effects
-  utterance.onstart = () => {
-    console.log('🔊 Speaking...');
-  };
-  
-  utterance.onend = () => {
-    console.log('🔊 Speaking finished');
-  };
-  
-  utterance.onerror = (e) => {
-    console.error('🔊 Speech error:', e);
-  };
-
-  window.speechSynthesis.speak(utterance);
-}
-
-// Load voices when they're available
-window.speechSynthesis.onvoiceschanged = () => {
-  console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
-};
-
-// Preload voices
-setTimeout(() => {
-  window.speechSynthesis.getVoices();
-}, 1000);
-
-/* ==========================================================================
-   EXPORT CHAT
-   ========================================================================== */
-
-function exportChat() {
-  const chat = getCurrentChat();
-  if (!chat || chat.messages.length === 0) {
-    return showError("No messages to export.");
-  }
-  
-  let text = `═══════════════════════════════════════════════════════\n`;
-  text += `         🗿 DASHYCORE — CHAT EXPORT\n`;
-  text += `═══════════════════════════════════════════════════════\n\n`;
-  text += `📅 Exported: ${new Date().toLocaleString()}\n`;
-  text += `🤖 Model: ${State.currentModel}\n`;
-  text += `👤 User: ${State.currentUser?.name || "Anonymous"}\n`;
-  text += `📨 Total Messages: ${chat.messages.length}\n\n`;
-  text += `───────────────────────────────────────────────────────\n\n`;
-  
-  chat.messages.forEach((m, index) => {
-    const role = m.role === "user" ? "👤 You" : "🤖 DashyCore";
-    text += `${role}:\n${m.text}\n\n`;
-    if (index < chat.messages.length - 1) {
-      text += `───────────────────────────────────────────────────────\n\n`;
-    }
-  });
-  
-  text += `\n═══════════════════════════════════════════════════════\n`;
-  text += `         🗿 Export complete — DashyCore AI\n`;
-  text += `═══════════════════════════════════════════════════════\n`;
-  
-  const blob = new Blob([text], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`;
-  a.click();
-  showSuccess("📥 Chat exported successfully!");
 }
 
 /* ==========================================================================
