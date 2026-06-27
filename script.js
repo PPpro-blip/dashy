@@ -73,6 +73,44 @@ async function verifyOTP(email, otp) {
 }
 
 /* ==========================================================================
+   CHAT PERSISTENCE — Save & Load Chats
+   ========================================================================== */
+
+function saveChatsToStorage() {
+  try {
+    const data = {
+      chats: State.chats,
+      currentChatId: State.currentChatId,
+      currentModel: State.currentModel,
+      currentTheme: State.currentTheme
+    };
+    localStorage.setItem('dashy_chats_data', JSON.stringify(data));
+  } catch (e) {
+    console.warn('Could not save chats:', e);
+  }
+}
+
+function loadChatsFromStorage() {
+  try {
+    const stored = localStorage.getItem('dashy_chats_data');
+    if (!stored) return false;
+    
+    const data = JSON.parse(stored);
+    if (data.chats && data.chats.length > 0) {
+      State.chats = data.chats;
+      State.currentChatId = data.currentChatId || null;
+      if (data.currentModel) State.currentModel = data.currentModel;
+      if (data.currentTheme) State.currentTheme = data.currentTheme;
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.warn('Could not load chats:', e);
+    return false;
+  }
+}
+
+/* ==========================================================================
    DASH MODEL CONFIGS — 100% HUGGING FACE! 🗿
    ========================================================================== */
 const DASH_MODELS = {
@@ -272,7 +310,15 @@ function resetUsername() {
 function enterChatApp() {
   showScreen("screen-chat");
   renderUserInSidebar();
-  startNewChat();
+  
+  const hasSavedChats = loadChatsFromStorage();
+  
+  if (hasSavedChats && State.chats.length > 0) {
+    renderSidebarChatList();
+    renderActiveChat();
+  } else {
+    startNewChat();
+  }
 }
 
 function renderUserInSidebar() {
@@ -326,6 +372,7 @@ function clearAllChats() {
   if (!confirm("Delete all chats? This cannot be undone.")) return;
   State.chats = [];
   State.currentChatId = null;
+  localStorage.removeItem('dashy_chats_data'); // ← ADD THIS!
   startNewChat();
 }
 
@@ -338,6 +385,7 @@ function startNewChat() {
   State.currentChatId = chat.id;
   renderSidebarChatList();
   renderActiveChat();
+  saveChatsToStorage();
 }
 
 function renderSidebarChatList() {
@@ -386,6 +434,7 @@ function switchToChat(id) {
   State.currentChatId = id;
   renderSidebarChatList();
   renderActiveChat();
+  saveChatsToStorage();
 }
 
 function getCurrentChat() {
@@ -521,8 +570,9 @@ function sendMessage(event) {
     };
     chat.messages.push(userMsg);
     renderMessageBubble(userMsg);
-
-    if (chat.messages.length === 1) {
+    saveChatsToStorage(); 
+    
+     if (chat.messages.length === 1) {
       chat.title = text.length > 0
         ? (text.length > 30 ? text.substring(0, 30) + "..." : text)
         : "Image chat";
@@ -600,7 +650,8 @@ function handleImageGeneration(prompt, chat) {
       aiMsg.imageLoading = false;
       aiMsg.text = `Here's your ${isHQ ? "HQ " : ""}image of "${cleanPrompt}":`;
       reRenderMessage(aiMsg);
-      scrollToBottom();
+      saveChatsToStorage();
+       scrollToBottom();
     })
     .catch(err => {
       aiMsg.imageLoading = false;
