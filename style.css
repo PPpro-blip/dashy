@@ -1603,40 +1603,6 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
   user-select: none;
 }
 
-.chat-voice-select {
-  background-color: var(--bg-input);
-  border: 1px solid var(--border-default);
-  color: var(--text-primary);
-  padding: 7px 12px;
-  border-radius: var(--radius-md);
-  font-size: 0.78rem;
-  cursor: pointer;
-  outline: none;
-  transition: var(--transition);
-  max-width: 140px;
-}
-
-.chat-voice-select:hover {
-  border-color: var(--accent-primary);
-  background-color: var(--bg-hover);
-}
-
-#voice-toggle-btn {
-  transition: all 0.3s ease;
-}
-
-#voice-toggle-btn.active {
-  color: #00ffcc !important;
-  background: rgba(0, 255, 204, 0.15) !important;
-  border-radius: 50%;
-  animation: voicePulse 0.8s infinite ease-in-out !important;
-}
-
-@keyframes voicePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
 /* ================================================================
    VOICE FEATURES + EXPORT/PAUSE BUTTONS
    ================================================================ */
