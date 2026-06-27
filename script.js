@@ -25,6 +25,14 @@ const State = {
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
+// ============================================================
+//  VOICE + PAUSE + EXPORT SETTINGS
+// ============================================================
+
+let isPaused = false;
+let selectedVoice = "default";
+let isVoiceMode = false;
+
 // 👑 ADMIN LIST — Unlimited messages!
 const ADMINS = [
   "shubhampandey2012@gmail.com",
@@ -548,30 +556,6 @@ function sendMessage(event) {
   if (event) event.preventDefault();
   try {
     
-     /* ==========================================================================
-   PAUSE RESPONSE TOGGLE
-   ========================================================================== */
-
-let isPaused = false;
-
-function togglePause() {
-  isPaused = !isPaused;
-  const btn = document.getElementById('pause-toggle-btn');
-  if (isPaused) {
-    btn.innerHTML = '▶️';
-    btn.style.color = '#fbbf24';
-    btn.style.background = 'rgba(251, 191, 36, 0.15)';
-    showSuccess('⏸️ Responses PAUSED');
-  } else {
-    btn.innerHTML = '⏸️';
-    btn.style.color = '';
-    btn.style.background = '';
-    showSuccess('▶️ Responses RESUMED');
-  }
-}
-
-// Modify sendMessage to check pause state
-// Add this at the BEGINNING of sendMessage():
 function sendMessage(event) {
   if (event) event.preventDefault();
   try {
@@ -1443,4 +1427,134 @@ function exportChat() {
   showSuccess("📥 Chat exported successfully!");
 }
 
+/* ==========================================================================
+   EXPORT CHAT
+   ========================================================================== */
 
+function exportChat() {
+  const chat = getCurrentChat();
+  if (!chat || chat.messages.length === 0) {
+    return showError("No messages to export.");
+  }
+  
+  let text = `═══════════════════════════════════════════════════════\n`;
+  text += `         🗿 DASHYCORE — CHAT EXPORT\n`;
+  text += `═══════════════════════════════════════════════════════\n\n`;
+  text += `📅 Exported: ${new Date().toLocaleString()}\n`;
+  text += `🤖 Model: ${State.currentModel}\n`;
+  text += `👤 User: ${State.currentUser?.name || "Anonymous"}\n`;
+  text += `📨 Total Messages: ${chat.messages.length}\n\n`;
+  text += `───────────────────────────────────────────────────────\n\n`;
+  
+  chat.messages.forEach((m, index) => {
+    const role = m.role === "user" ? "👤 You" : "🤖 DashyCore";
+    text += `${role}:\n${m.text}\n\n`;
+    if (index < chat.messages.length - 1) {
+      text += `───────────────────────────────────────────────────────\n\n`;
+    }
+  });
+  
+  text += `\n═══════════════════════════════════════════════════════\n`;
+  text += `         🗿 Export complete — DashyCore AI\n`;
+  text += `═══════════════════════════════════════════════════════\n`;
+  
+  const blob = new Blob([text], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  showSuccess("📥 Chat exported successfully!");
+}
+
+/* ==========================================================================
+   PAUSE RESPONSE TOGGLE
+   ========================================================================== */
+
+function togglePause() {
+  isPaused = !isPaused;
+  const btn = document.getElementById('pause-toggle-btn');
+  if (isPaused) {
+    btn.innerHTML = '<span class="util-icon">▶️</span> Resume Responses';
+    btn.style.color = '#fbbf24';
+    btn.style.background = 'rgba(251, 191, 36, 0.12)';
+    btn.classList.add('active');
+    showSuccess('⏸️ Responses PAUSED');
+  } else {
+    btn.innerHTML = '<span class="util-icon">⏸️</span> Pause Responses';
+    btn.style.color = '';
+    btn.style.background = '';
+    btn.classList.remove('active');
+    showSuccess('▶️ Responses RESUMED');
+  }
+}
+
+/* ==========================================================================
+   TEXT-TO-SPEECH — 15 VOICES!
+   ========================================================================== */
+
+function changeVoice(voiceName) {
+  selectedVoice = voiceName;
+  showSuccess(`🔊 Voice changed to: ${voiceName}`);
+}
+
+function toggleVoice() {
+  isVoiceMode = !isVoiceMode;
+  const btn = document.getElementById('voice-toggle-btn');
+  if (isVoiceMode) {
+    btn.style.color = '#00ffcc';
+    btn.style.background = 'rgba(0, 255, 204, 0.15)';
+    btn.classList.add('active');
+    showSuccess('🔊 Voice mode ON — AI will speak responses!');
+  } else {
+    btn.style.color = '';
+    btn.style.background = '';
+    btn.classList.remove('active');
+    showSuccess('🔇 Voice mode OFF');
+  }
+}
+
+function speakResponse(text) {
+  if (!isVoiceMode) return;
+  
+  if (!('speechSynthesis' in window)) {
+    return showError("Text-to-speech not supported in this browser.");
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  
+  if (selectedVoice !== "default") {
+    const matchedVoice = voices.find(v => v.name === selectedVoice);
+    if (matchedVoice) {
+      utterance.voice = matchedVoice;
+    } else {
+      const fallback = voices.find(v => v.name.includes(selectedVoice) || selectedVoice.includes(v.name));
+      if (fallback) utterance.voice = fallback;
+    }
+  }
+  
+  if (!utterance.voice && voices.length > 0) {
+    utterance.voice = voices[0];
+  }
+
+  utterance.onerror = (e) => {
+    console.error('🔊 Speech error:', e);
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// Preload voices
+window.speechSynthesis.onvoiceschanged = () => {
+  console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
+};
+
+setTimeout(() => {
+  window.speechSynthesis.getVoices();
+}, 1000);
