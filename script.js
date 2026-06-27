@@ -36,6 +36,42 @@ const ADMINS = [
   "neemapandey737@gmail.com"
 ];
 
+// ============================================================
+//  OTP SYSTEM — Google Apps Script
+// ============================================================
+
+const OTP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwb18HN82eezCpH5pUABVTY6v3sQM_HAGgJ0XKsnYF9OF783XgMqa8UvUG4VGkFfW-v/exec"; // 🔁 Replace with your Apps Script URL
+
+async function sendOTP(email) {
+  try {
+    const res = await fetch(OTP_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "send", email })
+    });
+    console.log("📧 OTP request sent to:", email);
+  } catch (err) {
+    console.error("❌ Failed to send OTP:", err);
+    showError("Could not send OTP. Please try again.");
+  }
+}
+
+async function verifyOTP(email, otp) {
+  try {
+    const res = await fetch(OTP_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "verify", email, otp })
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("❌ OTP verification failed:", err);
+    return { success: false, message: "Verification error. Please try again." };
+  }
+}
+
 /* ==========================================================================
    DASH MODEL CONFIGS — 100% HUGGING FACE! 🗿
    ========================================================================== */
