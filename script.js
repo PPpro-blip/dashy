@@ -1558,3 +1558,5 @@ window.speechSynthesis.onvoiceschanged = () => {
 setTimeout(() => {
   window.speechSynthesis.getVoices();
 }, 1000);
+
+window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
