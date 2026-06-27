@@ -1559,4 +1559,32 @@ setTimeout(() => {
   window.speechSynthesis.getVoices();
 }, 1000);
 
+/* ==========================================================================
+   TOASTS
+   ========================================================================== */
+function showError(msg) {
+  console.log("[Dashy ERROR]", msg);
+  showToast(msg, "error");
+}
+function showSuccess(msg) {
+  console.log("[Dashy]", msg);
+  showToast(msg, "success");
+}
+function showToast(msg, type = "error") {
+  const existing = document.querySelector(".error-toast");
+  if (existing) existing.remove();
+  const t = document.createElement("div");
+  t.className = "error-toast" + (type === "success" ? " success" : "");
+  const iconColor = type === "success" ? "var(--accent-success)" : "var(--accent-danger)";
+  const icon = type === "success" ? "✓" : "⚠";
+  t.innerHTML = `<span style="color: ${iconColor};">${icon}</span><span>${escapeHtml(msg)}</span>`;
+  document.body.appendChild(t);
+  setTimeout(() => {
+    t.style.transition = "opacity 0.3s, transform 0.3s";
+    t.style.opacity = "0";
+    t.style.transform = "translateX(-50%) translateY(10px)";
+    setTimeout(() => t.remove(), 320);
+  }, 3500);
+}
+
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
