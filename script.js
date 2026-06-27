@@ -25,6 +25,17 @@ const State = {
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
+// 👑 ADMIN LIST — Unlimited messages!
+const ADMINS = [
+  "shubhampandey2012@gmail.com",
+  "23maths20@gmail.com",
+  "shristi.neoskillacademy@gmail.com",
+  "yashrajskilldeveloper@gmail.com",
+  "kamleshprathampandey@gmail.com",
+  "pratham.neoskill@gmail.com",
+  "neemapandey737@gmail.com"
+];
+
 /* ==========================================================================
    DASH MODEL CONFIGS — 100% HUGGING FACE! 🗿
    ========================================================================== */
@@ -723,10 +734,19 @@ function escapeHtml(s) {
 function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
-  navigator.clipboard.writeText(el.textContent).then(() => {
+  
+  // Clean the text before copying
+  let text = el.textContent;
+  text = text.split('\n').map(line => line.trim()).join('\n');
+  text = text.replace(/\n{3,}/g, '\n\n');
+  
+  navigator.clipboard.writeText(text).then(() => {
     btn.textContent = "✓ Copied";
     btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
+    setTimeout(() => { 
+      btn.textContent = "Copy"; 
+      btn.classList.remove("copied"); 
+    }, 1800);
   }).catch(() => showError("Could not copy to clipboard."));
 }
 
