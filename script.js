@@ -1234,4 +1234,4 @@ function showToast(msg, type = "error") {
 }
 
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
-}
+
