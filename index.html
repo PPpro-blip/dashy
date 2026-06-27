@@ -189,174 +189,180 @@
   </div>
 
   <!-- SCREEN 3: CHAT -->
-  <div id="screen-chat" class="screen-container">
-    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+<div id="screen-chat" class="screen-container">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
-    <aside class="chat-sidebar" id="chat-sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <svg viewBox="0 0 64 64" width="28" height="28">
+  <aside class="chat-sidebar" id="chat-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 64 64" width="28" height="28">
+          <defs>
+            <linearGradient id="sidebarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00d2ff"/>
+              <stop offset="100%" stop-color="#a476bb"/>
+            </linearGradient>
+          </defs>
+          <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#sidebarGrad)" stroke-width="2"/>
+          <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#sidebarGrad)"/>
+          <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#sidebarGrad)" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <span class="sidebar-brand">DashyCore</span>
+      </div>
+      <button class="sidebar-new-chat-btn" onclick="startNewChat()"><span>+</span> New Chat</button>
+    </div>
+
+    <div class="sidebar-search-wrap">
+      <div class="sidebar-search-icon">🔍</div>
+      <input type="text" id="sidebar-search-input" class="sidebar-search-input" placeholder="Search chats..." oninput="filterChats(this.value)">
+    </div>
+
+    <div class="sidebar-history-section">
+      <div class="sidebar-section-header">
+        <p class="sidebar-section-label">Recent Chats</p>
+        <span class="sidebar-chat-count" id="sidebar-chat-count">0</span>
+      </div>
+      <div id="sidebar-chat-list" class="sidebar-chat-list"></div>
+
+      <div id="sidebar-empty-state" class="sidebar-empty-state">
+        <div class="sidebar-empty-icon">💬</div>
+        <p class="sidebar-empty-title">No chats yet</p>
+        <p class="sidebar-empty-subtitle">Start a conversation to see your history here</p>
+      </div>
+
+      <div class="sidebar-tips-block">
+        <p class="sidebar-tips-label">💡 Quick Tips</p>
+        <div class="sidebar-tip-item" onclick="useSuggestion('Generate an image of ')"><span class="tip-icon">🎨</span><span class="tip-text">Type "generate image of..."</span></div>
+        <div class="sidebar-tip-item" onclick="useSuggestion('Write code to ')"><span class="tip-icon">💻</span><span class="tip-text">Ask for code snippets</span></div>
+        <div class="sidebar-tip-item" onclick="document.getElementById('file-picker-input').click()"><span class="tip-icon">📎</span><span class="tip-text">Attach files & images</span></div>
+        <div class="sidebar-tip-item" onclick="useSuggestion('Explain ')"><span class="tip-icon">💡</span><span class="tip-text">Ask DashyCore anything</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <!-- NEW: Pause Toggle Button -->
+      <button class="sidebar-utility-btn" id="pause-toggle-btn" onclick="togglePause()">
+        <span class="util-icon">⏸️</span> Pause Responses
+      </button>
+
+      <!-- NEW: Export Chat Button -->
+      <button class="sidebar-utility-btn" onclick="exportChat()">
+        <span class="util-icon">📥</span> Export Chat
+      </button>
+
+      <button class="sidebar-utility-btn" onclick="resetUsername()"><span class="util-icon">✏️</span> Change Username</button>
+      <button class="sidebar-utility-btn" onclick="clearAllChats()"><span class="util-icon">🗑️</span> Clear All Chats</button>
+      <button class="sidebar-utility-btn" onclick="openModal('modal-capabilities')"><span class="util-icon">⚡</span> Capabilities</button>
+      <button class="sidebar-utility-btn" onclick="openModal('modal-credits')"><span class="util-icon">★</span> Credits</button>
+      <div class="sidebar-user-row">
+        <div class="sidebar-user-avatar" id="sidebar-user-avatar">U</div>
+        <div class="sidebar-user-meta">
+          <span class="sidebar-user-name" id="sidebar-user-name">User</span>
+          <span class="sidebar-user-email" id="sidebar-user-email">user@dashy.ai</span>
+        </div>
+        <button class="sidebar-logout-btn" onclick="logout()" title="Log out">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+  </button>
+
+  <main class="chat-main">
+    <header class="chat-topbar">
+      <h2 class="chat-topbar-title" id="chat-current-title">New Chat</h2>
+      <div class="chat-topbar-right">
+        <select id="model-select" class="chat-model-select" onchange="changeModel(this.value)">
+          <option value="dash-complexity">🧠 DASH-Complexity</option>
+          <option value="dash-allrounder" selected>⚡ DASH-AllRounder</option>
+          <option value="dash-superfast">🔥 DASH-SuperFast</option>
+        </select>
+        <select id="theme-select" class="chat-theme-select" onchange="changeTheme(this.value)">
+          <option value="dark">Dark</option>
+          <option value="cyan">Cyan</option>
+          <option value="amber">Amber</option>
+        </select>
+
+        <!-- NEW: Voice Toggle Button -->
+        <button class="chat-input-icon-btn" id="voice-toggle-btn" title="Toggle voice" onclick="toggleVoice()">
+          🔊
+        </button>
+
+        <!-- NEW: Voice Selector Dropdown -->
+        <select id="voice-select" class="chat-voice-select" onchange="changeVoice(this.value)">
+          <option value="default">Default</option>
+          <option value="Daniel">🇬🇧 British Male</option>
+          <option value="Samantha">🇺🇸 American Female</option>
+          <option value="Allison">🇺🇸 Young Female</option>
+          <option value="Ava">🇺🇸 Modern Female</option>
+          <option value="Alex">🇺🇸 Neutral Male</option>
+          <option value="David">🇺🇸 Deep Male</option>
+          <option value="Emma">🇬🇧 British Female</option>
+          <option value="Fred">🇺🇸 Friendly Male</option>
+          <option value="Ivy">🇺🇸 Bright Female</option>
+          <option value="James">🇬🇧 Classic Male</option>
+          <option value="Joanna">🇺🇸 Smooth Female</option>
+          <option value="Kendra">🇺🇸 Energetic Female</option>
+          <option value="Kimberly">🇺🇸 Warm Female</option>
+          <option value="Matthew">🇺🇸 Calm Male</option>
+          <option value="Salli">🇺🇸 Clear Female</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="chat-messages-area" id="chat-messages-area">
+      <div class="chat-empty-state" id="chat-empty-state">
+        <div class="empty-state-logo">
+          <svg viewBox="0 0 64 64" width="64" height="64">
             <defs>
-              <linearGradient id="sidebarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient id="emptyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#00d2ff"/>
                 <stop offset="100%" stop-color="#a476bb"/>
               </linearGradient>
             </defs>
-            <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#sidebarGrad)" stroke-width="2"/>
-            <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#sidebarGrad)"/>
-            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#sidebarGrad)" stroke-width="5" stroke-linecap="round"/>
+            <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#emptyGrad)" stroke-width="2"/>
+            <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#emptyGrad)"/>
+            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#emptyGrad)" stroke-width="5" stroke-linecap="round"/>
           </svg>
-          <span class="sidebar-brand">DashyCore</span>
         </div>
-        <button class="sidebar-new-chat-btn" onclick="startNewChat()"><span>+</span> New Chat</button>
-      </div>
-
-      <div class="sidebar-search-wrap">
-        <div class="sidebar-search-icon">🔍</div>
-        <input type="text" id="sidebar-search-input" class="sidebar-search-input" placeholder="Search chats..." oninput="filterChats(this.value)">
-      </div>
-
-      <div class="sidebar-history-section">
-        <div class="sidebar-section-header">
-          <p class="sidebar-section-label">Recent Chats</p>
-          <span class="sidebar-chat-count" id="sidebar-chat-count">0</span>
-        </div>
-        <div id="sidebar-chat-list" class="sidebar-chat-list"></div>
-
-        <div id="sidebar-empty-state" class="sidebar-empty-state">
-          <div class="sidebar-empty-icon">💬</div>
-          <p class="sidebar-empty-title">No chats yet</p>
-          <p class="sidebar-empty-subtitle">Start a conversation to see your history here</p>
-        </div>
-
-        <div class="sidebar-tips-block">
-          <p class="sidebar-tips-label">💡 Quick Tips</p>
-          <div class="sidebar-tip-item" onclick="useSuggestion('Generate an image of ')"><span class="tip-icon">🎨</span><span class="tip-text">Type "generate image of..."</span></div>
-          <div class="sidebar-tip-item" onclick="useSuggestion('Write code to ')"><span class="tip-icon">💻</span><span class="tip-text">Ask for code snippets</span></div>
-          <div class="sidebar-tip-item" onclick="document.getElementById('file-picker-input').click()"><span class="tip-icon">📎</span><span class="tip-text">Attach files & images</span></div>
-          <div class="sidebar-tip-item" onclick="useSuggestion('Explain ')"><span class="tip-icon">💡</span><span class="tip-text">Ask DashyCore anything</span></div>
+        <h1 class="empty-state-greeting" id="empty-state-greeting">How can I help you today?</h1>
+        <p class="empty-state-subtitle">Pick a suggestion below or type your own question</p>
+        <div class="empty-state-suggestions">
+          <div class="suggestion-chip" onclick="useSuggestion('Generate an image of a cyberpunk cat')"><span class="suggestion-icon">🎨</span><span>Generate an image of a cyberpunk cat</span></div>
+          <div class="suggestion-chip" onclick="useSuggestion('Write a complete Python web scraper with comments')"><span class="suggestion-icon">💻</span><span>Write a Python web scraper</span></div>
+          <div class="suggestion-chip" onclick="useSuggestion('Explain quantum entanglement simply')"><span class="suggestion-icon">💡</span><span>Explain quantum entanglement</span></div>
+          <div class="suggestion-chip" onclick="useSuggestion('Help me plan a startup pitch deck')"><span class="suggestion-icon">🚀</span><span>Plan a startup pitch deck</span></div>
         </div>
       </div>
+    </section>
 
-      <div class="sidebar-footer">
-        <button class="sidebar-utility-btn" onclick="resetUsername()"><span class="util-icon">✏️</span> Change Username</button>
-        <button class="sidebar-utility-btn" onclick="clearAllChats()"><span class="util-icon">🗑️</span> Clear All Chats</button>
-        <button class="sidebar-utility-btn" onclick="openModal('modal-capabilities')"><span class="util-icon">⚡</span> Capabilities</button>
-        <button class="sidebar-utility-btn" onclick="openModal('modal-credits')"><span class="util-icon">★</span> Credits</button>
-        <div class="sidebar-user-row">
-          <div class="sidebar-user-avatar" id="sidebar-user-avatar">U</div>
-          <div class="sidebar-user-meta">
-            <span class="sidebar-user-name" id="sidebar-user-name">User</span>
-            <span class="sidebar-user-email" id="sidebar-user-email">user@dashy.ai</span>
-          </div>
-          <button class="sidebar-logout-btn" onclick="logout()" title="Log out">⏻</button>
-        </div>
-      <button class="sidebar-utility-btn" onclick="exportChat()">
-  <span class="util-icon">📥</span> Export Chat
-</button>
-      </div>
-  </div>
-</aside>
-
-    <button class="sidebar-toggle-btn" id="sidebar-toggle-btn" onclick="toggleSidebar()" title="Toggle sidebar">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
-    </button>
-
-    <main class="chat-main">
-      <header class="chat-topbar">
-        <h2 class="chat-topbar-title" id="chat-current-title">New Chat</h2>
-        <div class="chat-topbar-right">
-          <select id="model-select" class="chat-model-select" onchange="changeModel(this.value)">
-            <option value="dash-complexity">🧠 DASH-Complexity</option>
-            <option value="dash-allrounder" selected>⚡ DASH-AllRounder</option>
-            <option value="dash-superfast">🔥 DASH-SuperFast</option>
-          </select>
-          <select id="theme-select" class="chat-theme-select" onchange="changeTheme(this.value)">
-            <option value="dark">Dark</option>
-            <option value="cyan">Cyan</option>
-            <option value="amber">Amber</option>
-          </select>
-        </div>
-      </header>
-
-      <section class="chat-messages-area" id="chat-messages-area">
-        <div class="chat-empty-state" id="chat-empty-state">
-          <div class="empty-state-logo">
-            <svg viewBox="0 0 64 64" width="64" height="64">
-              <defs>
-                <linearGradient id="emptyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stop-color="#00d2ff"/>
-                  <stop offset="100%" stop-color="#a476bb"/>
-                </linearGradient>
-              </defs>
-              <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#emptyGrad)" stroke-width="2"/>
-              <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#emptyGrad)"/>
-              <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#emptyGrad)" stroke-width="5" stroke-linecap="round"/>
+    <footer class="chat-input-area">
+      <div class="attachment-preview-row" id="attachment-preview-row"></div>
+      <form class="chat-input-form" onsubmit="sendMessage(event)">
+        <div class="chat-input-wrapper">
+          <button type="button" class="chat-input-icon-btn" title="Attach file" onclick="document.getElementById('file-picker-input').click()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z"/></svg>
+          </button>
+          <input type="file" id="file-picker-input" multiple accept="image/*,.pdf,.txt,.md,.json,.csv" style="display:none" onchange="handleFileAttachment(event)">
+          
+          <!-- 🎙️ VOICE INPUT BUTTON -->
+          <button type="button" class="chat-input-icon-btn" id="voice-btn" title="Voice input" onclick="toggleVoiceInput()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12,1A3,3 0 0,1 15,4V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V4A3,3 0 0,1 12,1M19,11A7,7 0 0,1 13,17.75V21H11V17.75A7,7 0 0,1 5,11H7A5,5 0 0,0 17,11H19Z"/>
             </svg>
-          </div>
-          <h1 class="empty-state-greeting" id="empty-state-greeting">How can I help you today?</h1>
-          <p class="empty-state-subtitle">Pick a suggestion below or type your own question</p>
-          <div class="empty-state-suggestions">
-            <div class="suggestion-chip" onclick="useSuggestion('Generate an image of a cyberpunk cat')"><span class="suggestion-icon">🎨</span><span>Generate an image of a cyberpunk cat</span></div>
-            <div class="suggestion-chip" onclick="useSuggestion('Write a complete Python web scraper with comments')"><span class="suggestion-icon">💻</span><span>Write a Python web scraper</span></div>
-            <div class="suggestion-chip" onclick="useSuggestion('Explain quantum entanglement simply')"><span class="suggestion-icon">💡</span><span>Explain quantum entanglement</span></div>
-            <div class="suggestion-chip" onclick="useSuggestion('Help me plan a startup pitch deck')"><span class="suggestion-icon">🚀</span><span>Plan a startup pitch deck</span></div>
-          </div>
+          </button>
+          
+          <input type="text" id="chat-text-input" class="chat-text-input" placeholder="Message DashyCore..." autocomplete="off">
+          <button type="submit" class="chat-send-btn" id="chat-send-btn" title="Send">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/></svg>
+          </button>
         </div>
-      </section>
-
-      <footer class="chat-input-area">
-        <div class="attachment-preview-row" id="attachment-preview-row"></div>
-        <form class="chat-input-form" onsubmit="sendMessage(event)">
-          <div class="chat-input-wrapper">
-            <button type="button" class="chat-input-icon-btn" title="Attach file" onclick="document.getElementById('file-picker-input').click()">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16.5,6V17.5A4,4 0 0,1 12.5,21.5A4,4 0 0,1 8.5,17.5V5A2.5,2.5 0 0,1 11,2.5A2.5,2.5 0 0,1 13.5,5V15.5A1,1 0 0,1 12.5,16.5A1,1 0 0,1 11.5,15.5V6H10V15.5A2.5,2.5 0 0,0 12.5,18A2.5,2.5 0 0,0 15,15.5V5A4,4 0 0,0 11,1A4,4 0 0,0 7,5V17.5A5.5,5.5 0 0,0 12.5,23A5.5,5.5 0 0,0 18,17.5V6H16.5Z"/></svg>
-            </button>
-            <input type="file" id="file-picker-input" multiple accept="image/*,.pdf,.txt,.md,.json,.csv" style="display:none" onchange="handleFileAttachment(event)">
-            
-            <!-- 🎙️ VOICE BUTTON -->
-            <button type="button" class="chat-input-icon-btn" id="voice-btn" title="Voice input" onclick="toggleVoiceInput()">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
-                <path d="M12,1A3,3 0 0,1 15,4V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V4A3,3 0 0,1 12,1M19,11A7,7 0 0,1 13,17.75V21H11V17.75A7,7 0 0,1 5,11H7A5,5 0 0,0 17,11H19Z"/>
-              </svg>
-            </button>
-            
-            <input type="text" id="chat-text-input" class="chat-text-input" placeholder="Message DashyCore..." autocomplete="off">
-            <button type="submit" class="chat-send-btn" id="chat-send-btn" title="Send">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M2,21L23,12L2,3V10L17,12L2,14V21Z"/></svg>
-            </button>
-          </div>
-        </form>
-        <p class="chat-footer-disclaimer">DashyCore can make mistakes. Verify important information.</p>
-      </footer>
-    </main>
-  </div>
-
-  <!-- VOICE TOGGLE BUTTON -->
-<button class="chat-input-icon-btn" id="voice-toggle-btn" title="Toggle voice" onclick="toggleVoice()">
-  🔊
-</button>
-
-<!-- VOICE SELECTOR DROPDOWN -->
-<select id="voice-select" class="chat-voice-select" onchange="changeVoice(this.value)">
-  <option value="default">Default</option>
-  <option value="Daniel">🇬🇧 British Male</option>
-  <option value="Samantha">🇺🇸 American Female</option>
-  <option value="Allison">🇺🇸 Young Female</option>
-  <option value="Ava">🇺🇸 Modern Female</option>
-  <option value="Alex">🇺🇸 Neutral Male</option>
-  <option value="David">🇺🇸 Deep Male</option>
-  <option value="Emma">🇬🇧 British Female</option>
-  <option value="Fred">🇺🇸 Friendly Male</option>
-  <option value="Ivy">🇺🇸 Bright Female</option>
-  <option value="James">🇬🇧 Classic Male</option>
-  <option value="Joanna">🇺🇸 Smooth Female</option>
-  <option value="Kendra">🇺🇸 Energetic Female</option>
-  <option value="Kimberly">🇺🇸 Warm Female</option>
-  <option value="Matthew">🇺🇸 Calm Male</option>
-  <option value="Salli">🇺🇸 Clear Female</option>
-</select>
- 
+      </form>
+      <p class="chat-footer-disclaimer">DashyCore can make mistakes. Verify important information.</p>
+    </footer>
+  </main>
+</div>
+  
   <!-- MODALS -->
   <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
 
