@@ -650,7 +650,8 @@ function handleImageGeneration(prompt, chat) {
       aiMsg.imageLoading = false;
       aiMsg.text = `Here's your ${isHQ ? "HQ " : ""}image of "${cleanPrompt}":`;
       reRenderMessage(aiMsg);
-      saveChatsToStorage();
+      speakResponse(aiMsg.text);
+       saveChatsToStorage();
        scrollToBottom();
     })
     .catch(err => {
@@ -687,11 +688,13 @@ async function handleTextGeneration(prompt, chat, attachments) {
   const textEl = bubble.querySelector(".message-text");
   textEl.classList.add("ai-typing");
 
-  try {
+   try {
     let responseText = await callHuggingFaceAPI(prompt, chat, attachments);
     await streamText(responseText, aiMsg, textEl);
     aiMsg.text = responseText;
     reRenderMessage(aiMsg);
+    speakResponse(responseText); // ← PASTE THIS LINE HERE!
+    saveChatsToStorage();
   } catch (err) {
     aiMsg.text = `⚠️ Error: ${err.message}`;
     textEl.innerHTML = formatMessageContent(aiMsg.text);
@@ -701,7 +704,6 @@ async function handleTextGeneration(prompt, chat, attachments) {
     State.isResponding = false;
     if (sendBtn) sendBtn.disabled = false;
   }
-}
 
 /* ==========================================================================
    HUGGING FACE API CALLER — NO GEMINI! 🗿
