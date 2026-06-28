@@ -35,7 +35,8 @@ const ADMINS = [
   "kamleshprathampandey@gmail.com",
   "pratham.neoskill@gmail.com",
   "neemapandey737@gmail.com",
-  "kamlesh062984@gmail.com"
+  "kamlesh062984@gmail.com",
+  "user@gmail.com"
 ];
 
 // ============================================================
