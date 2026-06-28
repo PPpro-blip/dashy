@@ -40,6 +40,95 @@ const ADMINS = [
 ];
 
 // ============================================================
+//  MESSAGE LIMITS — Per user type
+// ============================================================
+
+const MESSAGE_LIMITS = {
+  "guest": 20,              // Guests get 20 messages
+  "user@gmail.com": 20,     // Google demo users get 20 messages
+  "default": 100,           // Real email users get 100 messages
+};
+
+function getUserLimit() {
+  const user = State.currentUser;
+  if (!user) return 5;
+
+  // 👑 Admins = unlimited
+  if (ADMINS.includes(user.email)) {
+    return Infinity;
+  }
+
+  // Google demo user
+  if (user.email === "user@gmail.com") {
+    return MESSAGE_LIMITS["user@gmail.com"];
+  }
+
+  // Guest user
+  if (user.email === "guest@dashy.ai") {
+    return MESSAGE_LIMITS.guest;
+  }
+
+  // Everyone else = default
+  return MESSAGE_LIMITS.default;
+}
+
+function getUserMessageCount() {
+  const user = State.currentUser;
+  if (!user) return 0;
+
+  // Admins don't get counted
+  if (ADMINS.includes(user.email)) {
+    return 0;
+  }
+
+  const key = `dashy_messages_${user.email}`;
+  const count = parseInt(localStorage.getItem(key) || "0");
+  return count;
+}
+
+function incrementUserMessageCount() {
+  const user = State.currentUser;
+  if (!user) return;
+
+  // Admins: skip counting
+  if (ADMINS.includes(user.email)) {
+    return;
+  }
+
+  const key = `dashy_messages_${user.email}`;
+  const current = parseInt(localStorage.getItem(key) || "0");
+  localStorage.setItem(key, String(current + 1));
+}
+
+function resetUserMessageCount() {
+  const user = State.currentUser;
+  if (!user) return;
+
+  // Admins: no need to reset
+  if (ADMINS.includes(user.email)) {
+    return;
+  }
+
+  const key = `dashy_messages_${user.email}`;
+  localStorage.removeItem(key);
+}
+
+function checkMessageLimit() {
+  const user = State.currentUser;
+  if (!user) return { allowed: true, remaining: Infinity, limit: Infinity };
+
+  const used = getUserMessageCount();
+  const limit = getUserLimit();
+  const remaining = limit - used;
+
+  if (remaining <= 0) {
+    return { allowed: false, remaining: 0, limit };
+  }
+
+  return { allowed: true, remaining, limit };
+}
+
+// ============================================================
 //  VOICE + PAUSE + EXPORT SETTINGS
 // ============================================================
 
@@ -180,12 +269,45 @@ function verifyAge() {
 /* ==========================================================================
    LOGIN
    ========================================================================== */
+/* ==========================================================================
+   LOGIN
+   ========================================================================== */
+
 function loginWithGoogle() {
-  handleUserLogin({ email: "user@gmail.com", defaultName: "Google User", avatarLetter: "G" });
+  // Show a funny warning
+  showToast(
+    "⚠️ This is a demo login! You'll get a fake ID like 'user@gmail.com'.\n" +
+    "The creator is 12 years old and is NOT paying for Google OAuth... YET! 😭\n\n" +
+    "You get 20 messages. Make them count! 🗿",
+    "warning"
+  );
+  
+  // Set a timeout so they can read the message
+  setTimeout(() => {
+    handleUserLogin({ 
+      email: "user@gmail.com", 
+      defaultName: "Google User", 
+      avatarLetter: "G" 
+    });
+  }, 3000);
 }
+
 function loginAsGuest() {
-  handleUserLogin({ email: "guest@dashy.ai", defaultName: "Guest", avatarLetter: "G" });
+  showToast(
+    "👋 You're a guest! You get 20 messages.\n" +
+    "If you like it, tell the creator to add real auth! 🗿",
+    "warning"
+  );
+  
+  setTimeout(() => {
+    handleUserLogin({ 
+      email: "guest@dashy.ai", 
+      defaultName: "Guest", 
+      avatarLetter: "G" 
+    });
+  }, 2500);
 }
+
 function loginWithEmail() {
   try {
     const email = document.getElementById("login-email-input").value.trim();
@@ -247,10 +369,22 @@ function enterChatApp() {
 function renderUserInSidebar() {
   const u = State.currentUser;
   if (!u) return;
+  
   const nameEl = document.getElementById("sidebar-user-name");
   const emailEl = document.getElementById("sidebar-user-email");
   const avatarEl = document.getElementById("sidebar-user-avatar");
-  if (nameEl) nameEl.textContent = u.name;
+  
+  if (nameEl) {
+    // 👑 Check if EMAIL is admin!
+    if (ADMINS.includes(u.email)) {
+      nameEl.textContent = `${u.name} 👑`;
+      nameEl.style.color = "#fbbf24";
+    } else {
+      nameEl.textContent = u.name;
+      nameEl.style.color = "";
+    }
+  }
+  
   if (emailEl) emailEl.textContent = u.email;
   if (avatarEl) avatarEl.textContent = u.avatar;
 
@@ -1237,3 +1371,18 @@ function showToast(msg, type = "error") {
 
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
 
+/* ==========================================================================
+   USERNAME SYSTEM — Unique usernames!
+   ========================================================================== */
+
+function isUsernameTaken(username) {
+  // Get all registered usernames from localStorage
+  const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
+  return users.includes(username);
+}
+
+function registerUsername(username) {
+  const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
+  users.push(username);
+  localStorage.setItem('dashy_users', JSON.stringify(users));
+}
