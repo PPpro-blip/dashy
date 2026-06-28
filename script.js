@@ -128,6 +128,146 @@ function checkMessageLimit() {
 }
 
 // ============================================================
+//  SUNO AI — Via Cloudflare Proxy (Hides API Key!)
+// ============================================================
+
+/* ==========================================================================
+   🎵 MUSIC GENERATION — Suno AI
+   ========================================================================== */
+
+/* ==========================================================================
+   🎵 MUSIC GENERATION — Suno AI (Card Version)
+   ========================================================================== */
+
+// Your Cloudflare Worker URL for Suno (Hides API Key!)
+const SUNO_ENDPOINT = "https://dashy-suno-proxy.your-subdomain.workers.dev/";
+
+let selectedGenre = "pop";
+let selectedDuration = "30";
+
+function selectGenre(genre) {
+  selectedGenre = genre;
+  
+  document.querySelectorAll('.music-genre-card').forEach(card => {
+    card.classList.toggle('selected', card.dataset.genre === genre);
+  });
+  
+  const genreNames = {
+    'pop': 'Pop',
+    'jazz': 'Jazz',
+    'lo-fi': 'Lo-Fi',
+    'rock': 'Rock',
+    'classical': 'Classical',
+    'hip-hop': 'Hip-Hop'
+  };
+  document.getElementById('music-selected-display').textContent = genreNames[genre] || genre;
+}
+
+function selectDuration(duration) {
+  selectedDuration = duration;
+  
+  document.querySelectorAll('.music-duration-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.duration === duration);
+  });
+  
+  document.getElementById('music-duration-display').textContent = duration;
+}
+
+function showMusicModal() {
+  openModal('modal-music');
+}
+
+async function generateMusicFromModal() {
+  const customPrompt = document.getElementById('music-prompt').value.trim();
+  const resultDiv = document.getElementById('music-result');
+  const btn = document.getElementById('music-generate-btn');
+  
+  // Build prompt from genre or custom
+  let prompt = customPrompt;
+  
+  if (!prompt) {
+    const genrePrompts = {
+      'pop': 'A catchy, upbeat pop song with vocals and energetic instruments',
+      'jazz': 'A smooth, improvisational jazz piece with piano and saxophone',
+      'lo-fi': 'A chill, nostalgic lo-fi beat with soft melodies and vinyl crackle',
+      'rock': 'An energetic rock song with electric guitar, drums, and powerful vocals',
+      'classical': 'An elegant orchestral classical piece with strings and piano',
+      'hip-hop': 'A rhythmic hip-hop beat with groovy bass, drums, and expressive vocals'
+    };
+    prompt = genrePrompts[selectedGenre] || selectedGenre;
+  }
+  
+  // Add duration hint
+  const durationMap = {
+    '15': 'a short 15-second',
+    '30': 'a 30-second',
+    '60': 'a 1-minute'
+  };
+  prompt = `Generate ${durationMap[selectedDuration]} ${prompt}`;
+  
+  resultDiv.innerHTML = `<p>⏳ Generating your ${selectedDuration}s song... This takes 1-2 minutes.</p>`;
+  btn.disabled = true;
+  btn.textContent = "⏳ Generating...";
+  
+  try {
+    const data = await generateMusicAPI(prompt);
+    
+    btn.disabled = false;
+    btn.textContent = "🎵 Generate Music";
+    
+    if (data && data.success && data.data && data.data.length > 0) {
+      const song = data.data[0];
+      resultDiv.innerHTML = `
+        <div style="padding: 12px; background: var(--bg-card); border-radius: var(--radius-md);">
+          <p><strong>🎵 ${song.title || "Untitled"}</strong></p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            ${song.lyric ? song.lyric.substring(0, 150) + (song.lyric.length > 150 ? "..." : "") : "🎶 Instrumental"}
+          </p>
+          <audio controls style="width: 100%; margin-top: 10px;">
+            <source src="${song.audio_url}" type="audio/mpeg">
+            Your browser doesn't support audio.
+          </audio>
+          <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+            <button class="download-btn" onclick="window.open('${song.audio_url}')">
+              📥 Download MP3
+            </button>
+            <button class="report-btn-cancel" onclick="document.querySelector('#music-result audio').play()">
+              ▶️ Play
+            </button>
+          </div>
+        </div>
+      `;
+    } else {
+      resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Failed: ${data?.message || "Unknown error"}</p>`;
+    }
+  } catch (error) {
+    resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Error: ${error.message}</p>`;
+    btn.disabled = false;
+    btn.textContent = "🎵 Generate Music";
+  }
+}
+
+async function generateMusicAPI(prompt) {
+  try {
+    const response = await fetch(SUNO_ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "generate",
+        prompt: prompt,
+        model: "chirp-v3"
+      })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Music generation failed:", error);
+    throw error;
+  }
+}
+
+// ============================================================
 //  VOICE + PAUSE + EXPORT SETTINGS
 // ============================================================
 
