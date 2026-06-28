@@ -1273,6 +1273,26 @@ function togglePause() {
    TEXT-TO-SPEECH — 15 VOICES!
    ========================================================================== */
 
+/* ==========================================================================
+   TEXT-TO-SPEECH — 15 VOICES! (FIXED)
+   ========================================================================== */
+
+let selectedVoice = "default";
+let isVoiceMode = false;
+let availableVoices = [];
+
+// Load voices when they're available
+window.speechSynthesis.onvoiceschanged = () => {
+  availableVoices = window.speechSynthesis.getVoices();
+  console.log('🔊 Voices loaded:', availableVoices.length);
+};
+
+// Preload voices
+setTimeout(() => {
+  availableVoices = window.speechSynthesis.getVoices();
+  console.log('🔊 Voices loaded (timeout):', availableVoices.length);
+}, 1000);
+
 function changeVoice(voiceName) {
   selectedVoice = voiceName;
   showSuccess(`🔊 Voice changed to: ${voiceName}`);
@@ -1301,6 +1321,7 @@ function speakResponse(text) {
     return showError("Text-to-speech not supported in this browser.");
   }
 
+  // Cancel any ongoing speech
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
@@ -1308,18 +1329,25 @@ function speakResponse(text) {
   utterance.rate = 0.9;
   utterance.pitch = 1;
 
+  // Get the latest voices
   const voices = window.speechSynthesis.getVoices();
   
   if (selectedVoice !== "default") {
+    // Try to find the exact voice by name
     const matchedVoice = voices.find(v => v.name === selectedVoice);
     if (matchedVoice) {
       utterance.voice = matchedVoice;
     } else {
-      const fallback = voices.find(v => v.name.includes(selectedVoice) || selectedVoice.includes(v.name));
+      // Try partial match
+      const fallback = voices.find(v => 
+        v.name.toLowerCase().includes(selectedVoice.toLowerCase()) || 
+        selectedVoice.toLowerCase().includes(v.name.toLowerCase())
+      );
       if (fallback) utterance.voice = fallback;
     }
   }
   
+  // If still no voice, use the first available
   if (!utterance.voice && voices.length > 0) {
     utterance.voice = voices[0];
   }
