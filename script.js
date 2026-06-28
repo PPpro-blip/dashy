@@ -1402,8 +1402,6 @@ function togglePause() {
 /* ==========================================================================
    TEXT-TO-SPEECH — 15 VOICES! (FIXED)
    ========================================================================== */
-
-let isVoiceMode = false;
 let availableVoices = [];
 
 // Load voices when they're available
