@@ -721,6 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         sendMessage(e);
       }
+      // Shift+Enter = new line (default behavior — we do nothing!)
     });
   }
 });
