@@ -389,13 +389,13 @@ function initApp() {
   console.log("🚀 INITAPP STARTED");
   
   try {
-    // 🔥 STEP 1: HIDE EVERYTHING FIRST
+    // 🔥 HIDE EVERYTHING FIRST
     document.querySelectorAll(".screen-container").forEach(s => {
       s.style.display = "none";
       s.classList.remove("active-screen");
     });
     
-    // 🔥 STEP 2: FORCE TITLE SCREEN TO SHOW
+    // 🔥 FORCE TITLE SCREEN
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
       console.log("✅ Title screen found!");
@@ -414,7 +414,7 @@ function initApp() {
       console.error("❌ Title screen NOT found!");
     }
     
-    // 🔥 STEP 3: AFTER 3 SECONDS, CHECK SESSION
+    // 🔥 AFTER 3 SECONDS, CHECK SESSION
     setTimeout(() => {
       console.log("⏰ 3 seconds passed, checking session...");
       
