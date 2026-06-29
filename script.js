@@ -1,4 +1,5 @@
 "use strict";
+let SHOW_TITLE = true;
 
 /* ==========================================================================
    ╔════════════════════════════════════════════════════════════════════════╗
@@ -387,7 +388,7 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   console.log("🚀 INITAPP STARTED");
-  
+
   try {
     // 1️⃣ FORCE TITLE SCREEN TO APPEAR
     document.querySelectorAll(".screen-container").forEach(s => {
@@ -409,13 +410,15 @@ function initApp() {
       titleScreen.style.zIndex = "99999";
       titleScreen.style.background = "#07090f";
       titleScreen.classList.add("active-screen");
+      SHOW_TITLE = true;
     } else {
       console.error("❌ Title screen NOT found!");
     }
 
-    // 2️⃣ WAIT 4 SECONDS, THEN CHECK SESSION
+    // 2️⃣ ONLY CHECK SESSION AFTER DELAY
     setTimeout(() => {
-      console.log("⏰ 4 seconds passed, checking session...");
+      console.log("⏰ 5 seconds passed, checking session...");
+      SHOW_TITLE = false;
 
       const session = localStorage.getItem('dashy_user_session');
       console.log("📦 Session:", session);
@@ -440,20 +443,7 @@ function initApp() {
           }
 
           console.log("✅ Auto-logging in...");
-          
-          // 🔥 LOAD CHATS AFTER LOGIN!
-          const hasSavedChats = loadChatsFromStorage();
-          
-          showScreen("screen-chat");
-          renderUserInSidebar();
-          
-          if (hasSavedChats && State.chats.length > 0) {
-            renderSidebarChatList();
-            renderActiveChat();
-          } else {
-            startNewChat();
-          }
-          
+          enterChatApp();
         } catch (e) {
           console.warn("Session error:", e);
           localStorage.removeItem('dashy_user_session');
@@ -467,7 +457,7 @@ function initApp() {
           goToLogin();
         }
       }
-    }, 4000);
+    }, 5000); // ⬅️ 5 SECONDS
 
   } catch (err) {
     console.error("❌ Init error:", err);
