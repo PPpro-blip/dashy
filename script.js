@@ -566,7 +566,6 @@ function enterChatApp() {
   if (hasSavedChats && State.chats.length > 0) {
     renderSidebarChatList();
     renderActiveChat();
-    updateMessageDisplay();
   } else {
     startNewChat();
   }
@@ -1652,35 +1651,34 @@ function registerUsername(username) {
 function updateMessageDisplay() {
   const user = State.currentUser;
   if (!user) return;
-  
+
   const used = getUserMessageCount();
   const limit = getUserLimit();
   const remaining = limit - used;
-  
+
   let display = document.getElementById("message-limit-display");
   if (!display) {
     display = document.createElement("div");
     display.id = "message-limit-display";
     display.className = "sidebar-message-limit";
-    
+
     const footer = document.querySelector(".sidebar-footer");
     if (footer) {
       footer.insertBefore(display, footer.firstChild);
     }
   }
-  
-  // 👑 ADMIN BADGE!
+
+  // 👑 Admin badge
   if (ADMINS.includes(user.email)) {
     display.innerHTML = `👑 <span style="color: #fbbf24; font-weight: 700;">ADMIN — Unlimited Messages!</span>`;
     display.style.borderColor = "#fbbf24";
     display.style.background = "rgba(251, 191, 36, 0.1)";
     return;
   }
-  
+
   // Normal users
   if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
-    display.style.color = "var(--accent-danger)";
   } else if (remaining <= 5) {
     display.innerHTML = `📨 <span style="color: var(--accent-warning)">${remaining} messages left</span>`;
   } else {
