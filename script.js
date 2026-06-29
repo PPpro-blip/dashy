@@ -517,15 +517,12 @@ function handleUserLogin({ email, defaultName, avatarLetter }) {
   const savedUsername = localStorage.getItem("dashy_username_" + email);
   if (savedUsername) {
     State.currentUser = { name: savedUsername, email, avatar: savedUsername[0].toUpperCase() };
-    enterChatApp();
   } else {
     State.currentUser = { name: defaultName, email, avatar: avatarLetter };
-    showScreen("screen-username");
-    setTimeout(() => {
-      const input = document.getElementById("username-setup-input");
-      if (input) { input.value = defaultName; input.focus(); input.select(); }
-    }, 100);
   }
+  
+  // 🔥 ALWAYS call enterChatApp after setting State.currentUser
+  enterChatApp();
 }
 
 function saveUsername() {
@@ -536,6 +533,11 @@ function saveUsername() {
   if (username.length < 2) return showError("Username must be at least 2 characters.");
   if (username.length > 20) return showError("Username must be 20 characters or less.");
   if (!/^[a-zA-Z0-9\s_-]+$/.test(username)) return showError("Username can only contain letters, numbers, spaces, _ and -");
+
+  // 🔥 UPDATE SESSION WITH USERNAME!
+  const session = JSON.parse(localStorage.getItem('dashy_user_session') || '{}');
+  session.defaultName = username;
+  localStorage.setItem('dashy_user_session', JSON.stringify(session));
 
   localStorage.setItem("dashy_username_" + State.currentUser.email, username);
   State.currentUser.name = username;
