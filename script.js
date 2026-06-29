@@ -387,36 +387,40 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   try {
-    // 🔥 CHECK FOR SAVED SESSION FIRST!
+    // Always show the title screen first
+    showScreen("screen-title");
+    
+    // Check if user has a saved session
     const session = localStorage.getItem('dashy_user_session');
     if (session) {
-      try {
-        const user = JSON.parse(session);
-        // Auto-login the user
-        handleUserLogin({
-          email: user.email,
-          defaultName: user.defaultName,
-          avatarLetter: user.avatarLetter || user.defaultName[0].toUpperCase()
-        });
-        return; // ✅ Exit early, no need to show login
-      } catch (e) {
-        console.warn("Session parse error:", e);
-        localStorage.removeItem('dashy_user_session');
-      }
+      // Auto-login after the title screen animation
+      setTimeout(() => {
+        try {
+          const user = JSON.parse(session);
+          handleUserLogin({
+            email: user.email,
+            defaultName: user.defaultName,
+            avatarLetter: user.avatarLetter || user.defaultName[0].toUpperCase()
+          });
+        } catch (e) {
+          console.warn("Session parse error:", e);
+          localStorage.removeItem('dashy_user_session');
+          goToLogin(); // Fallback to login
+        }
+      }, 2500); // Wait for title animation
+      return;
     }
 
-    // If no session, show age verification
-    const verified = localStorage.getItem("dashy_age_verified");
-    if (!verified) {
-      showScreen("screen-age");
-    } else {
-      showScreen("screen-title");
-      setTimeout(() => {
-        if (document.getElementById("screen-title").classList.contains("active-screen")) {
-          goToLogin();
-        }
-      }, 2500);
-    }
+    // If no session, show age verification after title
+    setTimeout(() => {
+      const verified = localStorage.getItem("dashy_age_verified");
+      if (!verified) {
+        showScreen("screen-age");
+      } else {
+        goToLogin();
+      }
+    }, 2500);
+    
   } catch (err) {
     showError("Init failed: " + err.message);
   }
