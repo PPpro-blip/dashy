@@ -133,7 +133,7 @@ function checkMessageLimit() {
    ========================================================================== */
 
 // Your Cloudflare Worker URL for Suno (Hides API Key!)
-const SUNO_ENDPOINT = "https://dashy-suno-proxy.your-subdomain.workers.dev/";
+const SUNO_ENDPOINT = "dashy-suno-proxy.kamleshprathampandey.workers.dev";
 
 let selectedGenre = "pop";
 let selectedDuration = "30";
@@ -1369,11 +1369,36 @@ function exportChat() {
   text += `         🗿 Export complete — DashyCore AI\n`;
   text += `═══════════════════════════════════════════════════════\n`;
   
-  const blob = new Blob([text], { type: 'text/plain' });
+  // FIX: Use Blob with proper encoding for mobile
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  
+  // FIX: For mobile, use FileSaver or create a download link properly
+  if (navigator.share) {
+    // Use Web Share API on mobile
+    const file = new File([text], `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`, { type: 'text/plain' });
+    navigator.share({
+      title: 'DashyCore Chat Export',
+      files: [file]
+    }).then(() => {
+      showSuccess("📤 Chat shared!");
+    }).catch(() => {
+      // Fallback to download
+      downloadFile(text);
+    });
+  } else {
+    downloadFile(text);
+  }
+}
+
+function downloadFile(text) {
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`;
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   showSuccess("📥 Chat exported successfully!");
 }
 
