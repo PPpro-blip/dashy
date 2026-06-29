@@ -59,6 +59,8 @@ body {
   height: 100vh;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
@@ -92,6 +94,41 @@ button, input, select, textarea {
 }
 .screen-container.active-screen {
   display: flex;
+}
+
+.message-text, .chat-text-input, .login-input-field, .sidebar-chat-item-title {
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+/* Subtle hover effects */
+button, .sidebar-chat-item, .suggestion-chip, .music-genre-card {
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover, .sidebar-chat-item:hover, .suggestion-chip:hover, .music-genre-card:hover {
+  transform: translateY(-1px);
+}
+
+/* Softer input fields */
+.login-input-field, .chat-text-input, .sidebar-search-input {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 10px;
+}
+
+.login-input-field:focus, .chat-text-input:focus, .sidebar-search-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.08);
+}
+
+/* Better button feel */
+.login-submit-btn, .sidebar-new-chat-btn, .chat-send-btn {
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.login-submit-btn:active, .sidebar-new-chat-btn:active, .chat-send-btn:active {
+  transform: scale(0.96);
 }
 
 /* TITLE SCREEN */
