@@ -38,6 +38,44 @@ const ADMINS = [
   "kamlesh062984@gmail.com"
 ];
 
+/* ==========================================================================
+   CHAT PERSISTENCE — Save & Load Chats
+   ========================================================================== */
+
+function saveChatsToStorage() {
+  try {
+    const data = {
+      chats: State.chats,
+      currentChatId: State.currentChatId,
+      currentModel: State.currentModel,
+      currentTheme: State.currentTheme
+    };
+    localStorage.setItem('dashy_chats_data', JSON.stringify(data));
+  } catch (e) {
+    console.warn('Could not save chats:', e);
+  }
+}
+
+function loadChatsFromStorage() {
+  try {
+    const stored = localStorage.getItem('dashy_chats_data');
+    if (!stored) return false;
+    
+    const data = JSON.parse(stored);
+    if (data.chats && data.chats.length > 0) {
+      State.chats = data.chats;
+      State.currentChatId = data.currentChatId || null;
+      if (data.currentModel) State.currentModel = data.currentModel;
+      if (data.currentTheme) State.currentTheme = data.currentTheme;
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.warn('Could not load chats:', e);
+    return false;
+  }
+}
+
 // ============================================================
 //  MESSAGE LIMITS — Per user type
 // ============================================================
@@ -349,6 +387,25 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   try {
+    // 🔥 CHECK FOR SAVED SESSION FIRST!
+    const session = localStorage.getItem('dashy_user_session');
+    if (session) {
+      try {
+        const user = JSON.parse(session);
+        // Auto-login the user
+        handleUserLogin({
+          email: user.email,
+          defaultName: user.defaultName,
+          avatarLetter: user.avatarLetter || user.defaultName[0].toUpperCase()
+        });
+        return; // ✅ Exit early, no need to show login
+      } catch (e) {
+        console.warn("Session parse error:", e);
+        localStorage.removeItem('dashy_user_session');
+      }
+    }
+
+    // If no session, show age verification
     const verified = localStorage.getItem("dashy_age_verified");
     if (!verified) {
       showScreen("screen-age");
@@ -364,6 +421,7 @@ function initApp() {
     showError("Init failed: " + err.message);
   }
 }
+
 window.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
 
@@ -449,6 +507,13 @@ function loginWithEmail() {
 }
 
 function handleUserLogin({ email, defaultName, avatarLetter }) {
+  // 🔥 SAVE SESSION!
+  localStorage.setItem('dashy_user_session', JSON.stringify({ 
+    email, 
+    defaultName, 
+    avatarLetter: avatarLetter || defaultName[0].toUpperCase() 
+  }));
+
   const savedUsername = localStorage.getItem("dashy_username_" + email);
   if (savedUsername) {
     State.currentUser = { name: savedUsername, email, avatar: savedUsername[0].toUpperCase() };
@@ -492,7 +557,17 @@ function resetUsername() {
 function enterChatApp() {
   showScreen("screen-chat");
   renderUserInSidebar();
-  startNewChat();
+  
+  // 🔥 Load saved chats!
+  const hasSavedChats = loadChatsFromStorage();
+  
+  if (hasSavedChats && State.chats.length > 0) {
+    renderSidebarChatList();
+    renderActiveChat();
+    updateMessageDisplay();
+  } else {
+    startNewChat();
+  }
 }
 
 function renderUserInSidebar() {
@@ -558,6 +633,7 @@ function clearAllChats() {
   if (!confirm("Delete all chats? This cannot be undone.")) return;
   State.chats = [];
   State.currentChatId = null;
+  localStorage.removeItem('dashy_chats_data');
   startNewChat();
 }
 
@@ -570,6 +646,7 @@ function startNewChat() {
   State.currentChatId = chat.id;
   renderSidebarChatList();
   renderActiveChat();
+  saveChatsToStorage();
 }
 
 function renderSidebarChatList() {
@@ -618,6 +695,7 @@ function switchToChat(id) {
   State.currentChatId = id;
   renderSidebarChatList();
   renderActiveChat();
+  saveChatsToStorage();
 }
 
 function getCurrentChat() {
@@ -756,7 +834,7 @@ function sendMessage(event) {
     };
     chat.messages.push(userMsg);
     renderMessageBubble(userMsg);
-
+    saveChatsToStorage(); 
     if (chat.messages.length === 1) {
       chat.title = text.length > 0
         ? (text.length > 30 ? text.substring(0, 30) + "..." : text)
@@ -878,6 +956,7 @@ async function handleTextGeneration(prompt, chat, attachments) {
     aiMsg.text = responseText;
     reRenderMessage(aiMsg);
     speakResponse(responseText);
+    saveChatsToStorage();
   } catch (err) {
     aiMsg.text = `⚠️ Error: ${err.message}`;
     textEl.innerHTML = formatMessageContent(aiMsg.text);
@@ -954,6 +1033,7 @@ function streamText(fullText, aiMsg, textEl) {
         aiMsg.text = fullText.substring(0, i);
         textEl.innerHTML = formatMessageContent(aiMsg.text);
         scrollToBottom();
+        saveChatsToStorage();
       } else {
         clearInterval(interval);
         textEl.innerHTML = formatMessageContent(fullText);
