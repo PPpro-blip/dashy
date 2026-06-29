@@ -1184,6 +1184,8 @@ button, input, select, textarea {
   overflow-y: auto;
   line-height: 1.6;
   min-height: 24px;
+  white-space: pre-wrap;  
+  word-wrap: break-word;
 }
 .chat-text-input::placeholder {
   color: var(--text-muted);
@@ -1790,6 +1792,56 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
     grid-template-columns: repeat(2, 1fr);
   }
   .music-duration-grid {
+    flex-wrap: wrap;
+  }
+}
+
+/* ============================================================
+   TABLET RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1024px) {
+  .chat-sidebar {
+    width: 240px;
+  }
+  .chat-topbar {
+    padding: 10px 16px 10px 50px;
+  }
+  .chat-messages-area {
+    padding: 20px 16px;
+  }
+  .chat-input-area {
+    padding: 10px 16px;
+  }
+  .chat-topbar-right {
+    gap: 6px;
+  }
+  .chat-model-select, .chat-theme-select, .chat-voice-select {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    max-width: 120px;
+  }
+  .empty-state-greeting {
+    font-size: 1.8rem;
+  }
+  .music-genre-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .login-card {
+    max-width: 90%;
+    padding: 30px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-sidebar {
+    width: 85%;
+    max-width: 320px;
+  }
+  .music-genre-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chat-topbar-right {
     flex-wrap: wrap;
   }
 }
