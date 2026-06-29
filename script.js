@@ -387,31 +387,42 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   try {
-    // Always show the title screen first
+    // STEP 1: ALWAYS show the title screen FIRST
     showScreen("screen-title");
-    
-    // Check if user has a saved session
+
+    // STEP 2: Force title screen to be visible
+    const titleScreen = document.getElementById("screen-title");
+    if (titleScreen) {
+      titleScreen.style.display = "flex";
+      titleScreen.style.opacity = "1";
+    }
+
+    // STEP 3: Check for saved session
     const session = localStorage.getItem('dashy_user_session');
+
     if (session) {
-      // Auto-login after the title screen animation
+      // Auto-login after the title animation (2.5 seconds)
       setTimeout(() => {
         try {
           const user = JSON.parse(session);
-          handleUserLogin({
-            email: user.email,
-            defaultName: user.defaultName,
-            avatarLetter: user.avatarLetter || user.defaultName[0].toUpperCase()
-          });
+          // Don't call handleUserLogin directly — go through the flow
+          const savedUsername = localStorage.getItem("dashy_username_" + user.email);
+          if (savedUsername) {
+            State.currentUser = { name: savedUsername, email: user.email, avatar: savedUsername[0].toUpperCase() };
+          } else {
+            State.currentUser = { name: user.defaultName, email: user.email, avatar: user.avatarLetter || user.defaultName[0].toUpperCase() };
+          }
+          enterChatApp();
         } catch (e) {
-          console.warn("Session parse error:", e);
+          console.warn("Session error:", e);
           localStorage.removeItem('dashy_user_session');
-          goToLogin(); // Fallback to login
+          goToLogin();
         }
-      }, 2500); // Wait for title animation
+      }, 2500);
       return;
     }
 
-    // If no session, show age verification after title
+    // No session → show age or login after title
     setTimeout(() => {
       const verified = localStorage.getItem("dashy_age_verified");
       if (!verified) {
@@ -420,7 +431,7 @@ function initApp() {
         goToLogin();
       }
     }, 2500);
-    
+
   } catch (err) {
     showError("Init failed: " + err.message);
   }
