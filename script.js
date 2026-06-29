@@ -171,7 +171,7 @@ function checkMessageLimit() {
    ========================================================================== */
 
 // Your Cloudflare Worker URL for Suno (Hides API Key!)
-const SUNO_ENDPOINT = "dashy-suno-proxy.kamleshprathampandey.workers.dev";
+const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev";
 
 let selectedGenre = "pop";
 let selectedDuration = "30";
