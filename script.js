@@ -387,50 +387,47 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   try {
-    // STEP 1: ALWAYS show the title screen FIRST
+    // 🔥 ALWAYS SHOW TITLE SCREEN FIRST
     showScreen("screen-title");
-
-    // STEP 2: Force title screen to be visible
+    
+    // 🔥 FORCE TITLE SCREEN TO BE VISIBLE
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
       titleScreen.style.display = "flex";
       titleScreen.style.opacity = "1";
+      titleScreen.style.visibility = "visible";
     }
 
-    // STEP 3: Check for saved session
-    const session = localStorage.getItem('dashy_user_session');
-
-    if (session) {
-      // Auto-login after the title animation (2.5 seconds)
-      setTimeout(() => {
+    // 🔥 CHECK SESSION AFTER 2.5 SECONDS
+    setTimeout(() => {
+      const session = localStorage.getItem('dashy_user_session');
+      
+      if (session) {
         try {
           const user = JSON.parse(session);
-          // Don't call handleUserLogin directly — go through the flow
           const savedUsername = localStorage.getItem("dashy_username_" + user.email);
+          
           if (savedUsername) {
             State.currentUser = { name: savedUsername, email: user.email, avatar: savedUsername[0].toUpperCase() };
           } else {
             State.currentUser = { name: user.defaultName, email: user.email, avatar: user.avatarLetter || user.defaultName[0].toUpperCase() };
           }
-          enterChatApp();
+          
+          enterChatApp(); // ✅ Goes to chat after title
         } catch (e) {
           console.warn("Session error:", e);
           localStorage.removeItem('dashy_user_session');
           goToLogin();
         }
-      }, 2500);
-      return;
-    }
-
-    // No session → show age or login after title
-    setTimeout(() => {
-      const verified = localStorage.getItem("dashy_age_verified");
-      if (!verified) {
-        showScreen("screen-age");
       } else {
-        goToLogin();
+        const verified = localStorage.getItem("dashy_age_verified");
+        if (!verified) {
+          showScreen("screen-age");
+        } else {
+          goToLogin();
+        }
       }
-    }, 2500);
+    }, 2500); // 2.5 second delay
 
   } catch (err) {
     showError("Init failed: " + err.message);
