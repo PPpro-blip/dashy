@@ -240,11 +240,7 @@
     </div>
 
     <div class="sidebar-footer">
-      <!-- NEW: Pause Toggle Button -->
-      <button class="sidebar-utility-btn" id="pause-toggle-btn" onclick="togglePause()">
-        <span class="util-icon">⏸️</span> Pause Responses
-      </button>
-
+    
       <!-- NEW: Export Chat Button -->
       <button class="sidebar-utility-btn" onclick="exportChat()">
         <span class="util-icon">📥</span> Export Chat
@@ -357,6 +353,11 @@
 <button type="button" class="chat-input-icon-btn" title="Generate Music" onclick="showMusicModal()">
   🎵
 </button>
+
+  <!-- ✅ ADD PAUSE BUTTON HERE -->
+  <button type="button" class="chat-input-icon-btn" id="pause-toggle-btn" onclick="togglePause()" title="Pause responses">
+    ⏸️
+  </button>
           
           <input type="text" id="chat-text-input" class="chat-text-input" placeholder="Message DashyCore..." autocomplete="off">
           <button type="submit" class="chat-send-btn" id="chat-send-btn" title="Send">
