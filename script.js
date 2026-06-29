@@ -387,15 +387,14 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   console.log("🚀 INITAPP STARTED");
-  
+
   try {
-    // 🔥 HIDE EVERYTHING FIRST
+    // 1️⃣ FORCE TITLE SCREEN TO APPEAR
     document.querySelectorAll(".screen-container").forEach(s => {
       s.style.display = "none";
       s.classList.remove("active-screen");
     });
-    
-    // 🔥 FORCE TITLE SCREEN
+
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
       console.log("✅ Title screen found!");
@@ -413,45 +412,41 @@ function initApp() {
     } else {
       console.error("❌ Title screen NOT found!");
     }
-    
-    // 🔥 AFTER 3 SECONDS, CHECK SESSION
+
+    // 2️⃣ WAIT 4 SECONDS (so you actually see it)
     setTimeout(() => {
-      console.log("⏰ 3 seconds passed, checking session...");
-      
+      console.log("⏰ 4 seconds passed, checking session...");
+
       const session = localStorage.getItem('dashy_user_session');
       console.log("📦 Session:", session);
-      
+
       if (session) {
         try {
           const user = JSON.parse(session);
-          console.log("👤 User found:", user);
-          
           const savedUsername = localStorage.getItem("dashy_username_" + user.email);
-          console.log("📛 Saved username:", savedUsername);
-          
+
           if (savedUsername) {
-            State.currentUser = { 
-              name: savedUsername, 
-              email: user.email, 
-              avatar: savedUsername[0].toUpperCase() 
+            State.currentUser = {
+              name: savedUsername,
+              email: user.email,
+              avatar: savedUsername[0].toUpperCase()
             };
           } else {
-            State.currentUser = { 
-              name: user.defaultName, 
-              email: user.email, 
-              avatar: user.avatarLetter || user.defaultName[0].toUpperCase() 
+            State.currentUser = {
+              name: user.defaultName,
+              email: user.email,
+              avatar: user.avatarLetter || user.defaultName[0].toUpperCase()
             };
           }
-          
+
           console.log("✅ Auto-logging in...");
           enterChatApp();
         } catch (e) {
-          console.error("❌ Session error:", e);
+          console.warn("Session error:", e);
           localStorage.removeItem('dashy_user_session');
           goToLogin();
         }
       } else {
-        console.log("❌ No session, showing login");
         const verified = localStorage.getItem("dashy_age_verified");
         if (!verified) {
           showScreen("screen-age");
@@ -459,8 +454,8 @@ function initApp() {
           goToLogin();
         }
       }
-    }, 3000);
-    
+    }, 4000); // ⬅️ 4 SECONDS
+
   } catch (err) {
     console.error("❌ Init error:", err);
     showError("Init failed: " + err.message);
