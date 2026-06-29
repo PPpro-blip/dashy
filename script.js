@@ -387,7 +387,7 @@ function closeAllModals() {
    ========================================================================== */
 function initApp() {
   console.log("🚀 INITAPP STARTED");
-
+  
   try {
     // 1️⃣ FORCE TITLE SCREEN TO APPEAR
     document.querySelectorAll(".screen-container").forEach(s => {
@@ -413,7 +413,7 @@ function initApp() {
       console.error("❌ Title screen NOT found!");
     }
 
-    // 2️⃣ WAIT 4 SECONDS (so you actually see it)
+    // 2️⃣ WAIT 4 SECONDS, THEN CHECK SESSION
     setTimeout(() => {
       console.log("⏰ 4 seconds passed, checking session...");
 
@@ -440,7 +440,20 @@ function initApp() {
           }
 
           console.log("✅ Auto-logging in...");
-          enterChatApp();
+          
+          // 🔥 LOAD CHATS AFTER LOGIN!
+          const hasSavedChats = loadChatsFromStorage();
+          
+          showScreen("screen-chat");
+          renderUserInSidebar();
+          
+          if (hasSavedChats && State.chats.length > 0) {
+            renderSidebarChatList();
+            renderActiveChat();
+          } else {
+            startNewChat();
+          }
+          
         } catch (e) {
           console.warn("Session error:", e);
           localStorage.removeItem('dashy_user_session');
@@ -454,7 +467,7 @@ function initApp() {
           goToLogin();
         }
       }
-    }, 4000); // ⬅️ 4 SECONDS
+    }, 4000);
 
   } catch (err) {
     console.error("❌ Init error:", err);
