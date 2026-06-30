@@ -1504,3 +1504,5 @@ function updateMessageDisplay() {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
 }
+
+window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
