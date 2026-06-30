@@ -167,7 +167,6 @@ async function generateMusicFromModal() {
   const resultDiv = document.getElementById('music-result');
   const btn = document.getElementById('music-generate-btn');
   
-  // Build prompt
   let prompt = customPrompt;
   if (!prompt) {
     const genrePrompts = {
@@ -181,7 +180,6 @@ async function generateMusicFromModal() {
     prompt = genrePrompts[selectedGenre] || selectedGenre;
   }
   
-  // 🎤 ADD VOCAL STYLE TO PROMPT
   if (selectedVocal === "instrumental") {
     prompt = `An instrumental track without vocals: ${prompt}`;
   }
@@ -189,7 +187,6 @@ async function generateMusicFromModal() {
   const durationMap = { '15': 'a short 15-second', '30': 'a 30-second', '60': 'a 1-minute' };
   prompt = `Generate ${durationMap[selectedDuration]} ${prompt}`;
   
-  // 🔥 SHOW LOADING SPINNER
   resultDiv.innerHTML = `
     <div style="display: flex; flex-direction: column; align-items: center; padding: 30px 0;">
       <div class="music-spinner"></div>
@@ -201,7 +198,6 @@ async function generateMusicFromModal() {
     </div>
   `;
   
-  // 🔥 PROGRESS BAR ANIMATION
   let progress = 0;
   const progressInterval = setInterval(() => {
     progress += Math.random() * 5;
@@ -219,6 +215,58 @@ async function generateMusicFromModal() {
     
     btn.disabled = false;
     btn.textContent = "🎵 Generate Music";
+    
+    if (data && data.success && data.data && data.data.length > 0) {
+      const song = data.data[0];
+      
+      startNewChat();
+      const chat = getCurrentChat();
+      chat.title = `🎵 ${song.title || "Generated Song"}`;
+      renderSidebarChatList();
+      document.getElementById("chat-current-title").textContent = chat.title;
+      
+      const aiMsg = {
+        id: generateMsgId(),
+        author: "DashyCore",
+        role: "ai",
+        text: `🎵 Here's your song **"${song.title || "Untitled"}"**!`,
+        avatar: "D",
+        modelUsed: "🎵 Music Generator",
+        songData: song
+      };
+      chat.messages.push(aiMsg);
+      renderMessageBubble(aiMsg);
+      
+      resultDiv.innerHTML = `
+        <div style="padding: 12px; background: var(--bg-card); border-radius: var(--radius-md); margin-top: 12px;">
+          <p><strong>🎵 ${song.title || "Untitled"}</strong></p>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">
+            ${song.lyric ? song.lyric.substring(0, 150) + (song.lyric.length > 150 ? "..." : "") : "🎶 Instrumental"}
+          </p>
+          <audio controls style="width: 100%; margin-top: 10px; border-radius: 8px;">
+            <source src="${song.audio_url}" type="audio/mpeg">
+            Your browser doesn't support audio.
+          </audio>
+          <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+            <button class="download-btn" onclick="window.open('${song.audio_url}')">📥 Download MP3</button>
+            <button class="report-btn-cancel" onclick="document.querySelector('#music-result audio').play()">▶️ Play</button>
+          </div>
+          <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">📩 Song also appears in your chat!</p>
+        </div>
+      `;
+      
+      saveChatsToStorage();
+      
+    } else {
+      resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Failed: ${data?.message || "Unknown error"}</p>`;
+    }
+  } catch (error) {
+    clearInterval(progressInterval);
+    resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Error: ${error.message}</p>`;
+    btn.disabled = false;
+    btn.textContent = "🎵 Generate Music";
+  }
+}  // ← THIS } CLOSES THE FUNCTION
     
     if (data && data.success && data.data && data.data.length > 0) {
       const song = data.data[0];
@@ -1504,5 +1552,5 @@ function updateMessageDisplay() {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
 }
-
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
+
