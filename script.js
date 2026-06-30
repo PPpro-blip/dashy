@@ -130,6 +130,7 @@ function checkMessageLimit() {
 const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev/";
 let selectedGenre = "pop";
 let selectedDuration = "30";
+let selectedVocal = "with-vocals";
 
 function selectGenre(genre) {
   selectedGenre = genre;
@@ -148,6 +149,17 @@ function selectDuration(duration) {
   document.getElementById('music-duration-display').textContent = duration;
 }
 
+function selectVocal(vocal) {
+  selectedVocal = vocal;
+  document.querySelectorAll('[data-vocal]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.vocal === vocal);
+  });
+  const vocalDisplay = document.getElementById('music-vocal-display');
+  if (vocalDisplay) {
+    vocalDisplay.textContent = vocal === 'with-vocals' ? 'With Vocals' : 'Instrumental';
+  }
+}
+
 function showMusicModal() { openModal('modal-music'); }
 
 async function generateMusicFromModal() {
@@ -158,14 +170,21 @@ async function generateMusicFromModal() {
   // Build prompt
   let prompt = customPrompt;
   if (!prompt) {
-  const genrePrompts = {
-  'pop': 'A catchy pop song with male vocals, emotional lyrics, and an upbeat instrumental',
-  'jazz': 'A smooth jazz song with female vocals, romantic lyrics, and a saxophone solo',
-  'lo-fi': 'A chill lo-fi song with soft vocals, nostalgic lyrics about memories, and a mellow beat',
-  'rock': 'An energetic rock song with powerful male vocals, intense lyrics, and electric guitar',
-  'classical': 'An orchestral piece with choir vocals, epic lyrics, and full symphony',
-  'hip-hop': 'A hip-hop track with rhythmic rap vocals, expressive lyrics, and a groovy bass'
-};
+    const genrePrompts = {
+      'pop': 'A catchy pop song with male vocals, emotional lyrics, and an upbeat instrumental',
+      'jazz': 'A smooth jazz song with female vocals, romantic lyrics, and a saxophone solo',
+      'lo-fi': 'A chill lo-fi song with soft vocals, nostalgic lyrics about memories, and a mellow beat',
+      'rock': 'An energetic rock song with powerful male vocals, intense lyrics, and electric guitar',
+      'classical': 'An orchestral piece with choir vocals, epic lyrics, and full symphony',
+      'hip-hop': 'A hip-hop track with rhythmic rap vocals, expressive lyrics, and a groovy bass'
+    };
+    prompt = genrePrompts[selectedGenre] || selectedGenre;
+  }
+  
+  // 🎤 ADD VOCAL STYLE TO PROMPT
+  if (selectedVocal === "instrumental") {
+    prompt = `An instrumental track without vocals: ${prompt}`;
+  }
   
   const durationMap = { '15': 'a short 15-second', '30': 'a 30-second', '60': 'a 1-minute' };
   prompt = `Generate ${durationMap[selectedDuration]} ${prompt}`;
