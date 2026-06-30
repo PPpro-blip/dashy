@@ -1,37 +1,41 @@
 "use strict";
 
+// 🗿 DASHYCORE — YOUR AI WORKSPACE COMPANION 🔥
+// 💀 BUILT BY PRATHAM PANDEY (AGE 12) — LEGEND IN THE MAKING 🏆
+// 🚀 IF YOU CAN READ THIS... THE AI IS BREATHING 😭
+
 const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.dev/";
 
 /* ==========================================================================
-   STATE
+   🧠 STATE — WHERE THE MAGIC HAPPENS
    ========================================================================== */
 const State = {
-  currentUser: null,
-  currentChatId: null,
-  chats: [],
-  currentModel: "dash-allrounder",
-  currentTheme: "dark",
-  isResponding: false,
-  pendingAttachments: [],
-  pendingReportMsgId: null
+  currentUser: null,           // 👤 Who's this legend?
+  currentChatId: null,         // 💬 Which chat we vibin' in
+  chats: [],                   // 📚 All the wisdom
+  currentModel: "dash-allrounder", // 🤖 Which DASH model we rockin'
+  currentTheme: "dark",        // 🌙 Dark mode = superior
+  isResponding: false,         // ⏳ Wait for it...
+  pendingAttachments: [],      // 📎 Files chillin'
+  pendingReportMsgId: null     // 🚩 Someone snitched
 };
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
-// 👑 ADMIN LIST
+// 👑 ADMIN LIST — Unlimited messages, respect the crown!
 const ADMINS = [
-  "shubhampandey2012@gmail.com",
-  "23maths20@gmail.com",
-  "shristi.neoskillacademy@gmail.com",
-  "yashrajskilldeveloper@gmail.com",
-  "kamleshprathampandey@gmail.com",
-  "pratham.neoskill@gmail.com",
-  "neemapandey737@gmail.com",
-  "kamlesh062984@gmail.com"
+  "shubhampandey2012@gmail.com",  // 🧠 The Mentor
+  "23maths20@gmail.com",           // 📐 Maths Ma'am
+  "shristi.neoskillacademy@gmail.com", // 💡 Shristi Ma'am
+  "yashrajskilldeveloper@gmail.com", // 🚀 Yashraj Bhai
+  "kamleshprathampandey@gmail.com", // 👑 The King himself
+  "pratham.neoskill@gmail.com",     // 🔥 Pratham's alt
+  "neemapandey737@gmail.com",       // ❤️ Mom
+  "kamlesh062984@gmail.com"         // 👨 Dad
 ];
 
 /* ==========================================================================
-   CHAT PERSISTENCE — KEEP THIS!
+   💾 CHAT PERSISTENCE — NO MORE LOST CHATS! 😭
    ========================================================================== */
 function saveChatsToStorage() {
   try {
@@ -67,18 +71,18 @@ function loadChatsFromStorage() {
 }
 
 // ============================================================
-//  MESSAGE LIMITS
+//  📨 MESSAGE LIMITS — DON'T SPAM, BRUH 😤
 // ============================================================
 const MESSAGE_LIMITS = {
-  "guest": 20,
-  "user@gmail.com": 20,
-  "default": 100,
+  "guest": 20,              // 🚶 Guests get 20
+  "user@gmail.com": 20,     // 🥸 Fake Google users get 20
+  "default": 100,           // 🧑 Regular users get 100
 };
 
 function getUserLimit() {
   const user = State.currentUser;
   if (!user) return 5;
-  if (ADMINS.includes(user.email)) return Infinity;
+  if (ADMINS.includes(user.email)) return Infinity; // 👑 UNLIMITED POWER
   if (user.email === "user@gmail.com") return MESSAGE_LIMITS["user@gmail.com"];
   if (user.email === "guest@dashy.ai") return MESSAGE_LIMITS.guest;
   return MESSAGE_LIMITS.default;
@@ -87,7 +91,7 @@ function getUserLimit() {
 function getUserMessageCount() {
   const user = State.currentUser;
   if (!user) return 0;
-  if (ADMINS.includes(user.email)) return 0;
+  if (ADMINS.includes(user.email)) return 0; // 👑 No counting for bosses
   const key = `dashy_messages_${user.email}`;
   const count = parseInt(localStorage.getItem(key) || "0");
   return count;
@@ -96,7 +100,7 @@ function getUserMessageCount() {
 function incrementUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
-  if (ADMINS.includes(user.email)) return;
+  if (ADMINS.includes(user.email)) return; // 👑 Admins don't get counted
   const key = `dashy_messages_${user.email}`;
   const current = parseInt(localStorage.getItem(key) || "0");
   localStorage.setItem(key, String(current + 1));
@@ -121,7 +125,7 @@ function checkMessageLimit() {
 }
 
 // ============================================================
-//  SUNO MUSIC
+//  🎵 SUNO MUSIC — MAKE SOME NOISE! 🎶
 // ============================================================
 const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev/";
 let selectedGenre = "pop";
@@ -214,14 +218,14 @@ async function generateMusicAPI(prompt) {
 }
 
 // ============================================================
-//  VOICE + PAUSE + EXPORT SETTINGS
+//  🎤 VOICE + ⏸️ PAUSE + 📥 EXPORT SETTINGS
 // ============================================================
 let isPaused = false;
 let selectedVoice = "default";
 let isVoiceMode = false;
 
 /* ==========================================================================
-   DASH MODELS
+   🤖 DASH MODELS — 3 BEASTS!
    ========================================================================== */
 const DASH_MODELS = {
   "dash-complexity": {
@@ -248,7 +252,7 @@ function getDashConfig(modelKey) {
 function isApiKeyConfigured() { return true; }
 
 /* ==========================================================================
-   UTILITIES
+   🛠️ UTILITIES — THE TOOLBOX
    ========================================================================== */
 function scrollToBottom() {
   const area = document.getElementById("chat-messages-area");
@@ -269,7 +273,7 @@ function useSuggestion(text) {
 }
 
 /* ==========================================================================
-   SCREEN & MODAL
+   📺 SCREEN & MODAL — SHOW ME THE MONEY!
    ========================================================================== */
 function showScreen(id) {
   document.querySelectorAll(".screen-container").forEach(s => {
@@ -304,10 +308,10 @@ function closeAllModals() {
 }
 
 /* ==========================================================================
-   APP BOOT — NO AUTO-LOGIN! JUST CLASSIC!
+   🚀 APP BOOT — LET'S GO!
    ========================================================================== */
 function initApp() {
-  console.log("🚀 INITAPP STARTED");
+  console.log("🚀 INITAPP STARTED — HERE WE GO!");
   try {
     showScreen("screen-title");
     const titleScreen = document.getElementById("screen-title");
@@ -329,7 +333,7 @@ window.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
 
 /* ==========================================================================
-   AGE VERIFICATION
+   🧒 AGE VERIFICATION — ARE YOU 16+? 🧐
    ========================================================================== */
 function verifyAge() {
   const input = document.getElementById("dob-input");
@@ -358,7 +362,7 @@ function verifyAge() {
 }
 
 /* ==========================================================================
-   LOGIN
+   🔐 LOGIN — COME ON IN!
    ========================================================================== */
 function loginWithGoogle() {
   showToast(
@@ -483,7 +487,7 @@ function logout() {
 }
 
 /* ==========================================================================
-   SIDEBAR
+   📂 SIDEBAR — NAVIGATION KING
    ========================================================================== */
 function toggleSidebar() {
   const sidebar = document.getElementById("chat-sidebar");
@@ -509,7 +513,7 @@ function clearAllChats() {
 }
 
 /* ==========================================================================
-   CHAT MANAGEMENT
+   💬 CHAT MANAGEMENT — THE HEART OF DASHYCORE
    ========================================================================== */
 function startNewChat() {
   const chat = { id: "chat_" + Date.now(), title: "New Chat", messages: [] };
@@ -589,7 +593,7 @@ function renderActiveChat() {
 }
 
 /* ==========================================================================
-   ATTACHMENTS
+   📎 ATTACHMENTS — FILE DROP ZONE
    ========================================================================== */
 function handleFileAttachment(event) {
   const files = Array.from(event.target.files || []);
@@ -658,7 +662,7 @@ window.addEventListener("drop", (e) => {
 });
 
 /* ==========================================================================
-   SEND MESSAGE
+   💬 SEND MESSAGE — THE MAIN EVENT
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', function() {
   const input = document.getElementById('chat-text-input');
@@ -720,7 +724,7 @@ function sendMessage(event) {
 }
 
 /* ==========================================================================
-   SPEEDGEN — IMAGE GENERATION
+   🎨 SPEEDGEN — IMAGE GENERATION
    ========================================================================== */
 function handleImageGeneration(prompt, chat) {
   State.isResponding = true;
@@ -773,7 +777,7 @@ function handleImageGeneration(prompt, chat) {
 }
 
 /* ==========================================================================
-   TEXT GENERATION
+   🤖 TEXT GENERATION — THE BRAIN
    ========================================================================== */
 async function handleTextGeneration(prompt, chat, attachments) {
   State.isResponding = true;
@@ -812,7 +816,7 @@ async function handleTextGeneration(prompt, chat, attachments) {
 }
 
 /* ==========================================================================
-   GROQ API CALLER
+   🔌 GROQ API CALLER — THE ENGINE
    ========================================================================== */
 async function callGroqAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
@@ -854,7 +858,7 @@ async function callGroqAPI(prompt, chat, attachments) {
 }
 
 /* ==========================================================================
-   STREAMING + FORMATTING
+   🎬 STREAMING + FORMATTING — MAKE IT PRETTY
    ========================================================================== */
 function streamText(fullText, aiMsg, textEl) {
   return new Promise(resolve => {
@@ -918,7 +922,7 @@ function copyCodeBlock(id, btn) {
 }
 
 /* ==========================================================================
-   RENDER MESSAGE BUBBLE
+   💬 RENDER MESSAGE BUBBLE — MAKE IT LOOK GOOD
    ========================================================================== */
 function renderMessageBubble(msg) {
   const area = document.getElementById("chat-messages-area");
@@ -1011,7 +1015,7 @@ function buildMessageBubbleNode(msg) {
 }
 
 /* ==========================================================================
-   ACTION BAR
+   ⚡ ACTION BAR — COPY, LIKE, REPORT, REGENERATE
    ========================================================================== */
 function buildActionBar(msg) {
   if (msg.imageLoading) return null;
@@ -1072,7 +1076,7 @@ function makeActionBtn(iconText, tooltip, onClick, extraClass = "") {
 }
 
 /* ==========================================================================
-   FEEDBACK STORAGE
+   📊 FEEDBACK STORAGE
    ========================================================================== */
 function saveFeedback(msg, type) {
   try {
@@ -1116,7 +1120,7 @@ function saveReport(msg, reason, details) {
 }
 
 /* ==========================================================================
-   GOOGLE SHEETS FEEDBACK
+   📤 GOOGLE SHEETS FEEDBACK
    ========================================================================== */
 async function sendFeedbackToSheets(type, message, user) {
   try {
@@ -1132,7 +1136,7 @@ async function sendFeedbackToSheets(type, message, user) {
 }
 
 /* ==========================================================================
-   REPORT
+   🚩 REPORT
    ========================================================================== */
 function openReportModal(msgId) {
   State.pendingReportMsgId = msgId;
@@ -1164,7 +1168,7 @@ function submitReport() {
 }
 
 /* ==========================================================================
-   REGENERATE
+   🔄 REGENERATE
    ========================================================================== */
 async function regenerateResponse(msg) {
   if (State.isResponding) return showError("Wait for current response to finish.");
@@ -1184,7 +1188,7 @@ async function regenerateResponse(msg) {
 }
 
 /* ==========================================================================
-   MODEL / THEME
+   🎨 MODEL / THEME
    ========================================================================== */
 function changeModel(v) { State.currentModel = v; }
 function changeTheme(v) {
@@ -1206,7 +1210,7 @@ function changeTheme(v) {
 }
 
 /* ==========================================================================
-   EXPORT CHAT
+   📥 EXPORT CHAT
    ========================================================================== */
 function exportChat() {
   const chat = getCurrentChat();
@@ -1249,7 +1253,7 @@ function downloadFile(text) {
 }
 
 /* ==========================================================================
-   PAUSE RESPONSE TOGGLE
+   ⏸️ PAUSE RESPONSE TOGGLE
    ========================================================================== */
 function togglePause() {
   isPaused = !isPaused;
@@ -1270,7 +1274,7 @@ function togglePause() {
 }
 
 /* ==========================================================================
-   TEXT-TO-SPEECH — 15 VOICES!
+   🎤 TEXT-TO-SPEECH — 15 VOICES!
    ========================================================================== */
 let availableVoices = [];
 window.speechSynthesis.onvoiceschanged = () => {
@@ -1328,7 +1332,7 @@ window.speechSynthesis.onvoiceschanged = () => { console.log('🔊 Voices loaded
 setTimeout(() => { window.speechSynthesis.getVoices(); }, 1000);
 
 /* ==========================================================================
-   TOASTS
+   🍞 TOASTS — BREAD OF THE APP
    ========================================================================== */
 function showError(msg) {
   console.log("[Dashy ERROR]", msg);
@@ -1358,7 +1362,7 @@ function showToast(msg, type = "error") {
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
 
 /* ==========================================================================
-   USERNAME SYSTEM — Unique usernames!
+   👤 USERNAME SYSTEM — UNIQUE NAMES!
    ========================================================================== */
 function isUsernameTaken(username) {
   const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
@@ -1372,7 +1376,7 @@ function registerUsername(username) {
 }
 
 /* ==========================================================================
-   MESSAGE LIMIT DISPLAY
+   📊 MESSAGE LIMIT DISPLAY
    ========================================================================== */
 function updateMessageDisplay() {
   const user = State.currentUser;
