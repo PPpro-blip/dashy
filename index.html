@@ -148,6 +148,13 @@
       <div class="login-email-form">
         <label class="login-input-label">Email address</label>
         <input type="email" id="login-email-input" class="login-input-field" placeholder="you@example.com">
+          <label class="login-input-label">Password</label>
+        <div style="position: relative; display: flex; align-items: center;">
+        <input type="password" id="login-password-input" class="login-input-field" placeholder="Enter your password" style="flex: 1; padding-right: 45px;">
+        <button type="button" id="toggle-password-btn" onclick="togglePasswordVisibility()" style="position: absolute; right: 12px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;">
+        👁️
+        </button>
+      </div>
         <label class="login-input-label">Password</label>
         <input type="password" id="login-password-input" class="login-input-field" placeholder="Enter your password">
         <button class="login-submit-btn" onclick="loginWithEmail()">Sign In</button>
