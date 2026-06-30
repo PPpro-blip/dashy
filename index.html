@@ -18,15 +18,12 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
-   <!-- ============================================================
-       SEO META TAGS
-       ============================================================ -->
+  <!-- SEO META TAGS -->
   <meta name="description" content="DashyCore AI — Free AI Assistant with 3 custom models: DASH-Complexity, DASH-AllRounder, DASH-SuperFast. Built by Pratham Pandey.">
   <meta name="keywords" content="AI assistant, free AI, chatbot, Groq AI, DashyCore, AI workspace, coding assistant, Pratham Pandey">
   <meta name="robots" content="index, follow">
   <meta name="author" content="Pratham Pandey">
 
-  <!-- Open Graph (for social media sharing) -->
   <meta property="og:title" content="DashyCore AI — Your Free AI Workspace">
   <meta property="og:description" content="Free AI assistant with 3 custom models. Chat, generate images, and more! Built by Pratham Pandey.">
   <meta property="og:image" content="https://pppro-blip.github.io/dashy/icon-512.png">
@@ -34,7 +31,6 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="DashyCore AI">
 
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="DashyCore AI — Your Free AI Workspace">
   <meta name="twitter:description" content="Free AI assistant with 3 custom models. Built by Pratham Pandey.">
@@ -241,7 +237,7 @@
 
     <div class="sidebar-footer">
     
-      <!-- NEW: Export Chat Button -->
+      <!-- Export Chat Button -->
       <button class="sidebar-utility-btn" onclick="exportChat()">
         <span class="util-icon">📥</span> Export Chat
       </button>
@@ -280,12 +276,12 @@
           <option value="amber">Amber</option>
         </select>
 
-        <!-- NEW: Voice Toggle Button -->
+        <!-- Voice Toggle Button -->
         <button class="chat-input-icon-btn" id="voice-toggle-btn" title="Toggle voice" onclick="toggleVoice()">
           🔊
         </button>
 
-        <!-- NEW: Voice Selector Dropdown -->
+        <!-- Voice Selector Dropdown -->
         <select id="voice-select" class="chat-voice-select" onchange="changeVoice(this.value)">
   <option value="default">🔊 Select Voice</option>
   <option value="Daniel">🇬🇧 British Male</option>
@@ -342,19 +338,19 @@
           </button>
           <input type="file" id="file-picker-input" multiple accept="image/*,.pdf,.txt,.md,.json,.csv" style="display:none" onchange="handleFileAttachment(event)">
           
-          <!-- 🎙️ VOICE INPUT BUTTON -->
+          <!-- VOICE INPUT BUTTON -->
           <button type="button" class="chat-input-icon-btn" id="voice-btn" title="Voice input" onclick="toggleVoiceInput()">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <path d="M12,1A3,3 0 0,1 15,4V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V4A3,3 0 0,1 12,1M19,11A7,7 0 0,1 13,17.75V21H11V17.75A7,7 0 0,1 5,11H7A5,5 0 0,0 17,11H19Z"/>
             </svg>
           </button>
 
-          <!-- 🎵 MUSIC GENERATION BUTTON -->
+          <!-- MUSIC GENERATION BUTTON -->
 <button type="button" class="chat-input-icon-btn" title="Generate Music" onclick="showMusicModal()">
   🎵
 </button>
 
-  <!-- ✅ ADD PAUSE BUTTON HERE -->
+  <!-- PAUSE BUTTON -->
   <button type="button" class="chat-input-icon-btn" id="pause-toggle-btn" onclick="togglePause()" title="Pause responses">
     ⏸️
   </button>
@@ -428,7 +424,7 @@
         </div>
       </div>
     </div>
-<!-- 🎵 MUSIC GENERATION MODAL -->
+<!-- MUSIC GENERATION MODAL -->
 <div id="modal-music" class="modal-card" onclick="event.stopPropagation()">
   <div class="modal-header">
     <h2 class="modal-title">🎵 Generate Music</h2>
@@ -508,5 +504,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-
