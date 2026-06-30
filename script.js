@@ -361,7 +361,10 @@ function showScreen(id) {
   }
 }
 
-function goToLogin() { showScreen("screen-login"); }
+function goToLogin() { 
+  showScreen("screen-login");
+  autoFillLogin();
+}
 
 function openModal(id) {
   document.getElementById("modal-overlay").classList.add("show");
@@ -382,6 +385,45 @@ function closeAllModals() {
 }
 
 /* ==========================================================================
+   PASSWORD EYE TOGGLE
+   ========================================================================== */
+
+function togglePasswordVisibility() {
+  const input = document.getElementById("login-password-input");
+  const btn = document.getElementById("toggle-password-btn");
+  
+  if (input.type === "password") {
+    input.type = "text";
+    btn.textContent = "🙈";
+    btn.style.color = "var(--accent-primary)";
+  } else {
+    input.type = "password";
+    btn.textContent = "👁️";
+    btn.style.color = "var(--text-muted)";
+  }
+}
+
+/* ==========================================================================
+   AUTO-FILL LOGIN
+   ========================================================================== */
+
+function autoFillLogin() {
+  const savedEmail = localStorage.getItem('dashy_saved_email');
+  const savedPassword = localStorage.getItem('dashy_saved_password');
+  
+  const emailInput = document.getElementById("login-email-input");
+  const passInput = document.getElementById("login-password-input");
+  
+  if (savedEmail && emailInput) {
+    emailInput.value = savedEmail;
+  }
+  
+  if (savedPassword && passInput) {
+    passInput.value = savedPassword;
+  }
+}
+
+/* ==========================================================================
    APP BOOT
    ========================================================================== */
 function initApp() {
@@ -398,51 +440,11 @@ function initApp() {
     }
 
     setTimeout(() => {
-      console.log("⏰ Checking session...");
-      
-      const session = localStorage.getItem('dashy_user_session');
-      console.log("📦 Session:", session);
-      
-      if (session) {
-        try {
-          const user = JSON.parse(session);
-          console.log("👤 User found:", user);
-          
-          const savedUsername = localStorage.getItem("dashy_username_" + user.email);
-          console.log("📛 Saved username:", savedUsername);
-          
-          if (savedUsername) {
-            State.currentUser = { 
-              name: savedUsername, 
-              email: user.email, 
-              avatar: savedUsername[0].toUpperCase() 
-            };
-            enterChatApp();
-          } else {
-            State.currentUser = { 
-              name: user.defaultName, 
-              email: user.email, 
-              avatar: user.avatarLetter || user.defaultName[0].toUpperCase() 
-            };
-            showScreen("screen-username");
-            setTimeout(() => {
-              const input = document.getElementById("username-setup-input");
-              if (input) { input.value = user.defaultName; input.focus(); input.select(); }
-            }, 100);
-          }
-        } catch (e) {
-          console.error("❌ Session error:", e);
-          localStorage.removeItem('dashy_user_session');
-          goToLogin();
-        }
+      const verified = localStorage.getItem("dashy_age_verified");
+      if (!verified) {
+        showScreen("screen-age");
       } else {
-        console.log("❌ No session, showing login");
-        const verified = localStorage.getItem("dashy_age_verified");
-        if (!verified) {
-          showScreen("screen-age");
-        } else {
-          goToLogin();
-        }
+        goToLogin();
       }
     }, 2500);
     
@@ -530,6 +532,10 @@ function loginWithEmail() {
     if (!email) return showError("Please enter your email.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("Invalid email format.");
     if (!pass || pass.length < 4) return showError("Password must be at least 4 characters.");
+    
+    localStorage.setItem('dashy_saved_email', email);
+    localStorage.setItem('dashy_saved_password', pass);
+    
     handleUserLogin({ email, defaultName: email.split("@")[0], avatarLetter: email[0].toUpperCase() });
   } catch (err) { showError("Login failed: " + err.message); }
 }
@@ -633,7 +639,7 @@ function logout() {
   State.currentUser = null;
   State.chats = [];
   State.currentChatId = null;
-  showScreen("screen-login");
+  goToLogin();
 }
 
 /* ==========================================================================
