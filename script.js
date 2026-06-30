@@ -1,13 +1,5 @@
 "use strict";
 
-/* ==========================================================================
-   ╔════════════════════════════════════════════════════════════════════════╗
-   ║   🔑  NO API KEY NEEDED! 100% GROQ AI! 🗿                            ║
-   ║   Admin system, chat persistence, and more!                          ║
-   ╚════════════════════════════════════════════════════════════════════════╝
-   ========================================================================== */
-
-// Your Cloudflare Worker URL
 const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.dev/";
 
 /* ==========================================================================
@@ -26,7 +18,7 @@ const State = {
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
-// 👑 ADMIN LIST — Unlimited messages!
+// 👑 ADMIN LIST
 const ADMINS = [
   "shubhampandey2012@gmail.com",
   "23maths20@gmail.com",
@@ -39,9 +31,8 @@ const ADMINS = [
 ];
 
 /* ==========================================================================
-   CHAT PERSISTENCE — Save & Load Chats
+   CHAT PERSISTENCE — KEEP THIS!
    ========================================================================== */
-
 function saveChatsToStorage() {
   try {
     const data = {
@@ -60,7 +51,6 @@ function loadChatsFromStorage() {
   try {
     const stored = localStorage.getItem('dashy_chats_data');
     if (!stored) return false;
-    
     const data = JSON.parse(stored);
     if (data.chats && data.chats.length > 0) {
       State.chats = data.chats;
@@ -77,9 +67,8 @@ function loadChatsFromStorage() {
 }
 
 // ============================================================
-//  MESSAGE LIMITS — Per user type
+//  MESSAGE LIMITS
 // ============================================================
-
 const MESSAGE_LIMITS = {
   "guest": 20,
   "user@gmail.com": 20,
@@ -89,30 +78,16 @@ const MESSAGE_LIMITS = {
 function getUserLimit() {
   const user = State.currentUser;
   if (!user) return 5;
-
-  if (ADMINS.includes(user.email)) {
-    return Infinity;
-  }
-
-  if (user.email === "user@gmail.com") {
-    return MESSAGE_LIMITS["user@gmail.com"];
-  }
-
-  if (user.email === "guest@dashy.ai") {
-    return MESSAGE_LIMITS.guest;
-  }
-
+  if (ADMINS.includes(user.email)) return Infinity;
+  if (user.email === "user@gmail.com") return MESSAGE_LIMITS["user@gmail.com"];
+  if (user.email === "guest@dashy.ai") return MESSAGE_LIMITS.guest;
   return MESSAGE_LIMITS.default;
 }
 
 function getUserMessageCount() {
   const user = State.currentUser;
   if (!user) return 0;
-
-  if (ADMINS.includes(user.email)) {
-    return 0;
-  }
-
+  if (ADMINS.includes(user.email)) return 0;
   const key = `dashy_messages_${user.email}`;
   const count = parseInt(localStorage.getItem(key) || "0");
   return count;
@@ -121,11 +96,7 @@ function getUserMessageCount() {
 function incrementUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
-
-  if (ADMINS.includes(user.email)) {
-    return;
-  }
-
+  if (ADMINS.includes(user.email)) return;
   const key = `dashy_messages_${user.email}`;
   const current = parseInt(localStorage.getItem(key) || "0");
   localStorage.setItem(key, String(current + 1));
@@ -134,11 +105,7 @@ function incrementUserMessageCount() {
 function resetUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
-
-  if (ADMINS.includes(user.email)) {
-    return;
-  }
-
+  if (ADMINS.includes(user.email)) return;
   const key = `dashy_messages_${user.email}`;
   localStorage.removeItem(key);
 }
@@ -146,67 +113,44 @@ function resetUserMessageCount() {
 function checkMessageLimit() {
   const user = State.currentUser;
   if (!user) return { allowed: true, remaining: Infinity, limit: Infinity };
-
   const used = getUserMessageCount();
   const limit = getUserLimit();
   const remaining = limit - used;
-
-  if (remaining <= 0) {
-    return { allowed: false, remaining: 0, limit };
-  }
-
+  if (remaining <= 0) return { allowed: false, remaining: 0, limit };
   return { allowed: true, remaining, limit };
 }
 
-
-/* ==========================================================================
-   🎵 MUSIC GENERATION — Suno AI (Card Version)
-   ========================================================================== */
-
+// ============================================================
+//  SUNO MUSIC
+// ============================================================
 const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev/";
-
 let selectedGenre = "pop";
 let selectedDuration = "30";
 
 function selectGenre(genre) {
   selectedGenre = genre;
-  
   document.querySelectorAll('.music-genre-card').forEach(card => {
     card.classList.toggle('selected', card.dataset.genre === genre);
   });
-  
-  const genreNames = {
-    'pop': 'Pop',
-    'jazz': 'Jazz',
-    'lo-fi': 'Lo-Fi',
-    'rock': 'Rock',
-    'classical': 'Classical',
-    'hip-hop': 'Hip-Hop'
-  };
+  const genreNames = { 'pop': 'Pop', 'jazz': 'Jazz', 'lo-fi': 'Lo-Fi', 'rock': 'Rock', 'classical': 'Classical', 'hip-hop': 'Hip-Hop' };
   document.getElementById('music-selected-display').textContent = genreNames[genre] || genre;
 }
 
 function selectDuration(duration) {
   selectedDuration = duration;
-  
   document.querySelectorAll('.music-duration-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.duration === duration);
   });
-  
   document.getElementById('music-duration-display').textContent = duration;
 }
 
-function showMusicModal() {
-  openModal('modal-music');
-}
+function showMusicModal() { openModal('modal-music'); }
 
 async function generateMusicFromModal() {
   const customPrompt = document.getElementById('music-prompt').value.trim();
   const resultDiv = document.getElementById('music-result');
   const btn = document.getElementById('music-generate-btn');
-  
   let prompt = customPrompt;
-  
   if (!prompt) {
     const genrePrompts = {
       'pop': 'A catchy, upbeat pop song with vocals and energetic instruments',
@@ -218,24 +162,15 @@ async function generateMusicFromModal() {
     };
     prompt = genrePrompts[selectedGenre] || selectedGenre;
   }
-  
-  const durationMap = {
-    '15': 'a short 15-second',
-    '30': 'a 30-second',
-    '60': 'a 1-minute'
-  };
+  const durationMap = { '15': 'a short 15-second', '30': 'a 30-second', '60': 'a 1-minute' };
   prompt = `Generate ${durationMap[selectedDuration]} ${prompt}`;
-  
   resultDiv.innerHTML = `<p>⏳ Generating your ${selectedDuration}s song... This takes 1-2 minutes.</p>`;
   btn.disabled = true;
   btn.textContent = "⏳ Generating...";
-  
   try {
     const data = await generateMusicAPI(prompt);
-    
     btn.disabled = false;
     btn.textContent = "🎵 Generate Music";
-    
     if (data && data.success && data.data && data.data.length > 0) {
       const song = data.data[0];
       resultDiv.innerHTML = `
@@ -249,12 +184,8 @@ async function generateMusicFromModal() {
             Your browser doesn't support audio.
           </audio>
           <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-            <button class="download-btn" onclick="window.open('${song.audio_url}')">
-              📥 Download MP3
-            </button>
-            <button class="report-btn-cancel" onclick="document.querySelector('#music-result audio').play()">
-              ▶️ Play
-            </button>
+            <button class="download-btn" onclick="window.open('${song.audio_url}')">📥 Download MP3</button>
+            <button class="report-btn-cancel" onclick="document.querySelector('#music-result audio').play()">▶️ Play</button>
           </div>
         </div>
       `;
@@ -272,14 +203,8 @@ async function generateMusicAPI(prompt) {
   try {
     const response = await fetch(SUNO_ENDPOINT, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        action: "generate",
-        prompt: prompt,
-        model: "chirp-v3"
-      })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "generate", prompt: prompt, model: "chirp-v3" })
     });
     return await response.json();
   } catch (error) {
@@ -291,13 +216,12 @@ async function generateMusicAPI(prompt) {
 // ============================================================
 //  VOICE + PAUSE + EXPORT SETTINGS
 // ============================================================
-
 let isPaused = false;
 let selectedVoice = "default";
 let isVoiceMode = false;
 
 /* ==========================================================================
-   DASH MODEL CONFIGS — 3 Models!
+   DASH MODELS
    ========================================================================== */
 const DASH_MODELS = {
   "dash-complexity": {
@@ -321,9 +245,7 @@ function getDashConfig(modelKey) {
   return DASH_MODELS[modelKey] || DASH_MODELS["dash-allrounder"];
 }
 
-function isApiKeyConfigured() {
-  return true;
-}
+function isApiKeyConfigured() { return true; }
 
 /* ==========================================================================
    UTILITIES
@@ -361,10 +283,7 @@ function showScreen(id) {
   }
 }
 
-function goToLogin() { 
-  showScreen("screen-login");
-  autoFillLogin();
-}
+function goToLogin() { showScreen("screen-login"); }
 
 function openModal(id) {
   document.getElementById("modal-overlay").classList.add("show");
@@ -385,69 +304,21 @@ function closeAllModals() {
 }
 
 /* ==========================================================================
-   PASSWORD EYE TOGGLE
-   ========================================================================== */
-
-function togglePasswordVisibility() {
-  const input = document.getElementById("login-password-input");
-  const btn = document.getElementById("toggle-password-btn");
-  
-  if (input.type === "password") {
-    input.type = "text";
-    btn.textContent = "🙈";
-    btn.style.color = "var(--accent-primary)";
-  } else {
-    input.type = "password";
-    btn.textContent = "👁️";
-    btn.style.color = "var(--text-muted)";
-  }
-}
-
-/* ==========================================================================
-   AUTO-FILL LOGIN
-   ========================================================================== */
-
-function autoFillLogin() {
-  const savedEmail = localStorage.getItem('dashy_saved_email');
-  const savedPassword = localStorage.getItem('dashy_saved_password');
-  
-  const emailInput = document.getElementById("login-email-input");
-  const passInput = document.getElementById("login-password-input");
-  
-  if (savedEmail && emailInput) {
-    emailInput.value = savedEmail;
-  }
-  
-  if (savedPassword && passInput) {
-    passInput.value = savedPassword;
-  }
-}
-
-/* ==========================================================================
-   APP BOOT
+   APP BOOT — NO AUTO-LOGIN! JUST CLASSIC!
    ========================================================================== */
 function initApp() {
   console.log("🚀 INITAPP STARTED");
-  
   try {
     showScreen("screen-title");
-    
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
       titleScreen.style.display = "flex";
       titleScreen.style.opacity = "1";
       titleScreen.style.visibility = "visible";
     }
-
     setTimeout(() => {
-      const verified = localStorage.getItem("dashy_age_verified");
-      if (!verified) {
-        showScreen("screen-age");
-      } else {
-        goToLogin();
-      }
+      showScreen("screen-login");
     }, 2500);
-    
   } catch (err) {
     console.error("❌ Init error:", err);
     showError("Init failed: " + err.message);
@@ -465,12 +336,10 @@ function verifyAge() {
   if (!input) return;
   const dob = new Date(input.value);
   if (isNaN(dob.getTime())) return showError("Please enter a valid date of birth.");
-
   const today = new Date();
   let age = today.getFullYear() - dob.getFullYear();
   const m = today.getMonth() - dob.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-
   if (age >= 16) {
     localStorage.setItem("dashy_age_verified", "full");
     showScreen("screen-title");
@@ -491,7 +360,6 @@ function verifyAge() {
 /* ==========================================================================
    LOGIN
    ========================================================================== */
-
 function loginWithGoogle() {
   showToast(
     "⚠️ This is a demo login! You'll get a fake ID like 'user@gmail.com'.\n" +
@@ -499,13 +367,8 @@ function loginWithGoogle() {
     "You get 20 messages. Make them count! 🗿",
     "warning"
   );
-  
   setTimeout(() => {
-    handleUserLogin({ 
-      email: "user@gmail.com", 
-      defaultName: "Google User", 
-      avatarLetter: "G" 
-    });
+    handleUserLogin({ email: "user@gmail.com", defaultName: "Google User", avatarLetter: "G" });
   }, 3000);
 }
 
@@ -515,13 +378,8 @@ function loginAsGuest() {
     "If you like it, tell the creator to add real auth! 🗿",
     "warning"
   );
-  
   setTimeout(() => {
-    handleUserLogin({ 
-      email: "guest@dashy.ai", 
-      defaultName: "Guest", 
-      avatarLetter: "G" 
-    });
+    handleUserLogin({ email: "guest@dashy.ai", defaultName: "Guest", avatarLetter: "G" });
   }, 2500);
 }
 
@@ -532,21 +390,11 @@ function loginWithEmail() {
     if (!email) return showError("Please enter your email.");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("Invalid email format.");
     if (!pass || pass.length < 4) return showError("Password must be at least 4 characters.");
-    
-    localStorage.setItem('dashy_saved_email', email);
-    localStorage.setItem('dashy_saved_password', pass);
-    
     handleUserLogin({ email, defaultName: email.split("@")[0], avatarLetter: email[0].toUpperCase() });
   } catch (err) { showError("Login failed: " + err.message); }
 }
 
 function handleUserLogin({ email, defaultName, avatarLetter }) {
-  localStorage.setItem('dashy_user_session', JSON.stringify({ 
-    email, 
-    defaultName, 
-    avatarLetter: avatarLetter || defaultName[0].toUpperCase() 
-  }));
-
   const savedUsername = localStorage.getItem("dashy_username_" + email);
   if (savedUsername) {
     State.currentUser = { name: savedUsername, email, avatar: savedUsername[0].toUpperCase() };
@@ -569,7 +417,6 @@ function saveUsername() {
   if (username.length < 2) return showError("Username must be at least 2 characters.");
   if (username.length > 20) return showError("Username must be 20 characters or less.");
   if (!/^[a-zA-Z0-9\s_-]+$/.test(username)) return showError("Username can only contain letters, numbers, spaces, _ and -");
-
   localStorage.setItem("dashy_username_" + State.currentUser.email, username);
   State.currentUser.name = username;
   State.currentUser.avatar = username[0].toUpperCase();
@@ -590,9 +437,7 @@ function resetUsername() {
 function enterChatApp() {
   showScreen("screen-chat");
   renderUserInSidebar();
-  
   const hasSavedChats = loadChatsFromStorage();
-  
   if (hasSavedChats && State.chats.length > 0) {
     renderSidebarChatList();
     renderActiveChat();
@@ -604,11 +449,9 @@ function enterChatApp() {
 function renderUserInSidebar() {
   const u = State.currentUser;
   if (!u) return;
-  
   const nameEl = document.getElementById("sidebar-user-name");
   const emailEl = document.getElementById("sidebar-user-email");
   const avatarEl = document.getElementById("sidebar-user-avatar");
-  
   if (nameEl) {
     if (ADMINS.includes(u.email)) {
       nameEl.textContent = `${u.name} 👑`;
@@ -618,10 +461,8 @@ function renderUserInSidebar() {
       nameEl.style.color = "";
     }
   }
-  
   if (emailEl) emailEl.textContent = u.email;
   if (avatarEl) avatarEl.textContent = u.avatar;
-
   const greet = document.getElementById("empty-state-greeting");
   if (greet) {
     const h = new Date().getHours();
@@ -635,11 +476,10 @@ function renderUserInSidebar() {
 
 function logout() {
   if (!confirm("Log out?")) return;
-  localStorage.removeItem('dashy_user_session');
   State.currentUser = null;
   State.chats = [];
   State.currentChatId = null;
-  goToLogin();
+  showScreen("screen-login");
 }
 
 /* ==========================================================================
@@ -688,8 +528,7 @@ function renderSidebarChatList() {
   list.innerHTML = "";
   if (count) count.textContent = State.chats.length;
   if (empty) {
-    const allEmpty = State.chats.length === 0 ||
-      (State.chats.length === 1 && State.chats[0].messages.length === 0);
+    const allEmpty = State.chats.length === 0 || (State.chats.length === 1 && State.chats[0].messages.length === 0);
     empty.classList.toggle("show", allEmpty);
   }
   State.chats.forEach(c => {
@@ -818,10 +657,9 @@ window.addEventListener("drop", (e) => {
   files.forEach(f => addAttachment(f));
 });
 
-// ============================================================
-//  SEND MESSAGE — With Shift+Enter support!
-// ============================================================
-
+/* ==========================================================================
+   SEND MESSAGE
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', function() {
   const input = document.getElementById('chat-text-input');
   if (input) {
@@ -845,15 +683,11 @@ function sendMessage(event) {
     const inputEl = document.getElementById("chat-text-input");
     const text = inputEl.value;
     if (!text.trim() && State.pendingAttachments.length === 0) return;
-
     const chat = getCurrentChat();
     if (!chat) return showError("No active chat.");
-
     const empty = document.getElementById("chat-empty-state");
     if (empty) empty.style.display = "none";
-
     const attachments = [...State.pendingAttachments];
-
     const userMsg = {
       id: generateMsgId(),
       author: State.currentUser.name,
@@ -864,24 +698,17 @@ function sendMessage(event) {
     };
     chat.messages.push(userMsg);
     renderMessageBubble(userMsg);
-    saveChatsToStorage(); 
+    saveChatsToStorage();
     if (chat.messages.length === 1) {
-      chat.title = text.length > 0
-        ? (text.length > 30 ? text.substring(0, 30) + "..." : text)
-        : "Image chat";
+      chat.title = text.length > 0 ? (text.length > 30 ? text.substring(0, 30) + "..." : text) : "Image chat";
       renderSidebarChatList();
       document.getElementById("chat-current-title").textContent = chat.title;
     }
-
     inputEl.value = "";
     State.pendingAttachments = [];
     renderAttachmentPreviews();
-
     const lower = text.toLowerCase();
-    const isImageRequest = /\b(generate|create|draw|make|render)\b.*\b(image|picture|photo|art|illustration|drawing)\b/i.test(lower)
-      || lower.startsWith("/imagine ")
-      || lower.startsWith("imagine ");
-
+    const isImageRequest = /\b(generate|create|draw|make|render)\b.*\b(image|picture|photo|art|illustration|drawing)\b/i.test(lower) || lower.startsWith("/imagine ") || lower.startsWith("imagine ");
     if (isImageRequest) {
       handleImageGeneration(text, chat);
     } else {
@@ -899,24 +726,13 @@ function handleImageGeneration(prompt, chat) {
   State.isResponding = true;
   const sendBtn = document.getElementById("chat-send-btn");
   if (sendBtn) sendBtn.disabled = true;
-
-  let cleanPrompt = prompt
-    .replace(/^(\/imagine\s+|imagine\s+)/i, "")
-    .replace(/^.*?(generate|create|draw|make|render)(\s+an?\s+|\s+)(image|picture|photo|art|illustration|drawing)(\s+of\s+|\s+)?/i, "")
-    .trim();
-
+  let cleanPrompt = prompt.replace(/^(\/imagine\s+|imagine\s+)/i, "").replace(/^.*?(generate|create|draw|make|render)(\s+an?\s+|\s+)(image|picture|photo|art|illustration|drawing)(\s+of\s+|\s+)?/i, "").trim();
   if (!cleanPrompt) cleanPrompt = prompt;
-
   const isHQ = State.currentModel === "dash-complexity";
   const dimension = isHQ ? 768 : 512;
   const seed = Math.floor(Math.random() * 1000000);
-
-  const finalPrompt = isHQ
-    ? `${cleanPrompt}, ultra detailed, masterpiece, professional, cinematic lighting, sharp focus, high quality`
-    : cleanPrompt;
-
+  const finalPrompt = isHQ ? `${cleanPrompt}, ultra detailed, masterpiece, professional, cinematic lighting, sharp focus, high quality` : cleanPrompt;
   const url = `${SPEEDGEN_ENDPOINT}${encodeURIComponent(finalPrompt)}?width=${dimension}&height=${dimension}&seed=${seed}&nologo=true&model=flux`;
-
   const aiMsg = {
     id: generateMsgId(),
     author: "DashyCore",
@@ -931,7 +747,6 @@ function handleImageGeneration(prompt, chat) {
   };
   chat.messages.push(aiMsg);
   const bubble = renderMessageBubble(aiMsg);
-
   fetch(url)
     .then(response => {
       if (!response.ok) throw new Error("SpeedGen returned " + response.status);
@@ -964,7 +779,6 @@ async function handleTextGeneration(prompt, chat, attachments) {
   State.isResponding = true;
   const sendBtn = document.getElementById("chat-send-btn");
   if (sendBtn) sendBtn.disabled = true;
-
   const aiMsg = {
     id: generateMsgId(),
     author: "DashyCore",
@@ -979,7 +793,6 @@ async function handleTextGeneration(prompt, chat, attachments) {
   const bubble = renderMessageBubble(aiMsg);
   const textEl = bubble.querySelector(".message-text");
   textEl.classList.add("ai-typing");
-
   try {
     let responseText = await callGroqAPI(prompt, chat, attachments);
     await streamText(responseText, aiMsg, textEl);
@@ -1003,18 +816,15 @@ async function handleTextGeneration(prompt, chat, attachments) {
    ========================================================================== */
 async function callGroqAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
-  
   const history = chat.messages.slice(-11, -1).map(m => ({
     role: m.role === "user" ? "user" : "assistant",
     text: m.text || ""
   }));
-
   const body = {
     model: config.backendModel,
     messages: [...history, { role: "user", text: prompt }],
     systemInstruction: config.systemInstruction
   };
-
   if (attachments && attachments.length > 0) {
     body.attachments = attachments.map(a => ({
       name: a.name,
@@ -1023,30 +833,23 @@ async function callGroqAPI(prompt, chat, attachments) {
       data: a.base64 || a.dataUrl
     }));
   }
-
   const url = GEMINI_ENDPOINT;
-
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-
   if (!res.ok) {
     const errorData = await res.text();
     throw new Error(`API error: ${res.status} - ${errorData}`);
   }
-
   const data = await res.json();
-  
   if (data.loading) {
     throw new Error("⏳ Model is loading. Please wait 10-15 seconds and try again.");
   }
-  
   if (!data.success) {
     throw new Error(data.error || "Unknown error from AI service.");
   }
-
   return data.text || "No response received.";
 }
 
@@ -1076,7 +879,6 @@ function streamText(fullText, aiMsg, textEl) {
 function formatMessageContent(text) {
   if (!text) return "";
   let html = escapeHtml(text);
-
   html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (m, lang, code) => {
     const language = lang || "code";
     const escapedCode = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -1089,41 +891,29 @@ function formatMessageContent(text) {
       <pre class="code-block-content" id="${codeId}">${escapedCode}</pre>
     </div>`;
   });
-
   html = html.replace(/`([^`\n]+)`/g, "<code>$1</code>");
   html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*([^*\n]+)\*/g, "<em>$1</em>");
   html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
   html = html.replace(/(^|\s)(https?:\/\/[^\s<]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>');
   html = html.replace(/\n/g, "<br>");
-
   return html;
 }
 
 function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 
 function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
-  
   let text = el.textContent;
   text = text.split('\n').map(line => line.trim()).join('\n');
   text = text.replace(/\n{3,}/g, '\n\n');
-  
   navigator.clipboard.writeText(text).then(() => {
     btn.textContent = "✓ Copied";
     btn.classList.add("copied");
-    setTimeout(() => { 
-      btn.textContent = "Copy"; 
-      btn.classList.remove("copied"); 
-    }, 1800);
+    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
   }).catch(() => showError("Could not copy to clipboard."));
 }
 
@@ -1152,14 +942,11 @@ function buildMessageBubbleNode(msg) {
   const bubble = document.createElement("div");
   bubble.className = "chat-message";
   bubble.dataset.msgId = msg.id;
-
   const avatar = document.createElement("div");
   avatar.className = "message-avatar " + (msg.role === "user" ? "user-avatar" : "ai-avatar");
   avatar.textContent = msg.avatar;
-
   const content = document.createElement("div");
   content.className = "message-content";
-
   const authorRow = document.createElement("div");
   authorRow.className = "message-author-row";
   const author = document.createElement("div");
@@ -1173,7 +960,6 @@ function buildMessageBubbleNode(msg) {
     authorRow.appendChild(badge);
   }
   content.appendChild(authorRow);
-
   if (msg.attachments && msg.attachments.length > 0) {
     const attRow = document.createElement("div");
     attRow.className = "message-attachments";
@@ -1192,12 +978,10 @@ function buildMessageBubbleNode(msg) {
     });
     content.appendChild(attRow);
   }
-
   const textEl = document.createElement("div");
   textEl.className = "message-text";
   textEl.innerHTML = formatMessageContent(msg.text);
   content.appendChild(textEl);
-
   if (msg.imageUrl && !msg.imageLoading) {
     const wrap = document.createElement("div");
     wrap.className = "generated-image-wrap";
@@ -1219,10 +1003,8 @@ function buildMessageBubbleNode(msg) {
     wrap.appendChild(overlay);
     content.appendChild(wrap);
   }
-
   const actionBar = buildActionBar(msg);
   if (actionBar) content.appendChild(actionBar);
-
   bubble.appendChild(avatar);
   bubble.appendChild(content);
   return bubble;
@@ -1234,32 +1016,22 @@ function buildMessageBubbleNode(msg) {
 function buildActionBar(msg) {
   if (msg.imageLoading) return null;
   if (msg.role === "ai" && (!msg.text || msg.text.length === 0)) return null;
-
   const bar = document.createElement("div");
   bar.className = "message-action-bar";
-
   if (msg.role === "user") {
     bar.appendChild(makeActionBtn("📋", "Copy prompt", () => {
-      navigator.clipboard.writeText(msg.text || "").then(() => {
-        showSuccess("Prompt copied!");
-      }).catch(() => showError("Couldn't copy."));
+      navigator.clipboard.writeText(msg.text || "").then(() => { showSuccess("Prompt copied!"); }).catch(() => showError("Couldn't copy."));
     }));
   } else {
     bar.appendChild(makeActionBtn("📋", "Copy response", () => {
-      navigator.clipboard.writeText(msg.text || "").then(() => {
-        showSuccess("Response copied!");
-      }).catch(() => showError("Couldn't copy."));
+      navigator.clipboard.writeText(msg.text || "").then(() => { showSuccess("Response copied!"); }).catch(() => showError("Couldn't copy."));
     }));
-
     const d1 = document.createElement("div");
     d1.className = "msg-action-divider";
     bar.appendChild(d1);
-
     bar.appendChild(makeActionBtn("👍", "Helpful", (btn) => {
       const wasActive = btn.classList.contains("active-like");
-      bar.querySelectorAll(".msg-action-btn").forEach(b => {
-        b.classList.remove("active-like", "active-dislike");
-      });
+      bar.querySelectorAll(".msg-action-btn").forEach(b => { b.classList.remove("active-like", "active-dislike"); });
       if (!wasActive) {
         btn.classList.add("active-like");
         msg.feedback = "like";
@@ -1269,12 +1041,9 @@ function buildActionBar(msg) {
         msg.feedback = null;
       }
     }, msg.feedback === "like" ? "active-like" : ""));
-
     bar.appendChild(makeActionBtn("👎", "Not helpful", (btn) => {
       const wasActive = btn.classList.contains("active-dislike");
-      bar.querySelectorAll(".msg-action-btn").forEach(b => {
-        b.classList.remove("active-like", "active-dislike");
-      });
+      bar.querySelectorAll(".msg-action-btn").forEach(b => { b.classList.remove("active-like", "active-dislike"); });
       if (!wasActive) {
         btn.classList.add("active-dislike");
         msg.feedback = "dislike";
@@ -1284,20 +1053,12 @@ function buildActionBar(msg) {
         msg.feedback = null;
       }
     }, msg.feedback === "dislike" ? "active-dislike" : ""));
-
-    bar.appendChild(makeActionBtn("🚩", "Report", () => {
-      openReportModal(msg.id);
-    }, msg.reported ? "active-report" : ""));
-
+    bar.appendChild(makeActionBtn("🚩", "Report", () => { openReportModal(msg.id); }, msg.reported ? "active-report" : ""));
     const d2 = document.createElement("div");
     d2.className = "msg-action-divider";
     bar.appendChild(d2);
-
-    bar.appendChild(makeActionBtn("🔄", "Regenerate", () => {
-      regenerateResponse(msg);
-    }));
+    bar.appendChild(makeActionBtn("🔄", "Regenerate", () => { regenerateResponse(msg); }));
   }
-
   return bar;
 }
 
@@ -1385,10 +1146,8 @@ function openReportModal(msgId) {
 function submitReport() {
   const selected = document.querySelector("input[name='report-reason']:checked");
   if (!selected) return showError("Please select a reason.");
-
   const detailsEl = document.getElementById("report-details");
   const details = detailsEl ? detailsEl.value.trim() : "";
-
   const chat = getCurrentChat();
   if (!chat || !State.pendingReportMsgId) {
     closeAllModals();
@@ -1412,14 +1171,11 @@ async function regenerateResponse(msg) {
   const chat = getCurrentChat();
   if (!chat) return;
   if (!msg.originalPrompt && !msg.imagePrompt) return showError("Can't regenerate this response.");
-
   const msgIndex = chat.messages.findIndex(m => m.id === msg.id);
   if (msgIndex === -1) return;
   chat.messages.splice(msgIndex, 1);
-
   const bubble = document.querySelector(`[data-msg-id="${msg.id}"]`);
   if (bubble) bubble.remove();
-
   if (msg.imagePrompt) {
     handleImageGeneration(msg.originalPrompt || msg.imagePrompt, chat);
   } else {
@@ -1452,13 +1208,9 @@ function changeTheme(v) {
 /* ==========================================================================
    EXPORT CHAT
    ========================================================================== */
-
 function exportChat() {
   const chat = getCurrentChat();
-  if (!chat || chat.messages.length === 0) {
-    return showError("No messages to export.");
-  }
-  
+  if (!chat || chat.messages.length === 0) return showError("No messages to export.");
   let text = `═══════════════════════════════════════════════════════\n`;
   text += `         🗿 DASHYCORE — CHAT EXPORT\n`;
   text += `═══════════════════════════════════════════════════════\n\n`;
@@ -1467,31 +1219,18 @@ function exportChat() {
   text += `👤 User: ${State.currentUser?.name || "Anonymous"}\n`;
   text += `📨 Total Messages: ${chat.messages.length}\n\n`;
   text += `───────────────────────────────────────────────────────\n\n`;
-  
   chat.messages.forEach((m, index) => {
     const role = m.role === "user" ? "👤 You" : "🤖 DashyCore";
     text += `${role}:\n${m.text}\n\n`;
-    if (index < chat.messages.length - 1) {
-      text += `───────────────────────────────────────────────────────\n\n`;
-    }
+    if (index < chat.messages.length - 1) text += `───────────────────────────────────────────────────────\n\n`;
   });
-  
   text += `\n═══════════════════════════════════════════════════════\n`;
   text += `         🗿 Export complete — DashyCore AI\n`;
   text += `═══════════════════════════════════════════════════════\n`;
-  
   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  
   if (navigator.share) {
     const file = new File([text], `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`, { type: 'text/plain' });
-    navigator.share({
-      title: 'DashyCore Chat Export',
-      files: [file]
-    }).then(() => {
-      showSuccess("📤 Chat shared!");
-    }).catch(() => {
-      downloadFile(text);
-    });
+    navigator.share({ title: 'DashyCore Chat Export', files: [file] }).then(() => { showSuccess("📤 Chat shared!"); }).catch(() => { downloadFile(text); });
   } else {
     downloadFile(text);
   }
@@ -1512,7 +1251,6 @@ function downloadFile(text) {
 /* ==========================================================================
    PAUSE RESPONSE TOGGLE
    ========================================================================== */
-
 function togglePause() {
   isPaused = !isPaused;
   const btn = document.getElementById('pause-toggle-btn');
@@ -1535,12 +1273,10 @@ function togglePause() {
    TEXT-TO-SPEECH — 15 VOICES!
    ========================================================================== */
 let availableVoices = [];
-
 window.speechSynthesis.onvoiceschanged = () => {
   availableVoices = window.speechSynthesis.getVoices();
   console.log('🔊 Voices loaded:', availableVoices.length);
 };
-
 setTimeout(() => {
   availableVoices = window.speechSynthesis.getVoices();
   console.log('🔊 Voices loaded (timeout):', availableVoices.length);
@@ -1569,51 +1305,27 @@ function toggleVoice() {
 
 function speakResponse(text) {
   if (!isVoiceMode) return;
-  
-  if (!('speechSynthesis' in window)) {
-    return showError("Text-to-speech not supported in this browser.");
-  }
-
+  if (!('speechSynthesis' in window)) return showError("Text-to-speech not supported in this browser.");
   window.speechSynthesis.cancel();
-
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US';
   utterance.rate = 0.9;
   utterance.pitch = 1;
-
   const voices = window.speechSynthesis.getVoices();
-  
   if (selectedVoice !== "default") {
     const matchedVoice = voices.find(v => v.name === selectedVoice);
-    if (matchedVoice) {
-      utterance.voice = matchedVoice;
-    } else {
-      const fallback = voices.find(v => 
-        v.name.toLowerCase().includes(selectedVoice.toLowerCase()) || 
-        selectedVoice.toLowerCase().includes(v.name.toLowerCase())
-      );
+    if (matchedVoice) { utterance.voice = matchedVoice; } else {
+      const fallback = voices.find(v => v.name.toLowerCase().includes(selectedVoice.toLowerCase()) || selectedVoice.toLowerCase().includes(v.name.toLowerCase()));
       if (fallback) utterance.voice = fallback;
     }
   }
-  
-  if (!utterance.voice && voices.length > 0) {
-    utterance.voice = voices[0];
-  }
-
-  utterance.onerror = (e) => {
-    console.error('🔊 Speech error:', e);
-  };
-
+  if (!utterance.voice && voices.length > 0) utterance.voice = voices[0];
+  utterance.onerror = (e) => { console.error('🔊 Speech error:', e); };
   window.speechSynthesis.speak(utterance);
 }
 
-window.speechSynthesis.onvoiceschanged = () => {
-  console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
-};
-
-setTimeout(() => {
-  window.speechSynthesis.getVoices();
-}, 1000);
+window.speechSynthesis.onvoiceschanged = () => { console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length); };
+setTimeout(() => { window.speechSynthesis.getVoices(); }, 1000);
 
 /* ==========================================================================
    TOASTS
@@ -1648,7 +1360,6 @@ window.addEventListener("error", e => showError("Error: " + (e.message || "Unkno
 /* ==========================================================================
    USERNAME SYSTEM — Unique usernames!
    ========================================================================== */
-
 function isUsernameTaken(username) {
   const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
   return users.includes(username);
@@ -1663,34 +1374,26 @@ function registerUsername(username) {
 /* ==========================================================================
    MESSAGE LIMIT DISPLAY
    ========================================================================== */
-
 function updateMessageDisplay() {
   const user = State.currentUser;
   if (!user) return;
-
   const used = getUserMessageCount();
   const limit = getUserLimit();
   const remaining = limit - used;
-
   let display = document.getElementById("message-limit-display");
   if (!display) {
     display = document.createElement("div");
     display.id = "message-limit-display";
     display.className = "sidebar-message-limit";
-
     const footer = document.querySelector(".sidebar-footer");
-    if (footer) {
-      footer.insertBefore(display, footer.firstChild);
-    }
+    if (footer) footer.insertBefore(display, footer.firstChild);
   }
-
   if (ADMINS.includes(user.email)) {
     display.innerHTML = `👑 <span style="color: #fbbf24; font-weight: 700;">ADMIN — Unlimited Messages!</span>`;
     display.style.borderColor = "#fbbf24";
     display.style.background = "rgba(251, 191, 36, 0.1)";
     return;
   }
-
   if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
   } else if (remaining <= 5) {
