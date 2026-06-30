@@ -81,31 +81,27 @@ function loadChatsFromStorage() {
 // ============================================================
 
 const MESSAGE_LIMITS = {
-  "guest": 20,              // Guests get 20 messages
-  "user@gmail.com": 20,     // Google demo users get 20 messages
-  "default": 100,           // Real email users get 100 messages
+  "guest": 20,
+  "user@gmail.com": 20,
+  "default": 100,
 };
 
 function getUserLimit() {
   const user = State.currentUser;
   if (!user) return 5;
 
-  // 👑 Admins = unlimited
   if (ADMINS.includes(user.email)) {
     return Infinity;
   }
 
-  // Google demo user
   if (user.email === "user@gmail.com") {
     return MESSAGE_LIMITS["user@gmail.com"];
   }
 
-  // Guest user
   if (user.email === "guest@dashy.ai") {
     return MESSAGE_LIMITS.guest;
   }
 
-  // Everyone else = default
   return MESSAGE_LIMITS.default;
 }
 
@@ -113,7 +109,6 @@ function getUserMessageCount() {
   const user = State.currentUser;
   if (!user) return 0;
 
-  // Admins don't get counted
   if (ADMINS.includes(user.email)) {
     return 0;
   }
@@ -127,7 +122,6 @@ function incrementUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
 
-  // Admins: skip counting
   if (ADMINS.includes(user.email)) {
     return;
   }
@@ -141,7 +135,6 @@ function resetUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
 
-  // Admins: no need to reset
   if (ADMINS.includes(user.email)) {
     return;
   }
@@ -170,7 +163,6 @@ function checkMessageLimit() {
    🎵 MUSIC GENERATION — Suno AI (Card Version)
    ========================================================================== */
 
-// Your Cloudflare Worker URL for Suno (Hides API Key!)
 const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev/";
 
 let selectedGenre = "pop";
@@ -213,7 +205,6 @@ async function generateMusicFromModal() {
   const resultDiv = document.getElementById('music-result');
   const btn = document.getElementById('music-generate-btn');
   
-  // Build prompt from genre or custom
   let prompt = customPrompt;
   
   if (!prompt) {
@@ -228,7 +219,6 @@ async function generateMusicFromModal() {
     prompt = genrePrompts[selectedGenre] || selectedGenre;
   }
   
-  // Add duration hint
   const durationMap = {
     '15': 'a short 15-second',
     '30': 'a 30-second',
@@ -360,10 +350,17 @@ function useSuggestion(text) {
    SCREEN & MODAL
    ========================================================================== */
 function showScreen(id) {
-  document.querySelectorAll(".screen-container").forEach(s => s.classList.remove("active-screen"));
+  document.querySelectorAll(".screen-container").forEach(s => {
+    s.style.display = "none";
+    s.classList.remove("active-screen");
+  });
   const el = document.getElementById(id);
-  if (el) el.classList.add("active-screen");
+  if (el) {
+    el.style.display = "flex";
+    el.classList.add("active-screen");
+  }
 }
+
 function goToLogin() { showScreen("screen-login"); }
 
 function openModal(id) {
@@ -372,10 +369,12 @@ function openModal(id) {
   const m = document.getElementById(id);
   if (m) m.classList.add("active");
 }
+
 function closeModal(e) {
   if (e && e.target && !e.target.classList.contains("modal-overlay")) return;
   closeAllModals();
 }
+
 function closeAllModals() {
   document.getElementById("modal-overlay").classList.remove("show");
   document.querySelectorAll(".modal-card").forEach(m => m.classList.remove("active"));
@@ -389,10 +388,8 @@ function initApp() {
   console.log("🚀 INITAPP STARTED");
   
   try {
-    // 🔥 SHOW TITLE SCREEN FIRST
     showScreen("screen-title");
     
-    // 🔥 FORCE TITLE SCREEN TO BE VISIBLE
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
       titleScreen.style.display = "flex";
@@ -400,7 +397,6 @@ function initApp() {
       titleScreen.style.visibility = "visible";
     }
 
-    // 🔥 CHECK SESSION AFTER 2.5 SECONDS
     setTimeout(() => {
       console.log("⏰ Checking session...");
       
@@ -421,16 +417,19 @@ function initApp() {
               email: user.email, 
               avatar: savedUsername[0].toUpperCase() 
             };
+            enterChatApp();
           } else {
             State.currentUser = { 
               name: user.defaultName, 
               email: user.email, 
               avatar: user.avatarLetter || user.defaultName[0].toUpperCase() 
             };
+            showScreen("screen-username");
+            setTimeout(() => {
+              const input = document.getElementById("username-setup-input");
+              if (input) { input.value = user.defaultName; input.focus(); input.select(); }
+            }, 100);
           }
-          
-          console.log("✅ Auto-logging in...");
-          enterChatApp();
         } catch (e) {
           console.error("❌ Session error:", e);
           localStorage.removeItem('dashy_user_session');
@@ -445,7 +444,7 @@ function initApp() {
           goToLogin();
         }
       }
-    }, 2500); // 2.5 second delay
+    }, 2500);
     
   } catch (err) {
     console.error("❌ Init error:", err);
@@ -492,7 +491,6 @@ function verifyAge() {
    ========================================================================== */
 
 function loginWithGoogle() {
-  // Show a funny warning
   showToast(
     "⚠️ This is a demo login! You'll get a fake ID like 'user@gmail.com'.\n" +
     "The creator is 12 years old and is NOT paying for Google OAuth... YET! 😭\n\n" +
@@ -500,7 +498,6 @@ function loginWithGoogle() {
     "warning"
   );
   
-  // Set a timeout so they can read the message
   setTimeout(() => {
     handleUserLogin({ 
       email: "user@gmail.com", 
@@ -538,7 +535,6 @@ function loginWithEmail() {
 }
 
 function handleUserLogin({ email, defaultName, avatarLetter }) {
-  // 🔥 SAVE SESSION!
   localStorage.setItem('dashy_user_session', JSON.stringify({ 
     email, 
     defaultName, 
@@ -548,12 +544,15 @@ function handleUserLogin({ email, defaultName, avatarLetter }) {
   const savedUsername = localStorage.getItem("dashy_username_" + email);
   if (savedUsername) {
     State.currentUser = { name: savedUsername, email, avatar: savedUsername[0].toUpperCase() };
+    enterChatApp();
   } else {
     State.currentUser = { name: defaultName, email, avatar: avatarLetter };
+    showScreen("screen-username");
+    setTimeout(() => {
+      const input = document.getElementById("username-setup-input");
+      if (input) { input.value = defaultName; input.focus(); input.select(); }
+    }, 100);
   }
-  
-  // 🔥 ALWAYS call enterChatApp after setting State.currentUser
-  enterChatApp();
 }
 
 function saveUsername() {
@@ -564,11 +563,6 @@ function saveUsername() {
   if (username.length < 2) return showError("Username must be at least 2 characters.");
   if (username.length > 20) return showError("Username must be 20 characters or less.");
   if (!/^[a-zA-Z0-9\s_-]+$/.test(username)) return showError("Username can only contain letters, numbers, spaces, _ and -");
-
-  // 🔥 UPDATE SESSION WITH USERNAME!
-  const session = JSON.parse(localStorage.getItem('dashy_user_session') || '{}');
-  session.defaultName = username;
-  localStorage.setItem('dashy_user_session', JSON.stringify(session));
 
   localStorage.setItem("dashy_username_" + State.currentUser.email, username);
   State.currentUser.name = username;
@@ -591,7 +585,6 @@ function enterChatApp() {
   showScreen("screen-chat");
   renderUserInSidebar();
   
-  // 🔥 Load saved chats!
   const hasSavedChats = loadChatsFromStorage();
   
   if (hasSavedChats && State.chats.length > 0) {
@@ -611,7 +604,6 @@ function renderUserInSidebar() {
   const avatarEl = document.getElementById("sidebar-user-avatar");
   
   if (nameEl) {
-    // 👑 Check if EMAIL is admin!
     if (ADMINS.includes(u.email)) {
       nameEl.textContent = `${u.name} 👑`;
       nameEl.style.color = "#fbbf24";
@@ -637,6 +629,7 @@ function renderUserInSidebar() {
 
 function logout() {
   if (!confirm("Log out?")) return;
+  localStorage.removeItem('dashy_user_session');
   State.currentUser = null;
   State.chats = [];
   State.currentChatId = null;
@@ -831,7 +824,6 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         sendMessage(e);
       }
-      // Shift+Enter = new line (default behavior — we do nothing!)
     });
   }
 });
@@ -1482,12 +1474,9 @@ function exportChat() {
   text += `         🗿 Export complete — DashyCore AI\n`;
   text += `═══════════════════════════════════════════════════════\n`;
   
-  // FIX: Use Blob with proper encoding for mobile
   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
   
-  // FIX: For mobile, use FileSaver or create a download link properly
   if (navigator.share) {
-    // Use Web Share API on mobile
     const file = new File([text], `DashyCore_Chat_${new Date().toISOString().slice(0,10)}.txt`, { type: 'text/plain' });
     navigator.share({
       title: 'DashyCore Chat Export',
@@ -1495,7 +1484,6 @@ function exportChat() {
     }).then(() => {
       showSuccess("📤 Chat shared!");
     }).catch(() => {
-      // Fallback to download
       downloadFile(text);
     });
   } else {
@@ -1538,17 +1526,15 @@ function togglePause() {
 }
 
 /* ==========================================================================
-   TEXT-TO-SPEECH — 15 VOICES! (FIXED)
+   TEXT-TO-SPEECH — 15 VOICES!
    ========================================================================== */
 let availableVoices = [];
 
-// Load voices when they're available
 window.speechSynthesis.onvoiceschanged = () => {
   availableVoices = window.speechSynthesis.getVoices();
   console.log('🔊 Voices loaded:', availableVoices.length);
 };
 
-// Preload voices
 setTimeout(() => {
   availableVoices = window.speechSynthesis.getVoices();
   console.log('🔊 Voices loaded (timeout):', availableVoices.length);
@@ -1582,7 +1568,6 @@ function speakResponse(text) {
     return showError("Text-to-speech not supported in this browser.");
   }
 
-  // Cancel any ongoing speech
   window.speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
@@ -1590,16 +1575,13 @@ function speakResponse(text) {
   utterance.rate = 0.9;
   utterance.pitch = 1;
 
-  // Get the latest voices
   const voices = window.speechSynthesis.getVoices();
   
   if (selectedVoice !== "default") {
-    // Try to find the exact voice by name
     const matchedVoice = voices.find(v => v.name === selectedVoice);
     if (matchedVoice) {
       utterance.voice = matchedVoice;
     } else {
-      // Try partial match
       const fallback = voices.find(v => 
         v.name.toLowerCase().includes(selectedVoice.toLowerCase()) || 
         selectedVoice.toLowerCase().includes(v.name.toLowerCase())
@@ -1608,7 +1590,6 @@ function speakResponse(text) {
     }
   }
   
-  // If still no voice, use the first available
   if (!utterance.voice && voices.length > 0) {
     utterance.voice = voices[0];
   }
@@ -1620,7 +1601,6 @@ function speakResponse(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-// Preload voices
 window.speechSynthesis.onvoiceschanged = () => {
   console.log('🔊 Voices loaded:', window.speechSynthesis.getVoices().length);
 };
@@ -1664,7 +1644,6 @@ window.addEventListener("error", e => showError("Error: " + (e.message || "Unkno
    ========================================================================== */
 
 function isUsernameTaken(username) {
-  // Get all registered usernames from localStorage
   const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
   return users.includes(username);
 }
@@ -1699,7 +1678,6 @@ function updateMessageDisplay() {
     }
   }
 
-  // 👑 Admin badge
   if (ADMINS.includes(user.email)) {
     display.innerHTML = `👑 <span style="color: #fbbf24; font-weight: 700;">ADMIN — Unlimited Messages!</span>`;
     display.style.borderColor = "#fbbf24";
@@ -1707,7 +1685,6 @@ function updateMessageDisplay() {
     return;
   }
 
-  // Normal users
   if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
   } else if (remaining <= 5) {
