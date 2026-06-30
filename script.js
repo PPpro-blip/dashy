@@ -158,16 +158,14 @@ async function generateMusicFromModal() {
   // Build prompt
   let prompt = customPrompt;
   if (!prompt) {
-    const genrePrompts = {
-      'pop': 'A catchy, upbeat pop song with vocals and energetic instruments',
-      'jazz': 'A smooth, improvisational jazz piece with piano and saxophone',
-      'lo-fi': 'A chill, nostalgic lo-fi beat with soft melodies and vinyl crackle',
-      'rock': 'An energetic rock song with electric guitar, drums, and powerful vocals',
-      'classical': 'An elegant orchestral classical piece with strings and piano',
-      'hip-hop': 'A rhythmic hip-hop beat with groovy bass, drums, and expressive vocals'
-    };
-    prompt = genrePrompts[selectedGenre] || selectedGenre;
-  }
+  const genrePrompts = {
+  'pop': 'A catchy pop song with male vocals, emotional lyrics, and an upbeat instrumental',
+  'jazz': 'A smooth jazz song with female vocals, romantic lyrics, and a saxophone solo',
+  'lo-fi': 'A chill lo-fi song with soft vocals, nostalgic lyrics about memories, and a mellow beat',
+  'rock': 'An energetic rock song with powerful male vocals, intense lyrics, and electric guitar',
+  'classical': 'An orchestral piece with choir vocals, epic lyrics, and full symphony',
+  'hip-hop': 'A hip-hop track with rhythmic rap vocals, expressive lyrics, and a groovy bass'
+};
   
   const durationMap = { '15': 'a short 15-second', '30': 'a 30-second', '60': 'a 1-minute' };
   prompt = `Generate ${durationMap[selectedDuration]} ${prompt}`;
