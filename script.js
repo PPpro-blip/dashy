@@ -1544,7 +1544,8 @@ function updateMessageDisplay() {
     display.style.background = "rgba(251, 191, 36, 0.1)";
     return;
   }
-  if (remaining <= 0) {
+
+     if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
   } else if (remaining <= 5) {
     display.innerHTML = `📨 <span style="color: var(--accent-warning)">${remaining} messages left</span>`;
@@ -1552,5 +1553,5 @@ function updateMessageDisplay() {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
 }
-window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
 
+window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
