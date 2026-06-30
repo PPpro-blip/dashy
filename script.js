@@ -1159,7 +1159,7 @@ function buildMessageBubbleNode(msg) {
   bubble.appendChild(avatar);
   bubble.appendChild(content);
   return bubble;
-
+}
    /* ==========================================================================
    ⚡ ACTION BAR — COPY, LIKE, REPORT, REGENERATE
    ========================================================================== */
