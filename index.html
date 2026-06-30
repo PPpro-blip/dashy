@@ -431,7 +431,8 @@
         </div>
       </div>
     </div>
-<!-- MUSIC GENERATION MODAL -->
+
+    <!-- MUSIC GENERATION MODAL -->
 <div id="modal-music" class="modal-card" onclick="event.stopPropagation()">
   <div class="modal-header">
     <h2 class="modal-title">🎵 Generate Music</h2>
@@ -501,6 +502,14 @@
       🎵 Generate Music
     </button>
 
+    <div class="music-duration-section">
+  <p class="login-input-label">🎤 Vocal Style</p>
+  <div class="music-duration-grid">
+    <button class="music-duration-btn active" data-vocal="with-vocals" onclick="selectVocal('with-vocals')">🎤 With Vocals</button>
+    <button class="music-duration-btn" data-vocal="instrumental" onclick="selectVocal('instrumental')">🎵 Instrumental</button>
+  </div>
+</div>
+    
     <!-- Result Display -->
     <div id="music-result" class="music-result"></div>
   </div>
