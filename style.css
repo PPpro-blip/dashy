@@ -1899,3 +1899,76 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
 @keyframes musicSpin {
   to { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   🎨 CUSTOM SVG COPY BUTTON
+   ============================================================ */
+
+.code-block-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  padding: 4px 12px 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-sans);
+}
+
+.code-block-copy:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background: rgba(0, 210, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.code-block-copy:active {
+  transform: scale(0.95);
+}
+
+.code-block-copy svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.2s ease;
+}
+
+.code-block-copy:hover svg {
+  stroke: var(--accent-primary);
+  transform: scale(1.05);
+}
+
+.code-block-copy.copied {
+  color: var(--accent-success);
+  border-color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.code-block-copy.copied svg {
+  stroke: var(--accent-success);
+}
+
+.code-block-copy .copy-text {
+  transition: all 0.2s ease;
+}
+
+.code-block-copy.copied .copy-text {
+  display: none;
+}
+
+.code-block-copy .copied-text {
+  display: none;
+}
+
+.code-block-copy.copied .copied-text {
+  display: inline;
+}
