@@ -2,7 +2,6 @@
 
 // 🗿 DASHYCORE — YOUR AI WORKSPACE COMPANION 🔥
 // 💀 BUILT BY PRATHAM PANDEY (AGE 12) — LEGEND IN THE MAKING 🏆
-// 🚀 IF YOU CAN READ THIS... THE AI IS BREATHING 😭
 
 const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.dev/";
 
@@ -10,32 +9,32 @@ const GEMINI_ENDPOINT = "https://dashy-flow-state.kamleshprathampandey.workers.d
    🧠 STATE — WHERE THE MAGIC HAPPENS
    ========================================================================== */
 const State = {
-  currentUser: null,           // 👤 Who's this legend?
-  currentChatId: null,         // 💬 Which chat we vibin' in
-  chats: [],                   // 📚 All the wisdom
-  currentModel: "dash-allrounder", // 🤖 Which DASH model we rockin'
-  currentTheme: "dark",        // 🌙 Dark mode = superior
-  isResponding: false,         // ⏳ Wait for it...
-  pendingAttachments: [],      // 📎 Files chillin'
-  pendingReportMsgId: null     // 🚩 Someone snitched
+  currentUser: null,
+  currentChatId: null,
+  chats: [],
+  currentModel: "dash-allrounder",
+  currentTheme: "dark",
+  isResponding: false,
+  pendingAttachments: [],
+  pendingReportMsgId: null
 };
 
 const SPEEDGEN_ENDPOINT = "https://image.pollinations.ai/prompt/";
 
-// 👑 ADMIN LIST — Unlimited messages, respect the crown!
+// 👑 ADMIN LIST — Unlimited messages!
 const ADMINS = [
-  "shubhampandey2012@gmail.com",  // 🧠 The Mentor
-  "23maths20@gmail.com",           // 📐 Maths Ma'am
-  "shristi.neoskillacademy@gmail.com", // 💡 Shristi Ma'am
-  "yashrajskilldeveloper@gmail.com", // 🚀 Yashraj Bhai
-  "kamleshprathampandey@gmail.com", // 👑 The King himself
-  "pratham.neoskill@gmail.com",     // 🔥 Pratham's alt
-  "neemapandey737@gmail.com",       // ❤️ Mom
-  "kamlesh062984@gmail.com"         // 👨 Dad
+  "shubhampandey2012@gmail.com",
+  "23maths20@gmail.com",
+  "shristi.neoskillacademy@gmail.com",
+  "yashrajskilldeveloper@gmail.com",
+  "kamleshprathampandey@gmail.com",
+  "pratham.neoskill@gmail.com",
+  "neemapandey737@gmail.com",
+  "kamlesh062984@gmail.com"
 ];
 
 /* ==========================================================================
-   💾 CHAT PERSISTENCE — NO MORE LOST CHATS! 😭
+   💾 CHAT PERSISTENCE
    ========================================================================== */
 function saveChatsToStorage() {
   try {
@@ -71,18 +70,18 @@ function loadChatsFromStorage() {
 }
 
 // ============================================================
-//  📨 MESSAGE LIMITS — DON'T SPAM, BRUH 😤
+//  📨 MESSAGE LIMITS
 // ============================================================
 const MESSAGE_LIMITS = {
-  "guest": 20,              // 🚶 Guests get 20
-  "user@gmail.com": 20,     // 🥸 Fake Google users get 20
-  "default": 100,           // 🧑 Regular users get 100
+  "guest": 20,
+  "user@gmail.com": 20,
+  "default": 100,
 };
 
 function getUserLimit() {
   const user = State.currentUser;
   if (!user) return 5;
-  if (ADMINS.includes(user.email)) return Infinity; // 👑 UNLIMITED POWER
+  if (ADMINS.includes(user.email)) return Infinity;
   if (user.email === "user@gmail.com") return MESSAGE_LIMITS["user@gmail.com"];
   if (user.email === "guest@dashy.ai") return MESSAGE_LIMITS.guest;
   return MESSAGE_LIMITS.default;
@@ -91,7 +90,7 @@ function getUserLimit() {
 function getUserMessageCount() {
   const user = State.currentUser;
   if (!user) return 0;
-  if (ADMINS.includes(user.email)) return 0; // 👑 No counting for bosses
+  if (ADMINS.includes(user.email)) return 0;
   const key = `dashy_messages_${user.email}`;
   const count = parseInt(localStorage.getItem(key) || "0");
   return count;
@@ -100,7 +99,7 @@ function getUserMessageCount() {
 function incrementUserMessageCount() {
   const user = State.currentUser;
   if (!user) return;
-  if (ADMINS.includes(user.email)) return; // 👑 Admins don't get counted
+  if (ADMINS.includes(user.email)) return;
   const key = `dashy_messages_${user.email}`;
   const current = parseInt(localStorage.getItem(key) || "0");
   localStorage.setItem(key, String(current + 1));
@@ -125,7 +124,7 @@ function checkMessageLimit() {
 }
 
 // ============================================================
-//  🎵 SUNO MUSIC — MAKE SOME NOISE! 🎶
+//  🎵 SUNO MUSIC
 // ============================================================
 const SUNO_ENDPOINT = "https://dashy-suno-proxy.kamleshprathampandey.workers.dev/";
 let selectedGenre = "pop";
@@ -266,61 +265,6 @@ async function generateMusicFromModal() {
     btn.disabled = false;
     btn.textContent = "🎵 Generate Music";
   }
-}  // ← THIS } CLOSES THE FUNCTION
-    
-    if (data && data.success && data.data && data.data.length > 0) {
-      const song = data.data[0];
-      
-      // 🔥 OPEN IN A NEW CHAT!
-      startNewChat();
-      const chat = getCurrentChat();
-      chat.title = `🎵 ${song.title || "Generated Song"}`;
-      renderSidebarChatList();
-      document.getElementById("chat-current-title").textContent = chat.title;
-      
-      // 🔥 ADD THE SONG AS A MESSAGE IN THE CHAT
-      const aiMsg = {
-        id: generateMsgId(),
-        author: "DashyCore",
-        role: "ai",
-        text: `🎵 Here's your song **"${song.title || "Untitled"}"**!`,
-        avatar: "D",
-        modelUsed: "🎵 Music Generator",
-        songData: song
-      };
-      chat.messages.push(aiMsg);
-      renderMessageBubble(aiMsg);
-      
-      // 🔥 UPDATE THE MODAL RESULT
-      resultDiv.innerHTML = `
-        <div style="padding: 12px; background: var(--bg-card); border-radius: var(--radius-md); margin-top: 12px;">
-          <p><strong>🎵 ${song.title || "Untitled"}</strong></p>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">
-            ${song.lyric ? song.lyric.substring(0, 150) + (song.lyric.length > 150 ? "..." : "") : "🎶 Instrumental"}
-          </p>
-          <audio controls style="width: 100%; margin-top: 10px; border-radius: 8px;">
-            <source src="${song.audio_url}" type="audio/mpeg">
-            Your browser doesn't support audio.
-          </audio>
-          <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
-            <button class="download-btn" onclick="window.open('${song.audio_url}')">📥 Download MP3</button>
-            <button class="report-btn-cancel" onclick="document.querySelector('#music-result audio').play()">▶️ Play</button>
-          </div>
-          <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">📩 Song also appears in your chat!</p>
-        </div>
-      `;
-      
-      saveChatsToStorage();
-      
-    } else {
-      resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Failed: ${data?.message || "Unknown error"}</p>`;
-    }
-  } catch (error) {
-    clearInterval(progressInterval);
-    resultDiv.innerHTML = `<p style="color: var(--accent-danger);">❌ Error: ${error.message}</p>`;
-    btn.disabled = false;
-    btn.textContent = "🎵 Generate Music";
-  }
 }
 
 async function generateMusicAPI(prompt) {
@@ -345,7 +289,7 @@ let selectedVoice = "default";
 let isVoiceMode = false;
 
 /* ==========================================================================
-   🤖 DASH MODELS — 3 BEASTS!
+   🤖 DASH MODELS
    ========================================================================== */
 const DASH_MODELS = {
   "dash-complexity": {
@@ -372,7 +316,7 @@ function getDashConfig(modelKey) {
 function isApiKeyConfigured() { return true; }
 
 /* ==========================================================================
-   🛠️ UTILITIES — THE TOOLBOX
+   🛠️ UTILITIES
    ========================================================================== */
 function scrollToBottom() {
   const area = document.getElementById("chat-messages-area");
@@ -393,7 +337,7 @@ function useSuggestion(text) {
 }
 
 /* ==========================================================================
-   📺 SCREEN & MODAL — SHOW ME THE MONEY!
+   📺 SCREEN & MODAL
    ========================================================================== */
 function showScreen(id) {
   document.querySelectorAll(".screen-container").forEach(s => {
@@ -428,7 +372,7 @@ function closeAllModals() {
 }
 
 /* ==========================================================================
-   🚀 APP BOOT — LET'S GO!
+   🚀 APP BOOT
    ========================================================================== */
 function initApp() {
   console.log("🚀 INITAPP STARTED — HERE WE GO!");
@@ -453,7 +397,7 @@ window.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
 
 /* ==========================================================================
-   🧒 AGE VERIFICATION — ARE YOU 16+? 🧐
+   🧒 AGE VERIFICATION
    ========================================================================== */
 function verifyAge() {
   const input = document.getElementById("dob-input");
@@ -482,7 +426,7 @@ function verifyAge() {
 }
 
 /* ==========================================================================
-   🔐 LOGIN — COME ON IN!
+   🔐 LOGIN
    ========================================================================== */
 function loginWithGoogle() {
   showToast(
@@ -607,7 +551,7 @@ function logout() {
 }
 
 /* ==========================================================================
-   📂 SIDEBAR — NAVIGATION KING
+   📂 SIDEBAR
    ========================================================================== */
 function toggleSidebar() {
   const sidebar = document.getElementById("chat-sidebar");
@@ -633,7 +577,7 @@ function clearAllChats() {
 }
 
 /* ==========================================================================
-   💬 CHAT MANAGEMENT — THE HEART OF DASHYCORE
+   💬 CHAT MANAGEMENT
    ========================================================================== */
 function startNewChat() {
   const chat = { id: "chat_" + Date.now(), title: "New Chat", messages: [] };
@@ -713,7 +657,7 @@ function renderActiveChat() {
 }
 
 /* ==========================================================================
-   📎 ATTACHMENTS — FILE DROP ZONE
+   📎 ATTACHMENTS
    ========================================================================== */
 function handleFileAttachment(event) {
   const files = Array.from(event.target.files || []);
@@ -782,7 +726,7 @@ window.addEventListener("drop", (e) => {
 });
 
 /* ==========================================================================
-   💬 SEND MESSAGE — THE MAIN EVENT
+   💬 SEND MESSAGE
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', function() {
   const input = document.getElementById('chat-text-input');
@@ -897,7 +841,7 @@ function handleImageGeneration(prompt, chat) {
 }
 
 /* ==========================================================================
-   🤖 TEXT GENERATION — THE BRAIN
+   🤖 TEXT GENERATION
    ========================================================================== */
 async function handleTextGeneration(prompt, chat, attachments) {
   State.isResponding = true;
@@ -936,7 +880,7 @@ async function handleTextGeneration(prompt, chat, attachments) {
 }
 
 /* ==========================================================================
-   🔌 GROQ API CALLER — THE ENGINE
+   🔌 GROQ API CALLER
    ========================================================================== */
 async function callGroqAPI(prompt, chat, attachments) {
   const config = getDashConfig(State.currentModel);
@@ -978,7 +922,7 @@ async function callGroqAPI(prompt, chat, attachments) {
 }
 
 /* ==========================================================================
-   🎬 STREAMING + FORMATTING — MAKE IT PRETTY
+   🎬 STREAMING + FORMATTING
    ========================================================================== */
 function streamText(fullText, aiMsg, textEl) {
   return new Promise(resolve => {
@@ -1042,7 +986,7 @@ function copyCodeBlock(id, btn) {
 }
 
 /* ==========================================================================
-   💬 RENDER MESSAGE BUBBLE — MAKE IT LOOK GOOD
+   💬 RENDER MESSAGE BUBBLE
    ========================================================================== */
 function renderMessageBubble(msg) {
   const area = document.getElementById("chat-messages-area");
@@ -1102,11 +1046,10 @@ function buildMessageBubbleNode(msg) {
     });
     content.appendChild(attRow);
   }
-    const textEl = document.createElement("div");
+  const textEl = document.createElement("div");
   textEl.className = "message-text";
   textEl.innerHTML = formatMessageContent(msg.text);
   content.appendChild(textEl);
-
   if (msg.imageUrl && !msg.imageLoading) {
     const wrap = document.createElement("div");
     wrap.className = "generated-image-wrap";
@@ -1128,8 +1071,6 @@ function buildMessageBubbleNode(msg) {
     wrap.appendChild(overlay);
     content.appendChild(wrap);
   }
-
-  // 🎵 MUSIC BLOCK
   if (msg.songData) {
     const song = msg.songData;
     const songWrap = document.createElement("div");
@@ -1152,16 +1093,15 @@ function buildMessageBubbleNode(msg) {
     `;
     content.appendChild(songWrap);
   }
-
   const actionBar = buildActionBar(msg);
   if (actionBar) content.appendChild(actionBar);
-
   bubble.appendChild(avatar);
   bubble.appendChild(content);
   return bubble;
 }
-   /* ==========================================================================
-   ⚡ ACTION BAR — COPY, LIKE, REPORT, REGENERATE
+
+/* ==========================================================================
+   ⚡ ACTION BAR
    ========================================================================== */
 function buildActionBar(msg) {
   if (msg.imageLoading) return null;
@@ -1478,7 +1418,7 @@ window.speechSynthesis.onvoiceschanged = () => { console.log('🔊 Voices loaded
 setTimeout(() => { window.speechSynthesis.getVoices(); }, 1000);
 
 /* ==========================================================================
-   🍞 TOASTS — BREAD OF THE APP
+   🍞 TOASTS
    ========================================================================== */
 function showError(msg) {
   console.log("[Dashy ERROR]", msg);
@@ -1508,7 +1448,7 @@ function showToast(msg, type = "error") {
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
 
 /* ==========================================================================
-   👤 USERNAME SYSTEM — UNIQUE NAMES!
+   👤 USERNAME SYSTEM
    ========================================================================== */
 function isUsernameTaken(username) {
   const users = JSON.parse(localStorage.getItem('dashy_users') || '[]');
@@ -1544,8 +1484,7 @@ function updateMessageDisplay() {
     display.style.background = "rgba(251, 191, 36, 0.1)";
     return;
   }
-
-     if (remaining <= 0) {
+  if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
   } else if (remaining <= 5) {
     display.innerHTML = `📨 <span style="color: var(--accent-warning)">${remaining} messages left</span>`;
@@ -1553,5 +1492,3 @@ function updateMessageDisplay() {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
 }
-
-window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
