@@ -1495,7 +1495,6 @@ function updateMessageDisplay() {
   } else {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
-}  // ← THIS CLOSES THE FUNCTION!
+}
 
-// ✅ EVENT LISTENER GOES AFTER THE FUNCTION
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
