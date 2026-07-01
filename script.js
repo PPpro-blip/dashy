@@ -1467,9 +1467,11 @@ function registerUsername(username) {
 function updateMessageDisplay() {
   const user = State.currentUser;
   if (!user) return;
+
   const used = getUserMessageCount();
   const limit = getUserLimit();
   const remaining = limit - used;
+
   let display = document.getElementById("message-limit-display");
   if (!display) {
     display = document.createElement("div");
@@ -1478,12 +1480,14 @@ function updateMessageDisplay() {
     const footer = document.querySelector(".sidebar-footer");
     if (footer) footer.insertBefore(display, footer.firstChild);
   }
+
   if (ADMINS.includes(user.email)) {
     display.innerHTML = `👑 <span style="color: #fbbf24; font-weight: 700;">ADMIN — Unlimited Messages!</span>`;
     display.style.borderColor = "#fbbf24";
     display.style.background = "rgba(251, 191, 36, 0.1)";
     return;
   }
+
   if (remaining <= 0) {
     display.innerHTML = `🚫 <span style="color: var(--accent-danger)">No messages left!</span>`;
   } else if (remaining <= 5) {
@@ -1491,6 +1495,7 @@ function updateMessageDisplay() {
   } else {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
-}
+}  // ← THIS CLOSES THE FUNCTION!
 
+// ✅ EVENT LISTENER GOES AFTER THE FUNCTION
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
