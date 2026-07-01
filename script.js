@@ -1497,4 +1497,23 @@ function updateMessageDisplay() {
   }
 }
 
+/* ==========================================================================
+   PASSWORD EYE TOGGLE
+   ========================================================================== */
+
+function togglePasswordVisibility() {
+  const input = document.getElementById("login-password-input");
+  const btn = document.getElementById("toggle-password-btn");
+  
+  if (input.type === "password") {
+    input.type = "text";
+    btn.textContent = "🙈";
+    btn.style.color = "var(--accent-primary)";
+  } else {
+    input.type = "password";
+    btn.textContent = "👁️";
+    btn.style.color = "var(--text-muted)";
+  }
+}
+
 window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
