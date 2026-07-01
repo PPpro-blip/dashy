@@ -1492,3 +1492,5 @@ function updateMessageDisplay() {
     display.innerHTML = `📨 ${remaining} messages left`;
   }
 }
+
+}
