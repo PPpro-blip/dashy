@@ -377,6 +377,22 @@ function closeAllModals() {
 function initApp() {
   console.log("🚀 INITAPP STARTED — HERE WE GO!");
   try {
+    // 🔥 LOAD SAVED MODEL AND THEME!
+    const savedModel = localStorage.getItem('dashy_selected_model');
+    if (savedModel && DASH_MODELS[savedModel]) {
+      State.currentModel = savedModel;
+      // Update dropdown
+      const select = document.getElementById("model-select");
+      if (select) select.value = savedModel;
+      console.log("📦 Loaded model:", savedModel);
+    }
+    
+    const savedTheme = localStorage.getItem('dashy_selected_theme');
+    if (savedTheme) {
+      changeTheme(savedTheme);
+      console.log("🎨 Loaded theme:", savedTheme);
+    }
+    
     showScreen("screen-title");
     const titleScreen = document.getElementById("screen-title");
     if (titleScreen) {
@@ -395,7 +411,6 @@ function initApp() {
 
 window.addEventListener("DOMContentLoaded", initApp);
 window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAllModals(); });
-
 /* ==========================================================================
    🧒 AGE VERIFICATION
    ========================================================================== */
