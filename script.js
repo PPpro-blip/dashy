@@ -1290,11 +1290,27 @@ async function regenerateResponse(msg) {
 }
 
 /* ==========================================================================
-   🎨 MODEL / THEME
+   MODEL / THEME
    ========================================================================== */
-function changeModel(v) { State.currentModel = v; }
+function changeModel(v) {
+  console.log("🔀 Model changing to:", v);
+  State.currentModel = v;
+  // 🔥 SAVE TO STORAGE SO IT PERSISTS!
+  localStorage.setItem('dashy_selected_model', v);
+  console.log("✅ Model now:", State.currentModel);
+  
+  // 🔥 UPDATE THE DROPDOWN UI
+  const select = document.getElementById("model-select");
+  if (select) {
+    select.value = v;
+  }
+}
+
 function changeTheme(v) {
   State.currentTheme = v;
+  // 🔥 SAVE TO STORAGE!
+  localStorage.setItem('dashy_selected_theme', v);
+  
   const r = document.documentElement;
   if (v === "cyan") {
     r.style.setProperty("--accent-primary", "#00ffcc");
