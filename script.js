@@ -975,13 +975,29 @@ function escapeHtml(s) {
 function copyCodeBlock(id, btn) {
   const el = document.getElementById(id);
   if (!el) return;
+  
   let text = el.textContent;
   text = text.split('\n').map(line => line.trim()).join('\n');
   text = text.replace(/\n{3,}/g, '\n\n');
+  
   navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = "✓ Copied";
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="copied-text">Copied!</span>
+    `;
     btn.classList.add("copied");
-    setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1800);
+    setTimeout(() => { 
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span class="copy-text">Copy</span>
+      `;
+      btn.classList.remove("copied"); 
+    }, 1800);
   }).catch(() => showError("Could not copy to clipboard."));
 }
 
