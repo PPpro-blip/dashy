@@ -1493,4 +1493,4 @@ function updateMessageDisplay() {
   }
 }
 
-}
+window.addEventListener("error", e => showError("Error: " + (e.message || "Unknown")));
