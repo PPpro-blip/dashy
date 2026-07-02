@@ -273,10 +273,10 @@
       <h2 class="chat-topbar-title" id="chat-current-title">New Chat</h2>
       <div class="chat-topbar-right">
         <select id="model-select" class="chat-model-select" onchange="changeModel(this.value)">
-  <option value="dash-complexity">🧠 DASH-Complexity</option>
-  <option value="dash-allrounder" selected>⚡ DASH-AllRounder</option>
-  <option value="dash-superfast">🔥 DASH-SuperFast</option>
-</select>
+          <option value="dash-complexity">🧠 DASH-Complexity</option>
+          <option value="dash-allrounder" selected>⚡ DASH-AllRounder</option>
+          <option value="dash-superfast">🔥 DASH-SuperFast</option>
+        </select>
         <select id="theme-select" class="chat-theme-select" onchange="changeTheme(this.value)">
           <option value="dark">Dark</option>
           <option value="cyan">Cyan</option>
@@ -365,6 +365,15 @@
 
           <!-- Music Generation -->
           <button type="button" class="chat-input-icon-btn" title="Generate Music" onclick="showMusicModal()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"/>
+              <circle cx="6" cy="18" r="3"/>
+              <circle cx="18" cy="16" r="3"/>
+            </svg>
+          </button>
+
+          <!-- Lyrics Generation Button -->
+          <button type="button" class="chat-input-icon-btn" title="Generate Lyrics" onclick="showLyricsModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 18V5l12-2v13"/>
               <circle cx="6" cy="18" r="3"/>
@@ -534,6 +543,51 @@
     <div id="music-result" class="music-result"></div>
   </div>
 </div>
+
+    <!-- LYRICS GENERATION MODAL -->
+    <div id="modal-lyrics" class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">🎵 Generate Lyrics</h2>
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="report-instruction">Describe the song you want lyrics for!</p>
+
+        <label class="login-input-label">🎤 Topic / Theme</label>
+        <input type="text" id="lyrics-topic" class="login-input-field" placeholder="e.g., A breakup song about moving on">
+
+        <label class="login-input-label">🎸 Style</label>
+        <select id="lyrics-style" class="login-input-field">
+          <option value="pop">Pop</option>
+          <option value="rock">Rock</option>
+          <option value="rap">Rap/Hip-Hop</option>
+          <option value="country">Country</option>
+          <option value="rnb">R&B</option>
+          <option value="indie">Indie</option>
+          <option value="metal">Metal</option>
+          <option value="lofi">Lo-Fi</option>
+          <option value="classical">Classical</option>
+        </select>
+
+        <label class="login-input-label">📝 Mood</label>
+        <select id="lyrics-mood" class="login-input-field">
+          <option value="happy">Happy / Uplifting</option>
+          <option value="sad">Sad / Emotional</option>
+          <option value="angry">Angry / Intense</option>
+          <option value="romantic">Romantic / Love</option>
+          <option value="motivational">Motivational</option>
+          <option value="funny">Funny / Humorous</option>
+        </select>
+
+        <button class="login-submit-btn" id="lyrics-generate-btn" onclick="generateLyrics()">
+          🎵 Generate Lyrics
+        </button>
+
+        <div id="lyrics-result" class="music-result"></div>
+      </div>
+    </div>
+
+  </div>
 
   <script src="script.js"></script>
 </body>

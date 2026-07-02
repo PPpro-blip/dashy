@@ -1972,3 +1972,41 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
 .code-block-copy.copied .copied-text {
   display: inline;
 }
+
+/* ============================================================
+   🎵 LYRICS GENERATOR
+   ============================================================ */
+
+#lyrics-result {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  min-height: 60px;
+  white-space: pre-wrap;
+}
+
+#lyrics-result .download-btn {
+  background: var(--accent-primary);
+  color: #02060d;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+#lyrics-result .download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
+}
+
+#modal-lyrics .login-input-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+#modal-lyrics select.login-input-field {
+  appearance: auto;
+}
