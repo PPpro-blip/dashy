@@ -1772,21 +1772,37 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
   appearance: auto;
 }
 
-/* Image Style Selector */
+/* ================================================================
+   IMAGE STYLE SELECTOR
+   ================================================================ */
+
 #image-style-select {
   background-color: var(--bg-input);
   border: 1px solid var(--border-default);
   color: var(--text-primary);
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-md);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   cursor: pointer;
   outline: none;
   transition: var(--transition);
-  max-width: 140px;
+  max-width: 130px;
+  height: 38px;
+  appearance: auto;
 }
 
 #image-style-select:hover {
   border-color: var(--accent-primary);
   background-color: var(--bg-hover);
+}
+
+#image-style-select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.15);
+}
+
+/* Make sure it's visible in the input wrapper */
+.chat-input-wrapper select {
+  display: inline-block;
+  flex-shrink: 0;
 }
