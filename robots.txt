@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pppro-blip.github.io/dashy/sitemap.xml
