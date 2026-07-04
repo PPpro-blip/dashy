@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
+  <meta name="google-site-verification" content="vETslK7sE7r7PRsmuC4Wse-WVO4whn9hJRYfmmCvapI" />
   <title>DashyCore AI — Your Free AI Workspace</title>
 
   <!-- PWA / Mobile setup -->
@@ -39,6 +39,38 @@
   </head>  
 <body> 
   
+<!-- ============================================================
+   SCHEMA MARKUP — Makes Google LOVE DashyCore!
+   ============================================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DashyCore AI",
+  "description": "Free AI Assistant with 3 custom models: DASH-Complexity, DASH-AllRounder, DASH-SuperFast. Chat, generate images, create lyrics, and more!",
+  "applicationCategory": "Productivity",
+  "operatingSystem": "All",
+  "browserRequirements": "Requires modern browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Pratham Pandey",
+    "url": "https://github.com/PPpro-blip"
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Pratham Pandey"
+  },
+  "keywords": "AI assistant, free AI, chatbot, Groq AI, DashyCore, AI workspace, coding assistant",
+  "url": "https://pppro-blip.github.io/dashy/",
+  "image": "https://pppro-blip.github.io/dashy/icon-512.png"
+}
+</script>
+
   <!-- SCREEN 0: AGE -->
   <div id="screen-age" class="screen-container">
     <div class="login-card">
@@ -158,8 +190,7 @@
         </div>
         
         <button class="login-submit-btn" onclick="loginWithEmail()">Sign In</button>
-        <p class="login-footer-text">Don't have an account? <a href="#" onclick="alert('Sign-up flow would launch here.')">Sign up</a></p>
-      </div>
+        <p class="login-footer-text">Don't have an account? <a href="https://github.com/PPpro-blip/dashy" target="_blank" rel="noopener noreferrer">GitHub</a>
     </div>
   </div>
 
