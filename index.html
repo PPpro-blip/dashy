@@ -363,6 +363,16 @@
             </svg>
           </button>
 
+         <!-- Image Style Selector -->
+<select id="image-style-select" class="chat-voice-select" title="Image Style">
+  <option value="photorealistic">📸 Photorealistic</option>
+  <option value="anime">🎨 Anime</option>
+  <option value="oil-painting">🖼️ Oil Painting</option>
+  <option value="cyberpunk">🌆 Cyberpunk</option>
+  <option value="watercolor">🎨 Watercolor</option>
+  <option value="sketch">✏️ Sketch</option>
+</select> 
+          
           <!-- Lyrics Generation Button -->
           <button type="button" class="chat-input-icon-btn" title="Generate Lyrics" onclick="showLyricsModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -449,7 +459,7 @@
         </div>
       </div>
     </div>
-
+ 
     <!-- LYRICS GENERATION MODAL -->
     <div id="modal-lyrics" class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header">

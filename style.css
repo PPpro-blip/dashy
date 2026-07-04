@@ -1771,3 +1771,22 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
 #modal-lyrics select.login-input-field {
   appearance: auto;
 }
+
+/* Image Style Selector */
+#image-style-select {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+  max-width: 140px;
+}
+
+#image-style-select:hover {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-hover);
+}
