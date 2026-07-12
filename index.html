@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="google-site-verification" content="vETslK7sE7r7PRsmuC4Wse-WVO4whn9hJRYfmmCvapI" />
+
   <title>DashyCore AI — Your Free AI Workspace</title>
 
   <!-- PWA / Mobile setup -->
@@ -36,41 +36,35 @@
   <meta name="twitter:description" content="Free AI assistant with 3 custom models. Built by Pratham Pandey.">
   <meta name="twitter:image" content="https://pppro-blip.github.io/dashy/icon-512.png">
 
+  <!-- Google Search Console -->
+  <meta name="google-site-verification" content="8OACRwBv5QLPhpvgCs0U7juPkvlsZa_p-8mCwpV26as" />
+
+  <!-- Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DashyCore AI",
+    "description": "Free AI Assistant with 3 custom models.",
+    "applicationCategory": "Productivity",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Pratham Pandey"
+    },
+    "url": "https://pppro-blip.github.io/dashy/",
+    "image": "https://pppro-blip.github.io/dashy/icon-512.png"
+  }
+  </script>
+
   </head>  
 <body> 
   
-<!-- ============================================================
-   SCHEMA MARKUP — Makes Google LOVE DashyCore!
-   ============================================================ -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "DashyCore AI",
-  "description": "Free AI Assistant with 3 custom models: DASH-Complexity, DASH-AllRounder, DASH-SuperFast. Chat, generate images, create lyrics, and more!",
-  "applicationCategory": "Productivity",
-  "operatingSystem": "All",
-  "browserRequirements": "Requires modern browser",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Pratham Pandey",
-    "url": "https://github.com/PPpro-blip"
-  },
-  "creator": {
-    "@type": "Person",
-    "name": "Pratham Pandey"
-  },
-  "keywords": "AI assistant, free AI, chatbot, Groq AI, DashyCore, AI workspace, coding assistant",
-  "url": "https://pppro-blip.github.io/dashy/",
-  "image": "https://pppro-blip.github.io/dashy/icon-512.png"
-}
-</script>
-
   <!-- SCREEN 0: AGE -->
   <div id="screen-age" class="screen-container">
     <div class="login-card">
@@ -125,7 +119,7 @@
       <h1 class="title-brand-name">DASHY<span class="title-accent">CORE</span></h1>
       <p class="title-tagline">Your AI Workspace Companion</p>
       <div class="title-loading-bar"><div class="title-loading-fill"></div></div>
-      <p class="title-version-label">v3.5 · PRODUCTION</p>
+      <p class="title-version-label">v4.0 · LEGEND EDITION</p>
       <div class="title-menu-buttons">
         <button class="title-menu-btn" onclick="openModal('modal-capabilities')"><span class="btn-glyph">⚡</span> Capabilities</button>
         <button class="title-menu-btn" onclick="openModal('modal-credits')"><span class="btn-glyph">★</span> Credits</button>
@@ -191,6 +185,8 @@
         
         <button class="login-submit-btn" onclick="loginWithEmail()">Sign In</button>
         <p class="login-footer-text">Don't have an account? <a href="#" onclick="alert('Sign-up flow would launch here.')">Sign up</a></p>
+      </div>
+    </div>
   </div>
 
   <!-- SCREEN 2.5: USERNAME -->
@@ -222,7 +218,108 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: CHAT -->
+  <!-- SCREEN 3: PRICING -->
+  <div id="screen-pricing" class="screen-container">
+    <div class="pricing-container">
+      <h1 class="pricing-title">Choose Your Plan</h1>
+      <p class="pricing-subtitle">Upgrade your AI experience with DashyCore</p>
+      
+      <div class="pricing-grid">
+        <!-- Free Plan -->
+        <div class="pricing-card free">
+          <div class="pricing-card-header">
+            <h2>Free</h2>
+            <span class="pricing-price">₹0<span>/month</span></span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ 20 messages per day</li>
+            <li>✅ 3 DASH Models</li>
+            <li>✅ Image Generation</li>
+            <li>✅ Voice Input</li>
+            <li>❌ Game Mode</li>
+            <li>❌ Priority Support</li>
+          </ul>
+          <button class="pricing-btn" onclick="showToast('You are already on the Free plan! 🗿')">Current Plan</button>
+        </div>
+
+        <!-- Pro Plan -->
+        <div class="pricing-card pro featured">
+          <div class="pricing-badge">🔥 MOST POPULAR</div>
+          <div class="pricing-card-header">
+            <h2>Pro</h2>
+            <span class="pricing-price">₹299<span>/month</span></span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Unlimited messages</li>
+            <li>✅ 3 DASH Models</li>
+            <li>✅ Image Generation</li>
+            <li>✅ Voice Input</li>
+            <li>✅ Game Mode</li>
+            <li>✅ Priority Support</li>
+          </ul>
+          <button class="pricing-btn" onclick="showToast('🔒 Pro plan coming soon! Stay tuned.')">Coming Soon</button>
+        </div>
+
+        <!-- Ultimate Plan -->
+        <div class="pricing-card ultimate">
+          <div class="pricing-card-header">
+            <h2>Ultimate</h2>
+            <span class="pricing-price">₹699<span>/month</span></span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Unlimited messages</li>
+            <li>✅ All DASH Models</li>
+            <li>✅ Image Generation</li>
+            <li>✅ Voice Input</li>
+            <li>✅ Game Mode</li>
+            <li>✅ Priority Support</li>
+            <li>✅ Custom Models</li>
+            <li>✅ API Access</li>
+          </ul>
+          <button class="pricing-btn" onclick="showToast('🔒 Ultimate plan coming soon! Stay tuned.')">Coming Soon</button>
+        </div>
+      </div>
+      
+      <button class="pricing-back-btn" onclick="goToLogin()">← Back to Login</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: GAME MODE -->
+  <div id="screen-game" class="screen-container">
+    <div class="game-container">
+      <div class="game-header">
+        <button class="game-back-btn" onclick="goToChat()">← Back to Chat</button>
+        <div class="game-logo-container">
+          <div class="game-logo">🗿</div>
+          <div class="game-logo-text">GAME MODE</div>
+        </div>
+      </div>
+      
+      <div class="game-body">
+        <div class="game-options">
+          <div class="game-option" onclick="selectGameMode('raw')">
+            <div class="game-option-icon">💻</div>
+            <h3>Raw Code</h3>
+            <p>Generate game code directly</p>
+          </div>
+          <div class="game-option" onclick="selectGameMode('preview')">
+            <div class="game-option-icon">🎮</div>
+            <h3>Preview Mode</h3>
+            <p>Play the game in the chat</p>
+          </div>
+        </div>
+        
+        <div class="game-input-area">
+          <input type="text" id="game-prompt-input" class="game-input" placeholder="Describe the game you want to build...">
+          <button class="game-generate-btn" onclick="generateGame()">🚀 Generate Game</button>
+        </div>
+        
+        <div id="game-result" class="game-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: CHAT -->
 <div id="screen-chat" class="screen-container">
   <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 
@@ -242,7 +339,11 @@
         </svg>
         <span class="sidebar-brand">DashyCore</span>
       </div>
-      <button class="sidebar-new-chat-btn" onclick="startNewChat()"><span>+</span> New Chat</button>
+      <div class="sidebar-top-buttons">
+        <button class="sidebar-new-chat-btn" onclick="startNewChat()"><span>+</span> New Chat</button>
+        <button class="sidebar-game-btn" onclick="goToGame()">🎮 Game</button>
+        <button class="sidebar-pricing-btn" onclick="goToPricing()">💰 Pricing</button>
+      </div>
     </div>
 
     <div class="sidebar-search-wrap">
@@ -308,20 +409,20 @@
           <option value="dash-superfast">🔥 DASH-SuperFast</option>
         </select>
         
-        <!-- 🆕 IMAGE STYLE SELECTOR -->
-        <select id="image-style-select" class="chat-voice-select" title="Image Style">
-          <option value="photorealistic">📸 Photorealistic</option>
-          <option value="anime">🎨 Anime</option>
-          <option value="oil-painting">🖼️ Oil Painting</option>
-          <option value="cyberpunk">🌆 Cyberpunk</option>
-          <option value="watercolor">🎨 Watercolor</option>
-          <option value="sketch">✏️ Sketch</option>
+        <select id="theme-select" class="chat-theme-select" onchange="changeTheme(this.value)">
+          <option value="dark">🌙 Dark</option>
+          <option value="light">☀️ Light</option>
+          <option value="cyan">🌊 Cyan</option>
+          <option value="amber">🔥 Amber</option>
         </select>
         
-        <select id="theme-select" class="chat-theme-select" onchange="changeTheme(this.value)">
-          <option value="dark">Dark</option>
-          <option value="cyan">Cyan</option>
-          <option value="amber">Amber</option>
+        <select id="accent-select" class="chat-accent-select" onchange="changeAccent(this.value)">
+          <option value="default">🎨 Default</option>
+          <option value="red">❤️ Red</option>
+          <option value="green">💚 Green</option>
+          <option value="purple">💜 Purple</option>
+          <option value="orange">🧡 Orange</option>
+          <option value="pink">💗 Pink</option>
         </select>
 
         <!-- Voice Toggle Button -->
@@ -404,6 +505,16 @@
             </svg>
           </button>
 
+          <!-- Image Style Selector -->
+          <select id="image-style-select" class="chat-voice-select" title="Image Style">
+            <option value="photorealistic">📸 Photorealistic</option>
+            <option value="anime">🎨 Anime</option>
+            <option value="oil-painting">🖼️ Oil Painting</option>
+            <option value="cyberpunk">🌆 Cyberpunk</option>
+            <option value="watercolor">🎨 Watercolor</option>
+            <option value="sketch">✏️ Sketch</option>
+          </select>
+
           <!-- Lyrics Generation -->
           <button type="button" class="chat-input-icon-btn" title="Generate Lyrics" onclick="showLyricsModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -438,9 +549,9 @@
     <div id="modal-capabilities" class="modal-card" onclick="event.stopPropagation()">
       <div class="modal-header"><h2 class="modal-title">⚡ Capabilities</h2><button class="modal-close" onclick="closeAllModals()">✕</button></div>
       <div class="modal-body">
-        <div class="cap-item"><div class="cap-icon">🧠</div><div class="cap-text"><h3>DASH-Complexity</h3><p>For complex reasoning & deep technical problems</p></div></div>
-        <div class="cap-item"><div class="cap-icon">⚡</div><div class="cap-text"><h3>DASH-AllRounder</h3><p>Balanced, friendly, versatile assistant</p></div></div>
-        <div class="cap-item"><div class="cap-icon">🔥</div><div class="cap-text"><h3>DASH-SuperFast</h3><p>Lightning-fast responses for quick questions</p></div></div>
+        <div class="cap-item"><div class="cap-icon">🧠</div><div class="cap-text"><h3>DASH-Complexity</h3><p>GPT-OSS 120B — Complex reasoning & deep technical problems</p></div></div>
+        <div class="cap-item"><div class="cap-icon">⚡</div><div class="cap-text"><h3>DASH-AllRounder</h3><p>Qwen 3.6 27B — Balanced, friendly, versatile assistant</p></div></div>
+        <div class="cap-item"><div class="cap-icon">🔥</div><div class="cap-text"><h3>DASH-SuperFast</h3><p>GPT-OSS 20B — Lightning-fast responses for quick questions</p></div></div>
         <div class="cap-item"><div class="cap-icon">🎨</div><div class="cap-text"><h3>SpeedGen Image Generation</h3><p>Type "generate image of..." to create AI artwork</p></div></div>
         <div class="cap-item"><div class="cap-icon">📎</div><div class="cap-text"><h3>File Attachments</h3><p>Upload images, PDFs, screenshots</p></div></div>
         <div class="cap-item"><div class="cap-icon">📱</div><div class="cap-text"><h3>Installable App</h3><p>Install DashyCore on your phone or desktop</p></div></div>
@@ -463,7 +574,7 @@
         <div class="credits-stack">
           <p class="credits-stack-label">Powered by</p>
           <div class="credits-tech-row">
-            <span class="credits-tech-pill">Hugging Face</span>
+            <span class="credits-tech-pill">Groq</span>
             <span class="credits-tech-pill">Pollinations (SpeedGen)</span>
             <span class="credits-tech-pill">Cloudflare Workers</span>
             <span class="credits-tech-pill">❤️</span>
