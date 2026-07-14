@@ -18,23 +18,31 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+  <!-- Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
   <!-- SEO META TAGS -->
   <meta name="description" content="DashyCore AI — Free AI Assistant with 3 custom models: DASH-Complexity, DASH-AllRounder, DASH-SuperFast. Built by Pratham Pandey.">
-  <meta name="keywords" content="AI assistant, free AI, chatbot, Groq AI, DashyCore, AI workspace, coding assistant, Pratham Pandey">
+  <meta name="keywords" content="AI assistant, free AI, chatbot, Groq AI, DashyCore, AI workspace, coding assistant">
   <meta name="robots" content="index, follow">
   <meta name="author" content="Pratham Pandey">
 
   <meta property="og:title" content="DashyCore AI — Your Free AI Workspace">
   <meta property="og:description" content="Free AI assistant with 3 custom models. Chat, generate images, and more! Built by Pratham Pandey.">
-  <meta property="og:image" content="https:// dashycore.is-a.dev/icon-512.png">
-  <meta property="og:url" content="https:// dashycore.is-a.dev/">
+  <meta property="og:image" content="https://dashycore.is-a.dev/icon-512.png">
+  <meta property="og:url" content="https://dashycore.is-a.dev/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="DashyCore AI">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="DashyCore AI — Your Free AI Workspace">
   <meta name="twitter:description" content="Free AI assistant with 3 custom models. Built by Pratham Pandey.">
-  <meta name="twitter:image" content="https:// dashycore.is-a.dev/icon-512.png">
+  <meta name="twitter:image" content="https://dashycore.is-a.dev/icon-512.png">
 
   <!-- Google Search Console -->
   <meta name="google-site-verification" content="8OACRwBv5QLPhpvgCs0U7juPkvlsZa_p-8mCwpV26as" />
@@ -57,8 +65,8 @@
       "@type": "Person",
       "name": "Pratham Pandey"
     },
-    "url": "https:// dashycore.is-a.dev/",
-    "image": "https:// dashycore.is-a.dev/icon-512.png"
+    "url": "https://dashycore.is-a.dev/",
+    "image": "https://dashycore.is-a.dev/icon-512.png"
   }
   </script>
 
@@ -119,7 +127,7 @@
       <h1 class="title-brand-name">DASHY<span class="title-accent">CORE</span></h1>
       <p class="title-tagline">Your AI Workspace Companion</p>
       <div class="title-loading-bar"><div class="title-loading-fill"></div></div>
-      <p class="title-version-label">v4.0 · LEGEND EDITION</p>
+      <p class="title-version-label">v4.0 · FIREBASE EDITION</p>
       <div class="title-menu-buttons">
         <button class="title-menu-btn" onclick="openModal('modal-capabilities')"><span class="btn-glyph">⚡</span> Capabilities</button>
         <button class="title-menu-btn" onclick="openModal('modal-credits')"><span class="btn-glyph">★</span> Credits</button>
@@ -150,14 +158,14 @@
       </div>
 
       <div class="login-providers">
-        <button class="login-provider-btn" onclick="loginWithGoogle()">
+        <button class="login-provider-btn" id="firebase-google-btn" onclick="loginWithFirebase()">
           <svg class="provider-icon" viewBox="0 0 24 24" width="20" height="20">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          <span>Continue with Google</span>
+          <span>Continue with Google (Firebase)</span>
         </button>
         <button class="login-provider-btn" onclick="loginAsGuest()">
           <svg class="provider-icon" viewBox="0 0 24 24" width="20" height="20" fill="#a476bb">
@@ -225,7 +233,6 @@
       <p class="pricing-subtitle">Upgrade your AI experience with DashyCore</p>
       
       <div class="pricing-grid">
-        <!-- Free Plan -->
         <div class="pricing-card free">
           <div class="pricing-card-header">
             <h2>Free</h2>
@@ -237,12 +244,10 @@
             <li>✅ Image Generation</li>
             <li>✅ Voice Input</li>
             <li>❌ Game Mode</li>
-            <li>❌ Priority Support</li>
           </ul>
           <button class="pricing-btn" onclick="showToast('You are already on the Free plan! 🗿')">Current Plan</button>
         </div>
 
-        <!-- Pro Plan -->
         <div class="pricing-card pro featured">
           <div class="pricing-badge">🔥 MOST POPULAR</div>
           <div class="pricing-card-header">
@@ -255,12 +260,10 @@
             <li>✅ Image Generation</li>
             <li>✅ Voice Input</li>
             <li>✅ Game Mode</li>
-            <li>✅ Priority Support</li>
           </ul>
-          <button class="pricing-btn" onclick="showToast('🔒 Pro plan coming soon! Stay tuned.')">Coming Soon</button>
+          <button class="pricing-btn" onclick="openRazorpay('pro')">🚀 Upgrade to Pro</button>
         </div>
 
-        <!-- Ultimate Plan -->
         <div class="pricing-card ultimate">
           <div class="pricing-card-header">
             <h2>Ultimate</h2>
@@ -272,11 +275,10 @@
             <li>✅ Image Generation</li>
             <li>✅ Voice Input</li>
             <li>✅ Game Mode</li>
-            <li>✅ Priority Support</li>
             <li>✅ Custom Models</li>
             <li>✅ API Access</li>
           </ul>
-          <button class="pricing-btn" onclick="showToast('🔒 Ultimate plan coming soon! Stay tuned.')">Coming Soon</button>
+          <button class="pricing-btn" onclick="openRazorpay('ultimate')">👑 Upgrade to Ultimate</button>
         </div>
       </div>
       
@@ -297,12 +299,12 @@
       
       <div class="game-body">
         <div class="game-options">
-          <div class="game-option" onclick="selectGameMode('raw')">
+          <div class="game-option" data-mode="raw" onclick="selectGameMode('raw')">
             <div class="game-option-icon">💻</div>
             <h3>Raw Code</h3>
             <p>Generate game code directly</p>
           </div>
-          <div class="game-option" onclick="selectGameMode('preview')">
+          <div class="game-option active" data-mode="preview" onclick="selectGameMode('preview')">
             <div class="game-option-icon">🎮</div>
             <h3>Preview Mode</h3>
             <p>Play the game in the chat</p>
@@ -310,11 +312,13 @@
         </div>
         
         <div class="game-input-area">
-          <input type="text" id="game-prompt-input" class="game-input" placeholder="Describe the game you want to build...">
+          <input type="text" id="game-prompt-input" class="game-input" placeholder="Describe the game you want to build..." value="a platformer game">
           <button class="game-generate-btn" onclick="generateGame()">🚀 Generate Game</button>
         </div>
         
-        <div id="game-result" class="game-result"></div>
+        <div id="game-result" class="game-result">
+          <p style="color: var(--text-muted); text-align: center;">🎮 Describe a game and click Generate!</p>
+        </div>
       </div>
     </div>
   </div>
@@ -375,7 +379,6 @@
 
     <div class="sidebar-footer">
     
-      <!-- Export Chat Button -->
       <button class="sidebar-utility-btn" onclick="exportChat()">
         <span class="util-icon">📥</span> Export Chat
       </button>
@@ -425,7 +428,6 @@
           <option value="pink">💗 Pink</option>
         </select>
 
-        <!-- Voice Toggle Button -->
         <button class="chat-input-icon-btn" id="voice-toggle-btn" title="Toggle voice" onclick="toggleVoice()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 1a3 3 0 0 1 3 3v8a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z"/>
@@ -435,7 +437,6 @@
           </svg>
         </button>
 
-        <!-- Voice Selector Dropdown -->
         <select id="voice-select" class="chat-voice-select" onchange="changeVoice(this.value)">
           <option value="default">🔊 Select Voice</option>
           <option value="Daniel">🇬🇧 British Male</option>
@@ -487,7 +488,6 @@
       <div class="attachment-preview-row" id="attachment-preview-row"></div>
       <form class="chat-input-form" onsubmit="sendMessage(event)">
         <div class="chat-input-wrapper">
-          <!-- Attach File -->
           <button type="button" class="chat-input-icon-btn" title="Attach file" onclick="document.getElementById('file-picker-input').click()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
@@ -495,7 +495,6 @@
           </button>
           <input type="file" id="file-picker-input" multiple accept="image/*,.pdf,.txt,.md,.json,.csv" style="display:none" onchange="handleFileAttachment(event)">
           
-          <!-- Voice Input -->
           <button type="button" class="chat-input-icon-btn" id="voice-btn" title="Voice input" onclick="toggleVoiceInput()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 1a3 3 0 0 1 3 3v8a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z"/>
@@ -505,7 +504,6 @@
             </svg>
           </button>
 
-          <!-- Image Style Selector -->
           <select id="image-style-select" class="chat-voice-select" title="Image Style">
             <option value="photorealistic">📸 Photorealistic</option>
             <option value="anime">🎨 Anime</option>
@@ -515,7 +513,6 @@
             <option value="sketch">✏️ Sketch</option>
           </select>
 
-          <!-- Lyrics Generation -->
           <button type="button" class="chat-input-icon-btn" title="Generate Lyrics" onclick="showLyricsModal()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M9 18V5l12-2v13"/>
@@ -524,7 +521,6 @@
             </svg>
           </button>
 
-          <!-- Pause Button -->
           <button type="button" class="chat-input-icon-btn" id="pause-toggle-btn" onclick="togglePause()" title="Pause responses">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="6" y="4" width="4" height="16"/>
@@ -550,8 +546,8 @@
       <div class="modal-header"><h2 class="modal-title">⚡ Capabilities</h2><button class="modal-close" onclick="closeAllModals()">✕</button></div>
       <div class="modal-body">
         <div class="cap-item"><div class="cap-icon">🧠</div><div class="cap-text"><h3>DASH-Complexity</h3><p>GPT-OSS 120B — Complex reasoning & deep technical problems</p></div></div>
-        <div class="cap-item"><div class="cap-icon">⚡</div><div class="cap-text"><h3>DASH-AllRounder</h3><p>Qwen 3.6 27B — Balanced, friendly, versatile assistant</p></div></div>
-        <div class="cap-item"><div class="cap-icon">🔥</div><div class="cap-text"><h3>DASH-SuperFast</h3><p>GPT-OSS 20B — Lightning-fast responses for quick questions</p></div></div>
+        <div class="cap-item"><div class="cap-icon">⚡</div><div class="cap-text"><h3>DASH-AllRounder</h3><p>Llama 3.3 70B — Balanced, versatile assistant</p></div></div>
+        <div class="cap-item"><div class="cap-icon">🔥</div><div class="cap-text"><h3>DASH-SuperFast</h3><p>GPT-OSS 20B — Lightning-fast responses</p></div></div>
         <div class="cap-item"><div class="cap-icon">🎨</div><div class="cap-text"><h3>SpeedGen Image Generation</h3><p>Type "generate image of..." to create AI artwork</p></div></div>
         <div class="cap-item"><div class="cap-icon">📎</div><div class="cap-text"><h3>File Attachments</h3><p>Upload images, PDFs, screenshots</p></div></div>
         <div class="cap-item"><div class="cap-icon">📱</div><div class="cap-text"><h3>Installable App</h3><p>Install DashyCore on your phone or desktop</p></div></div>
@@ -574,9 +570,10 @@
         <div class="credits-stack">
           <p class="credits-stack-label">Powered by</p>
           <div class="credits-tech-row">
-            <span class="credits-tech-pill">Groq</span>
+            <span class="credits-tech-pill">Groq AI</span>
             <span class="credits-tech-pill">Pollinations (SpeedGen)</span>
             <span class="credits-tech-pill">Cloudflare Workers</span>
+            <span class="credits-tech-pill">Firebase Auth</span>
             <span class="credits-tech-pill">❤️</span>
           </div>
         </div>
