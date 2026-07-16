@@ -286,11 +286,11 @@
     </div>
   </div>
 
- <!-- ====================== GAME MODE - FULL UPGRADE ====================== -->
+ <!-- GAME MODE - FINAL UPGRADE -->
 <div id="screen-game" class="screen-container">
   <div class="game-container">
 
-    <!-- EPIC INTRO ANIMATION -->
+    <!-- EPIC INTRO -->
     <div id="game-intro" class="game-intro">
       <div class="intro-content">
         <div class="dashy-logo-big">
@@ -311,18 +311,19 @@
       </div>
     </div>
 
-    <!-- MAIN GAME DESIGNER -->
+    <!-- MAIN DESIGNER -->
     <div id="game-designer" class="game-designer hidden">
       <div class="game-header">
         <button class="game-back-btn" onclick="goToChat()">← Back to Chat</button>
         <div class="game-logo-text">🎮 GAME MODE</div>
+        <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
       </div>
 
       <div class="game-body">
         <h2 class="game-designer-title">Design Your Dream Game</h2>
 
         <input type="text" id="game-prompt-input" class="game-input" 
-               placeholder="e.g. 2D platformer with ninja, endless runner, space shooter..." 
+               placeholder="e.g. endless runner, space shooter, platformer..." 
                value="a fun platformer game">
 
         <div class="mode-selection">
@@ -346,7 +347,7 @@
       </div>
     </div>
   </div>
-</div> 
+</div>
 
   <!-- SCREEN 5: CHAT -->
 <div id="screen-chat" class="screen-container">
