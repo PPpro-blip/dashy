@@ -146,9 +146,13 @@ button, input, select, textarea {
   font-size: 3.4rem;
   font-weight: 800;
   letter-spacing: 6px;
-  color: var(--text-primary);
   font-family: var(--font-mono);
   margin-top: 8px;
+  background: var(--gradient-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 .title-accent {
   background: var(--gradient-brand);
@@ -2212,3 +2216,78 @@ button, .sidebar-chat-item, .suggestion-chip, .sidebar-tip-item,
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* GAME MODE - SICK INTRO */
+.game-intro {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #1a0033 0%, #000 80%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: introSequence 6.8s forwards;
+}
+
+.intro-content { text-align: center; position: relative; }
+
+.dashy-logo-big { animation: superSaiyanTransform 4.2s ease-in-out forwards; }
+
+.game-mode-title {
+  font-size: 5rem;
+  font-weight: 900;
+  margin-top: 25px;
+  letter-spacing: 12px;
+  background: linear-gradient(90deg, #00ffff, #ffff00, #ff00ff, #00ffff);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleSlam 2s ease-out forwards, gradientShift 3s linear infinite;
+  opacity: 0;
+}
+
+.saiyan-glow {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(255,215,0,0.45) 0%, transparent 70%);
+  border-radius: 50%;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseGlow 2.5s infinite alternate;
+  z-index: -1;
+}
+
+@keyframes superSaiyanTransform {
+  0% { transform: scale(0.6) rotate(-8deg); filter: brightness(0.8) drop-shadow(0 0 30px #00ffff); }
+  35% { transform: scale(1.25) rotate(5deg); filter: brightness(1.8) drop-shadow(0 0 90px #ffff00); }
+  100% { transform: scale(1) rotate(0deg); filter: brightness(1.4) drop-shadow(0 0 70px #ffcc00); }
+}
+
+@keyframes titleSlam {
+  0% { opacity: 0; transform: translateY(60px) scale(0.7); }
+  65% { opacity: 1; transform: translateY(-20px) scale(1.08); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+@keyframes pulseGlow { from { transform: translate(-50%, -50%) scale(0.9); } to { transform: translate(-50%, -50%) scale(1.3); } }
+@keyframes introSequence { 0% { opacity: 1; } 88% { opacity: 1; } 100% { opacity: 0; pointer-events: none; } }
+
+/* Designer */
+.game-designer { height: 100%; padding: 30px 20px; display: flex; flex-direction: column; }
+.game-designer-title { text-align: center; font-size: 2.1rem; margin-bottom: 30px; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.mode-selection { display: flex; gap: 20px; margin: 30px 0; justify-content: center; }
+.mode-card {
+  flex: 1; max-width: 280px; padding: 28px 20px; background: var(--bg-card);
+  border: 2px solid var(--border-default); border-radius: var(--radius-lg);
+  text-align: center; cursor: pointer; transition: all 0.4s;
+}
+.mode-card:hover, .mode-card.active {
+  border-color: var(--accent-primary);
+  transform: translateY(-12px);
+  box-shadow: 0 0 40px rgba(0, 210, 255, 0.3);
+}
+.mode-icon { font-size: 3.5rem; margin-bottom: 12px; }

@@ -286,42 +286,67 @@
     </div>
   </div>
 
-  <!-- SCREEN 4: GAME MODE -->
-  <div id="screen-game" class="screen-container">
-    <div class="game-container">
+ <!-- ====================== GAME MODE - FULL UPGRADE ====================== -->
+<div id="screen-game" class="screen-container">
+  <div class="game-container">
+
+    <!-- EPIC INTRO ANIMATION -->
+    <div id="game-intro" class="game-intro">
+      <div class="intro-content">
+        <div class="dashy-logo-big">
+          <svg viewBox="0 0 64 64" width="170" height="170">
+            <defs>
+              <linearGradient id="saiyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="100%" stop-color="#ffd700"/>
+              </linearGradient>
+            </defs>
+            <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#saiyanGrad)" stroke-width="4"/>
+            <rect x="20" y="18" width="5" height="28" rx="2" fill="url(#saiyanGrad)"/>
+            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#saiyanGrad)" stroke-width="8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h1 class="game-mode-title">GAME MODE</h1>
+        <div class="saiyan-glow"></div>
+      </div>
+    </div>
+
+    <!-- MAIN GAME DESIGNER -->
+    <div id="game-designer" class="game-designer hidden">
       <div class="game-header">
         <button class="game-back-btn" onclick="goToChat()">← Back to Chat</button>
-        <div class="game-logo-container">
-          <div class="game-logo">🗿</div>
-          <div class="game-logo-text">GAME MODE</div>
-        </div>
+        <div class="game-logo-text">🎮 GAME MODE</div>
       </div>
-      
+
       <div class="game-body">
-        <div class="game-options">
-          <div class="game-option" data-mode="raw" onclick="selectGameMode('raw')">
-            <div class="game-option-icon">💻</div>
+        <h2 class="game-designer-title">Design Your Dream Game</h2>
+
+        <input type="text" id="game-prompt-input" class="game-input" 
+               placeholder="e.g. 2D platformer with ninja, endless runner, space shooter..." 
+               value="a fun platformer game">
+
+        <div class="mode-selection">
+          <div class="mode-card" onclick="selectGameMode('raw')">
+            <div class="mode-icon">💻</div>
             <h3>Raw Code</h3>
-            <p>Generate game code directly</p>
+            <p>Get full HTML + JS code</p>
           </div>
-          <div class="game-option active" data-mode="preview" onclick="selectGameMode('preview')">
-            <div class="game-option-icon">🎮</div>
+          <div class="mode-card active" onclick="selectGameMode('preview')">
+            <div class="mode-icon">🎮</div>
             <h3>Preview Mode</h3>
-            <p>Play the game in the chat</p>
+            <p>Play instantly in chat</p>
           </div>
         </div>
-        
-        <div class="game-input-area">
-          <input type="text" id="game-prompt-input" class="game-input" placeholder="Describe the game you want to build..." value="a platformer game">
-          <button class="game-generate-btn" onclick="generateGame()">🚀 Generate Game</button>
-        </div>
-        
-        <div id="game-result" class="game-result">
-          <p style="color: var(--text-muted); text-align: center;">🎮 Describe a game and click Generate!</p>
-        </div>
+
+        <button class="game-generate-btn" onclick="generateGame()">
+          🚀 Generate My Game
+        </button>
+
+        <div id="game-result" class="game-result"></div>
       </div>
     </div>
   </div>
+</div> 
 
   <!-- SCREEN 5: CHAT -->
 <div id="screen-chat" class="screen-container">
