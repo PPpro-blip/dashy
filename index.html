@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<meta name="google-site-verification" content="Or3je-FZDTRyznsS1wRbLVOGpWoiKSQAm9O9zJHJWEg" />
+  
+  <!-- Primary Meta -->
+  <title>DashyCore — Your AI Operating System</title>
+  <meta name="description" content="One workspace for AI chat, coding, voice, images, games and productivity. Built by Pratham Pandey.">
+  <meta name="author" content="Pratham Pandey">
+  <meta name="keywords" content="AI workspace, AI chat, AI coding, AI images, AI voice, productivity, DashyCore">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://dashycore.vercel.app/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dashycore.vercel.app/">
+  <meta property="og:title" content="DashyCore — Your AI Operating System">
+  <meta property="og:description" content="One workspace for AI chat, coding, voice, images, games and productivity.">
+  <meta property="og:image" content="https://dashycore.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="DashyCore">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DashyCore — Your AI Operating System">
+  <meta name="twitter:description" content="One workspace for AI chat, coding, voice, images, games and productivity.">
+  <meta name="twitter:image" content="https://dashycore.vercel.app/og-image.png">
+
+  <!-- PWA / Mobile -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DashyCore">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DashyCore",
+    "url": "https://dashycore.vercel.app",
+    "description": "One workspace for AI chat, coding, voice, images, games and productivity.",
+    "applicationCategory": "ProductivityApplication",
+    "operatingSystem": "Any",
+    "author": {
+      "@type": "Person",
+      "name": "Pratham Pandey"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Fonts — preconnect for speed -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/style.css">
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="/script.js" as="script">
+</head>
+
+<body>
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 1: LANDING / TITLE
+       ═══════════════════════════════════════════════ -->
+  <div id="screen-title" class="screen active-screen" role="main" aria-label="Welcome screen">
+    <div class="landing" aria-hidden="true">
+      <div class="landing__ambient"></div>
+      <div class="landing__grid"></div>
+    </div>
+
+    <div class="landing__content">
+      <!-- Logo Mark -->
+      <div class="landing__logo" aria-label="DashyCore logo">
+        <svg viewBox="0 0 64 64" fill="none" width="72" height="72" role="img" aria-label="DashyCore icon">
+          <defs>
+            <linearGradient id="g-brand" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00d2ff"/>
+              <stop offset="50%" stop-color="#4f8ef7"/>
+              <stop offset="100%" stop-color="#a476bb"/>
+            </linearGradient>
+            <filter id="f-glow">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <polygon points="32,2 58,17 58,47 32,62 6,47 6,17"
+            fill="none" stroke="url(#g-brand)" stroke-width="1.5" opacity="0.4"/>
+          <polygon points="32,8 52,20 52,44 32,56 12,44 12,20"
+            fill="url(#g-brand)" opacity="0.06"/>
+          <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-brand)" filter="url(#f-glow)"/>
+          <path d="M25 18 Q46 18 46 32 Q46 46 25 46"
+            fill="none" stroke="url(#g-brand)" stroke-width="4.5" stroke-linecap="round" filter="url(#f-glow)"/>
+        </svg>
+      </div>
+
+      <!-- Brand Name -->
+      <h1 class="landing__title">
+        DASHY<span class="landing__title-accent">CORE</span>
+      </h1>
+      <p class="landing__tagline">Your AI Operating System</p>
+
+      <!-- Loading Bar -->
+      <div class="landing__loader" role="progressbar" aria-label="Loading">
+        <div class="landing__loader-fill"></div>
+      </div>
+      <p class="landing__version">v5.0 · Production</p>
+
+      <!-- CTA Buttons -->
+      <nav class="landing__actions" aria-label="Main actions">
+        <button class="btn btn--ghost" onclick="openModal('modal-capabilities')" type="button">
+          <svg class="btn__icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+            <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z"/>
+          </svg>
+          Capabilities
+        </button>
+        <button class="btn btn--ghost" onclick="openModal('modal-credits')" type="button">
+          <svg class="btn__icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+          </svg>
+          Credits
+        </button>
+        <button class="btn btn--primary" onclick="goToLogin()" type="button">
+          Get Started
+          <svg class="btn__icon btn__icon--right" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 2: LOGIN / AUTH
+       ═══════════════════════════════════════════════ -->
+  <div id="screen-login" class="screen" role="main" aria-label="Sign in">
+    <div class="auth">
+      <div class="auth__card">
+        <!-- Back button -->
+        <button class="auth__back" onclick="goToTitle()" type="button" aria-label="Go back">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+
+        <!-- Logo -->
+        <div class="auth__logo">
+          <svg viewBox="0 0 64 64" fill="none" width="48" height="48">
+            <defs>
+              <linearGradient id="g-auth" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="50%" stop-color="#4f8ef7"/>
+                <stop offset="100%" stop-color="#a476bb"/>
+              </linearGradient>
+            </defs>
+            <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#g-auth)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-auth)"/>
+            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-auth)" stroke-width="4.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <h1 class="auth__title">Welcome to DashyCore</h1>
+        <p class="auth__subtitle">Sign in to access your AI workspace</p>
+
+        <!-- OAuth Providers -->
+        <div class="auth__providers">
+          <button class="auth__provider-btn" onclick="loginWithGoogle()" type="button">
+            <svg class="auth__provider-icon" viewBox="0 0 24 24" width="20" height="20">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+
+          <button class="auth__provider-btn auth__provider-btn--guest" onclick="loginAsGuest()" type="button">
+            <svg class="auth__provider-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            <span>Continue as Guest</span>
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="auth__divider">
+          <span class="auth__divider-line"></span>
+          <span class="auth__divider-text">or sign in with email</span>
+          <span class="auth__divider-line"></span>
+        </div>
+
+        <!-- Email Form -->
+        <form class="auth__form" onsubmit="loginWithEmail(event)" novalidate>
+          <div class="auth__field">
+            <label class="auth__label" for="auth-email">Email address</label>
+            <input
+              type="email"
+              id="auth-email"
+              class="auth__input"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+          <div class="auth__field">
+            <label class="auth__label" for="auth-password">Password</label>
+            <input
+              type="password"
+              id="auth-password"
+              class="auth__input"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            >
+          </div>
+          <button class="btn btn--primary btn--full" type="submit">Sign In</button>
+        </form>
+
+        <p class="auth__footer">
+          Don't have an account?
+          <button class="auth__link" onclick="showSignUp()" type="button">Sign up</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 2.5: USERNAME SETUP
+       ═══════════════════════════════════════════════ -->
+  <div id="screen-username" class="screen" role="main" aria-label="Choose username">
+    <div class="auth">
+      <div class="auth__card">
+        <div class="auth__logo">
+          <svg viewBox="0 0 64 64" fill="none" width="48" height="48">
+            <defs>
+              <linearGradient id="g-user" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="50%" stop-color="#4f8ef7"/>
+                <stop offset="100%" stop-color="#a476bb"/>
+              </linearGradient>
+            </defs>
+            <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#g-user)" stroke-width="1.5" opacity="0.4"/>
+            <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-user)"/>
+            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-user)" stroke-width="4.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <h1 class="auth__title">Welcome aboard! 👋</h1>
+        <p class="auth__subtitle">Choose a name for your workspace</p>
+
+        <form class="auth__form" onsubmit="saveUsername(event)" novalidate>
+          <div class="auth__field">
+            <label class="auth__label" for="username-input">Your name</label>
+            <input
+              type="text"
+              id="username-input"
+              class="auth__input"
+              placeholder="e.g. Pratham, Alex, CyberNinja…"
+              maxlength="20"
+              autocomplete="off"
+              required
+            >
+            <p class="auth__hint">This is how DashyCore will greet you.</p>
+          </div>
+          <button class="btn btn--primary btn--full" type="submit">
+            Continue
+            <svg class="btn__icon btn__icon--right" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCREEN 3: MAIN WORKSPACE
+       ═══════════════════════════════════════════════ -->
+  <div id="screen-chat" class="screen" role="main" aria-label="DashyCore workspace">
+
+    <!-- Sidebar Backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()" aria-hidden="true"></div>
+
+    <!-- ─── Sidebar ─── -->
+    <aside class="sidebar" id="sidebar" aria-label="Chat history">
+      <div class="sidebar__header">
+        <div class="sidebar__brand">
+          <svg viewBox="0 0 64 64" width="24" height="24" fill="none">
+            <defs>
+              <linearGradient id="g-sidebar" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="50%" stop-color="#4f8ef7"/>
+                <stop offset="100%" stop-color="#a476bb"/>
+              </linearGradient>
+            </defs>
+            <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-sidebar)"/>
+            <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-sidebar)" stroke-width="4.5" stroke-linecap="round"/>
+          </svg>
+          <span class="sidebar__brand-text">DashyCore</span>
+        </div>
+        <button class="sidebar__close" onclick="toggleSidebar()" type="button" aria-label="Close sidebar">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- New Chat -->
+      <button class="sidebar__new-chat" onclick="startNewChat()" type="button">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>New Chat</span>
+      </button>
+
+      <!-- Search -->
+      <div class="sidebar__search">
+        <svg class="sidebar__search-icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+        <input
+          type="text"
+          id="sidebar-search"
+          class="sidebar__search-input"
+          placeholder="Search chats…"
+          oninput="filterChats(this.value)"
+          autocomplete="off"
+        >
+        <kbd class="sidebar__search-kbd">⌘K</kbd>
+      </div>
+
+      <!-- Pinned Chats -->
+      <div class="sidebar__section" id="sidebar-pinned-section" style="display:none">
+        <div class="sidebar__section-header">
+          <span class="sidebar__section-label">
+            <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" style="opacity:0.5">
+              <path d="M9.828 3.172a4 4 0 015.656 5.656l-1.06 1.06-.707-.707 1.06-1.06a3 3 0 10-4.243-4.243l-1.06 1.06-.707-.707 1.06-1.06zM7.172 16.828a4 4 0 01-5.656-5.656l1.06-1.06.707.707-1.06 1.06a3 3 0 104.243 4.243l1.06-1.06.707.707-1.06 1.06z"/>
+            </svg>
+            Pinned
+          </span>
+        </div>
+        <div id="sidebar-pinned-list" class="sidebar__chat-list"></div>
+      </div>
+
+      <!-- Recent Chats -->
+      <div class="sidebar__section sidebar__section--grow">
+        <div class="sidebar__section-header">
+          <span class="sidebar__section-label">Recent</span>
+          <span class="sidebar__badge" id="sidebar-chat-count">0</span>
+        </div>
+        <div id="sidebar-chat-list" class="sidebar__chat-list"></div>
+
+        <!-- Empty State -->
+        <div id="sidebar-empty" class="sidebar__empty">
+          <svg viewBox="0 0 20 20" width="32" height="32" fill="currentColor" opacity="0.15">
+            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+          </svg>
+          <p class="sidebar__empty-title">No chats yet</p>
+          <p class="sidebar__empty-sub">Start a conversation to see it here</p>
+        </div>
+      </div>
+
+      <!-- Quick Tips -->
+      <div class="sidebar__tips">
+        <p class="sidebar__tips-label">
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" style="opacity:0.4">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+          </svg>
+          Quick Tips
+        </p>
+        <button class="sidebar__tip" onclick="useSuggestion('Generate an image of ')" type="button">
+          <span class="sidebar__tip-icon">🎨</span>
+          <span>Generate images</span>
+        </button>
+        <button class="sidebar__tip" onclick="useSuggestion('Write code to ')" type="button">
+          <span class="sidebar__tip-icon">💻</span>
+          <span>Code snippets</span>
+        </button>
+        <button class="sidebar__tip" onclick="document.getElementById('file-input').click()" type="button">
+          <span class="sidebar__tip-icon">📎</span>
+          <span>Attach files</span>
+        </button>
+        <button class="sidebar__tip" onclick="useSuggestion('Explain ')" type="button">
+          <span class="sidebar__tip-icon">💡</span>
+          <span>Ask anything</span>
+        </button>
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar__footer">
+        <!-- Utility Links -->
+        <div class="sidebar__utils">
+          <button class="sidebar__util-btn" onclick="openModal('modal-settings')" type="button">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+              <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+            </svg>
+            <span>Settings</span>
+          </button>
+          <button class="sidebar__util-btn" onclick="clearAllChats()" type="button">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <span>Clear Chats</span>
+          </button>
+        </div>
+
+        <!-- User Profile -->
+        <div class="sidebar__user">
+          <div class="sidebar__avatar" id="sidebar-avatar" aria-hidden="true">U</div>
+          <div class="sidebar__user-info">
+            <span class="sidebar__user-name" id="sidebar-user-name">User</span>
+            <span class="sidebar__user-email" id="sidebar-user-email">user@dashy.ai</span>
+          </div>
+          <button class="sidebar__logout" onclick="logout()" type="button" title="Sign out" aria-label="Sign out">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─── Sidebar Toggle (visible when collapsed) ─── -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" type="button" aria-label="Open sidebar">
+      <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+
+    <!-- ─── Main Chat Area ─── -->
+    <main class="workspace" id="workspace">
+
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar__left">
+          <h2 class="topbar__title" id="chat-title">New Chat</h2>
+        </div>
+        <div class="topbar__right">
+          <!-- Model Selector -->
+          <div class="topbar__select-wrap">
+            <select id="model-select" class="topbar__select" onchange="changeModel(this.value)" aria-label="Select AI model">
+              <option value="dash-complexity">🧠 DASH-Complexity</option>
+              <option value="dash-allround" selected>⚡ DASH-AllRound</option>
+              <option value="dash-superfast">🚀 DASH-SuperFast</option>
+            </select>
+          </div>
+
+          <!-- Theme Selector -->
+          <div class="topbar__select-wrap">
+            <select id="theme-select" class="topbar__select" onchange="changeTheme(this.value)" aria-label="Select theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="midnight">Midnight</option>
+              <option value="cyber">Cyber</option>
+              <option value="nord">Nord</option>
+              <option value="glass">Glass</option>
+            </select>
+          </div>
+
+          <!-- Voice Toggle -->
+          <button class="topbar__icon-btn" id="voice-toggle" onclick="toggleVoiceInput()" type="button" title="Voice input" aria-label="Toggle voice input">
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+              <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Messages Area -->
+      <section class="messages" id="messages-area" aria-label="Chat messages" role="log" aria-live="polite">
+
+        <!-- Empty State -->
+        <div class="empty" id="chat-empty-state">
+          <div class="empty__logo">
+            <svg viewBox="0 0 64 64" width="56" height="56" fill="none">
+              <defs>
+                <linearGradient id="g-empty" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00d2ff"/>
+                  <stop offset="50%" stop-color="#4f8ef7"/>
+                  <stop offset="100%" stop-color="#a476bb"/>
+                </linearGradient>
+              </defs>
+              <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#g-empty)" stroke-width="1.5" opacity="0.3"/>
+              <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-empty)"/>
+              <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-empty)" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h1 class="empty__greeting" id="empty-greeting">How can I help you today?</h1>
+          <p class="empty__subtitle">Ask me anything, generate images, write code, or explore ideas</p>
+          <div class="empty__suggestions">
+            <button class="suggestion" onclick="useSuggestion('Generate an image of a cyberpunk cat')" type="button">
+              <span class="suggestion__icon">🎨</span>
+              <span class="suggestion__text">
+                <span class="suggestion__title">Create AI art</span>
+                <span class="suggestion__desc">Generate an image of a cyberpunk cat</span>
+              </span>
+            </button>
+            <button class="suggestion" onclick="useSuggestion('Write a complete Python web scraper with comments')" type="button">
+              <span class="suggestion__icon">💻</span>
+              <span class="suggestion__text">
+                <span class="suggestion__title">Write code</span>
+                <span class="suggestion__desc">Build a Python web scraper</span>
+              </span>
+            </button>
+            <button class="suggestion" onclick="useSuggestion('Explain quantum entanglement like I am 10')" type="button">
+              <span class="suggestion__icon">💡</span>
+              <span class="suggestion__text">
+                <span class="suggestion__title">Learn something</span>
+                <span class="suggestion__desc">Explain quantum entanglement simply</span>
+              </span>
+            </button>
+            <button class="suggestion" onclick="useSuggestion('Help me plan a startup pitch deck')" type="button">
+              <span class="suggestion__icon">🚀</span>
+              <span class="suggestion__text">
+                <span class="suggestion__title">Get productive</span>
+                <span class="suggestion__desc">Plan a startup pitch deck</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Voice Visualizer (hidden by default) -->
+      <div class="voice-visualizer" id="voice-visualizer" style="display:none" aria-label="Voice recording active">
+        <div class="voice-visualizer__waves">
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+          <span class="voice-visualizer__bar"></span>
+        </div>
+        <p class="voice-visualizer__label">Listening…</p>
+        <button class="voice-visualizer__stop" onclick="stopVoiceInput()" type="button">Stop</button>
+      </div>
+
+      <!-- Input Area -->
+      <footer class="input-area">
+        <!-- Attachment Preview -->
+        <div class="input-area__attachments" id="attachment-preview" aria-label="Attached files"></div>
+
+        <form class="input-area__form" onsubmit="sendMessage(event)" novalidate>
+          <div class="input-area__wrapper">
+            <!-- Attach Button -->
+            <button class="input-area__action" type="button" onclick="document.getElementById('file-input').click()" title="Attach file" aria-label="Attach file">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+                <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V5a1 1 0 112 0v6a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+            <input type="file" id="file-input" multiple accept="image/*,.pdf,.txt,.md,.json,.csv,.js,.ts,.py,.html,.css" style="display:none" onchange="handleFileAttachment(event)">
+
+            <!-- Text Input -->
+            <textarea
+              id="chat-input"
+              class="input-area__textarea"
+              placeholder="Message DashyCore…"
+              rows="1"
+              autocomplete="off"
+              aria-label="Type your message"
+            ></textarea>
+
+            <!-- Send Button -->
+            <button class="input-area__send" id="send-btn" type="submit" title="Send message" aria-label="Send message">
+              <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <!-- Footer Disclaimer -->
+        <p class="input-area__disclaimer">
+          DashyCore can make mistakes. Verify important information.
+        </p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       MODALS
+       ═══════════════════════════════════════════════ -->
+  <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)" aria-hidden="true">
+
+    <!-- ─── Capabilities ─── -->
+    <div id="modal-capabilities" class="modal" role="dialog" aria-labelledby="cap-title" onclick="event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title" id="cap-title">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" style="color:var(--accent)">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/>
+          </svg>
+          Capabilities
+        </h2>
+        <button class="modal__close" onclick="closeAllModals()" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="cap">
+          <div class="cap__grid">
+            <div class="cap__item">
+              <div class="cap__icon">💬</div>
+              <h3 class="cap__name">AI Chat</h3>
+              <p class="cap__desc">Three DASH models for reasoning, general, and speed tasks.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">🎨</div>
+              <h3 class="cap__name">Image Generation</h3>
+              <p class="cap__desc">Type "generate image of…" to create AI artwork instantly.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">💻</div>
+              <h3 class="cap__name">Code Generation</h3>
+              <p class="cap__desc">Full programs with syntax highlighting and one-click copy.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">🎙️</div>
+              <h3 class="cap__name">Voice Input</h3>
+              <p class="cap__desc">Speak naturally and let DashyCore transcribe your message.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">📎</div>
+              <h3 class="cap__name">File Attachments</h3>
+              <p class="cap__desc">Upload images, PDFs, code files — drag, paste, or browse.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">📱</div>
+              <h3 class="cap__name">Installable PWA</h3>
+              <p class="cap__desc">Install on any device for a native app experience.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">🎮</div>
+              <h3 class="cap__name">Game Mode</h3>
+              <p class="cap__desc">Hidden experimental mode for interactive AI experiences.</p>
+            </div>
+            <div class="cap__item">
+              <div class="cap__icon">🔒</div>
+              <h3 class="cap__name">Private & Secure</h3>
+              <p class="cap__desc">Your data stays yours. Firebase auth with persistent sessions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Credits ─── -->
+    <div id="modal-credits" class="modal" role="dialog" aria-labelledby="credits-title" onclick="event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title" id="credits-title">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" style="color:var(--accent)">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+          </svg>
+          Credits
+        </h2>
+        <button class="modal__close" onclick="closeAllModals()" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="credits">
+          <div class="credits__logo">
+            <svg viewBox="0 0 64 64" width="72" height="72" fill="none">
+              <defs>
+                <linearGradient id="g-credits" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#00d2ff"/>
+                  <stop offset="50%" stop-color="#4f8ef7"/>
+                  <stop offset="100%" stop-color="#a476bb"/>
+                </linearGradient>
+              </defs>
+              <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#g-credits)" stroke-width="1.5" opacity="0.3"/>
+              <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-credits)"/>
+              <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-credits)" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <blockquote class="credits__quote">
+            "If you can read this… <strong>the AI is breathing.</strong> But honestly, it wouldn't be possible without my coder and fantastic mentor <strong class="credits__highlight">Shubham Sir</strong>. I wouldn't be able to do this at all."
+          </blockquote>
+          <p class="credits__author">
+            — Pratham Pandey
+            <span class="credits__role">Creator, age 12</span>
+          </p>
+          <div class="credits__stack">
+            <p class="credits__stack-label">Built with</p>
+            <div class="credits__pills">
+              <span class="credits__pill">HTML / CSS / JS</span>
+              <span class="credits__pill">Firebase</span>
+              <span class="credits__pill">Vercel</span>
+              <span class="credits__pill">Cloudflare Workers</span>
+              <span class="credits__pill">PWA</span>
+              <span class="credits__pill">❤️</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Settings ─── -->
+    <div id="modal-settings" class="modal modal--wide" role="dialog" aria-labelledby="settings-title" onclick="event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title" id="settings-title">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" style="color:var(--accent)">
+            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+          </svg>
+          Settings
+        </h2>
+        <button class="modal__close" onclick="closeAllModals()" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="settings">
+          <!-- Settings Tabs -->
+          <nav class="settings__tabs" role="tablist" aria-label="Settings sections">
+            <button class="settings__tab settings__tab--active" role="tab" aria-selected="true" onclick="switchSettingsTab('general', this)" type="button">General</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('appearance', this)" type="button">Appearance</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('voice', this)" type="button">Voice</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('models', this)" type="button">Models</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('data', this)" type="button">Data</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('shortcuts', this)" type="button">Shortcuts</button>
+            <button class="settings__tab" role="tab" aria-selected="false" onclick="switchSettingsTab('about', this)" type="button">About</button>
+          </nav>
+
+          <!-- Tab: General -->
+          <div class="settings__panel" id="settings-general" role="tabpanel">
+            <div class="settings__group">
+              <label class="settings__label">Display Name</label>
+              <div class="settings__row">
+                <input type="text" id="settings-name" class="settings__input" placeholder="Your name" maxlength="20">
+                <button class="btn btn--small" onclick="updateDisplayName()" type="button">Save</button>
+              </div>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">Default Model</label>
+              <select id="settings-default-model" class="settings__select" onchange="setDefaultModel(this.value)">
+                <option value="dash-complexity">🧠 DASH-Complexity</option>
+                <option value="dash-allround" selected>⚡ DASH-AllRound</option>
+                <option value="dash-superfast">🚀 DASH-SuperFast</option>
+              </select>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">Send on Enter</label>
+              <div class="settings__toggle-row">
+                <span class="settings__desc">Press Enter to send messages (Shift+Enter for new line)</span>
+                <label class="toggle">
+                  <input type="checkbox" id="settings-enter-send" checked>
+                  <span class="toggle__slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Appearance -->
+          <div class="settings__panel" id="settings-appearance" role="tabpanel" style="display:none">
+            <div class="settings__group">
+              <label class="settings__label">Theme</label>
+              <div class="settings__theme-grid">
+                <button class="settings__theme-card" onclick="changeTheme('dark')" type="button" data-theme="dark">
+                  <span class="settings__theme-preview" style="background:#0a0a0f"></span>
+                  <span>Dark</span>
+                </button>
+                <button class="settings__theme-card" onclick="changeTheme('light')" type="button" data-theme="light">
+                  <span class="settings__theme-preview" style="background:#f8f9fa"></span>
+                  <span>Light</span>
+                </button>
+                <button class="settings__theme-card" onclick="changeTheme('midnight')" type="button" data-theme="midnight">
+                  <span class="settings__theme-preview" style="background:#0d1117"></span>
+                  <span>Midnight</span>
+                </button>
+                <button class="settings__theme-card" onclick="changeTheme('cyber')" type="button" data-theme="cyber">
+                  <span class="settings__theme-preview" style="background:linear-gradient(135deg,#0a0a2e,#1a0a2e)"></span>
+                  <span>Cyber</span>
+                </button>
+                <button class="settings__theme-card" onclick="changeTheme('nord')" type="button" data-theme="nord">
+                  <span class="settings__theme-preview" style="background:#2e3440"></span>
+                  <span>Nord</span>
+                </button>
+                <button class="settings__theme-card" onclick="changeTheme('glass')" type="button" data-theme="glass">
+                  <span class="settings__theme-preview" style="background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));backdrop-filter:blur(10px)"></span>
+                  <span>Glass</span>
+                </button>
+              </div>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">Font Size</label>
+              <select id="settings-font-size" class="settings__select" onchange="changeFontSize(this.value)">
+                <option value="small">Small</option>
+                <option value="medium" selected>Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tab: Voice -->
+          <div class="settings__panel" id="settings-voice" role="tabpanel" style="display:none">
+            <div class="settings__group">
+              <label class="settings__label">Voice Input</label>
+              <div class="settings__toggle-row">
+                <span class="settings__desc">Enable microphone for voice messages</span>
+                <label class="toggle">
+                  <input type="checkbox" id="settings-voice-enabled" checked>
+                  <span class="toggle__slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">Text-to-Speech</label>
+              <div class="settings__toggle-row">
+                <span class="settings__desc">Read AI responses aloud</span>
+                <label class="toggle">
+                  <input type="checkbox" id="settings-tts-enabled">
+                  <span class="toggle__slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">TTS Voice</label>
+              <select id="settings-tts-voice" class="settings__select">
+                <option value="default">System Default</option>
+              </select>
+            </div>
+            <div class="settings__group">
+              <label class="settings__label">Speech Rate</label>
+              <input type="range" id="settings-speech-rate" class="settings__range" min="0.5" max="2" step="0.1" value="1">
+              <span class="settings__range-value" id="speech-rate-value">1.0x</span>
+            </div>
+          </div>
+
+          <!-- Tab: Models -->
+          <div class="settings__panel" id="settings-models" role="tabpanel" style="display:none">
+            <div class="settings__group">
+              <div class="settings__model-card">
+                <div class="settings__model-header">
+                  <span class="settings__model-icon">🧠</span>
+                  <h3 class="settings__model-name">DASH-Complexity</h3>
+                </div>
+                <p class="settings__model-desc">Best for reasoning, coding, and large context tasks. Handles complex multi-step problems with high accuracy.</p>
+                <div class="settings__model-tags">
+                  <span class="settings__model-tag">Reasoning</span>
+                  <span class="settings__model-tag">Coding</span>
+                  <span class="settings__model-tag">128K context</span>
+                </div>
+              </div>
+              <div class="settings__model-card">
+                <div class="settings__model-header">
+                  <span class="settings__model-icon">⚡</span>
+                  <h3 class="settings__model-name">DASH-AllRound</h3>
+                  <span class="settings__model-badge">Default</span>
+                </div>
+                <p class="settings__model-desc">Balanced general assistant. Great for creative writing, Q&A, brainstorming, and everyday tasks.</p>
+                <div class="settings__model-tags">
+                  <span class="settings__model-tag">General</span>
+                  <span class="settings__model-tag">Creative</span>
+                  <span class="settings__model-tag">Balanced</span>
+                </div>
+              </div>
+              <div class="settings__model-card">
+                <div class="settings__model-header">
+                  <span class="settings__model-icon">🚀</span>
+                  <h3 class="settings__model-name">DASH-SuperFast</h3>
+                </div>
+                <p class="settings__model-desc">Instant answers with the lowest latency. Perfect for quick lookups, short tasks, and rapid iteration.</p>
+                <div class="settings__model-tags">
+                  <span class="settings__model-tag">Fast</span>
+                  <span class="settings__model-tag">Low latency</span>
+                  <span class="settings__model-tag">Efficient</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Data -->
+          <div class="settings__panel" id="settings-data" role="tabpanel" style="display:none">
+            <div class="settings__group">
+              <label class="settings__label">Export Data</label>
+              <p class="settings__desc">Download all your chats and settings as a JSON file.</p>
+              <button class="btn btn--ghost" onclick="exportAllData()" type="button">
+                <svg class="btn__icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                Export All Data
+              </button>
+            </div>
+            <div class="settings__group settings__group--danger">
+              <label class="settings__label">Delete All Data</label>
+              <p class="settings__desc">Permanently delete all chats, preferences, and cached data. This cannot be undone.</p>
+              <button class="btn btn--danger" onclick="deleteAllData()" type="button">
+                <svg class="btn__icon" viewBox="0 0 20 20" width="16" height="16" fill="currentColor">
+                  <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                Delete Everything
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab: Shortcuts -->
+          <div class="settings__panel" id="settings-shortcuts" role="tabpanel" style="display:none">
+            <div class="settings__group">
+              <div class="settings__shortcuts-list">
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">New chat</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>⌘</kbd><kbd>Shift</kbd><kbd>O</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">Search chats</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>⌘</kbd><kbd>K</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">Toggle sidebar</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>⌘</kbd><kbd>B</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">Send message</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>Enter</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">New line</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>Shift</kbd><kbd>Enter</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">Settings</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>⌘</kbd><kbd>,</kbd>
+                  </div>
+                </div>
+                <div class="settings__shortcut">
+                  <span class="settings__shortcut-desc">Voice input</span>
+                  <div class="settings__shortcut-keys">
+                    <kbd>⌘</kbd><kbd>Shift</kbd><kbd>V</kbd>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: About -->
+          <div class="settings__panel" id="settings-about" role="tabpanel" style="display:none">
+            <div class="settings__group" style="text-align:center">
+              <svg viewBox="0 0 64 64" width="56" height="56" fill="none" style="margin:0 auto 16px">
+                <defs>
+                  <linearGradient id="g-about" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00d2ff"/>
+                    <stop offset="50%" stop-color="#4f8ef7"/>
+                    <stop offset="100%" stop-color="#a476bb"/>
+                  </linearGradient>
+                </defs>
+                <polygon points="32,2 58,17 58,47 32,62 6,47 6,17" fill="none" stroke="url(#g-about)" stroke-width="1.5" opacity="0.3"/>
+                <rect x="20" y="18" width="5" height="28" rx="2.5" fill="url(#g-about)"/>
+                <path d="M25 18 Q46 18 46 32 Q46 46 25 46" fill="none" stroke="url(#g-about)" stroke-width="4.5" stroke-linecap="round"/>
+              </svg>
+              <h3 style="margin:0 0 4px;font-size:1.1rem">DashyCore</h3>
+              <p class="settings__desc">Version 5.0 · Production</p>
+              <p class="settings__desc" style="margin-top:16px">Your AI Operating System — one workspace for chat, coding, voice, images, games, and productivity.</p>
+              <p class="settings__desc" style="margin-top:12px">
+                Built with ❤️ by <strong>Pratham Pandey</strong>
+              </p>
+              <p class="settings__desc" style="margin-top:4px;font-size:0.75rem;opacity:0.4">
+                © 2025 DashyCore. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Report ─── -->
+    <div id="modal-report" class="modal" role="dialog" aria-labelledby="report-title" onclick="event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title" id="report-title">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" style="color:#ef4444">
+            <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
+          </svg>
+          Report Response
+        </h2>
+        <button class="modal__close" onclick="closeAllModals()" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <p class="report__instruction">Help us improve. What's wrong with this response?</p>
+        <div class="report__options" id="report-options">
+          <label class="report__option">
+            <input type="radio" name="report-reason" value="inaccurate">
+            <span class="report__option-content">
+              <strong>Inaccurate or wrong</strong>
+              <span>The information is factually incorrect</span>
+            </span>
+          </label>
+          <label class="report__option">
+            <input type="radio" name="report-reason" value="harmful">
+            <span class="report__option-content">
+              <strong>Harmful or unsafe</strong>
+              <span>Promotes harm, danger, or illegal activity</span>
+            </span>
+          </label>
+          <label class="report__option">
+            <input type="radio" name="report-reason" value="offensive">
+            <span class="report__option-content">
+              <strong>Offensive content</strong>
+              <span>Hateful, discriminatory, or inappropriate</span>
+            </span>
+          </label>
+          <label class="report__option">
+            <input type="radio" name="report-reason" value="not-helpful">
+            <span class="report__option-content">
+              <strong>Not helpful</strong>
+              <span>Doesn't answer the question properly</span>
+            </span>
+          </label>
+          <label class="report__option">
+            <input type="radio" name="report-reason" value="other">
+            <span class="report__option-content">
+              <strong>Other</strong>
+              <span>Something else entirely</span>
+            </span>
+          </label>
+        </div>
+        <textarea id="report-details" class="report__textarea" placeholder="Add additional details (optional)…" rows="3"></textarea>
+        <div class="report__actions">
+          <button class="btn btn--ghost" onclick="closeAllModals()" type="button">Cancel</button>
+          <button class="btn btn--danger" onclick="submitReport()" type="button">Submit Report</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Image Gallery ─── -->
+    <div id="modal-gallery" class="modal modal--wide" role="dialog" aria-labelledby="gallery-title" onclick="event.stopPropagation()">
+      <div class="modal__header">
+        <h2 class="modal__title" id="gallery-title">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor" style="color:var(--accent)">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+          </svg>
+          Image Gallery
+        </h2>
+        <button class="modal__close" onclick="closeAllModals()" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="gallery" id="gallery-grid">
+          <p class="gallery__empty">No generated images yet. Try "Generate an image of…" in chat.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       TOAST NOTIFICATIONS
+       ═══════════════════════════════════════════════ -->
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ═══════════════════════════════════════════════
+       SCRIPTS
+       ═══════════════════════════════════════════════ -->
+  <script src="/script.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
