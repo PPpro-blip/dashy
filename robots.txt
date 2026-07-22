@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https:// dashycore.is-a.dev/sitemap.xml

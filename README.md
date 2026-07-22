@@ -1,2 +1,0 @@
-# dashy
-better than chatgpt
